@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -64,11 +65,27 @@
         /* Notification styles */
         .notification {
             display: inline-block;
-            margin-right: 20px; 
+            margin-right: 20px;
             padding: 14px 16px;
             text-decoration: none;
-            background-color: #333; 
+            background-color: #333;
             color: white;
+        }
+
+        /* Style for the Download Summary button */
+        #downloadSummaryButton {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #downloadSummaryButton:hover {
+            background-color: #ddd;
+            color: black;
         }
     </style>
 </head>
@@ -86,6 +103,7 @@
         <a href="#" id="employeesLink">Employees</a>
         <a href="#" id="scheduleLink">Schedule</a>
         <a href="#" id="graphLink">Graph</a>
+        <button id="downloadSummaryButton">Download Summary</button>
     </div>
 
     <!-- Content area -->
@@ -93,22 +111,24 @@
         <!-- The content will be dynamically updated here -->
     </div>
 
+    <!-- Download Summary button -->
+
     <script>
-        document.getElementById('attendanceLink').addEventListener('click', function() {
+        document.getElementById('attendanceLink').addEventListener('click', function () {
             changeTitleAndLoadAttendance();
         });
 
-        document.getElementById('employeesLink').addEventListener('click', function() {
+        document.getElementById('employeesLink').addEventListener('click', function () {
             changeTitle('Employees');
             loadEmployees();
         });
 
-        document.getElementById('scheduleLink').addEventListener('click', function() {
+        document.getElementById('scheduleLink').addEventListener('click', function () {
             changeTitle('Schedule');
             // functionality
         });
 
-        document.getElementById('graphLink').addEventListener('click', function() {
+        document.getElementById('graphLink').addEventListener('click', function () {
             changeTitle('Graph');
             // functionality
         });
@@ -162,7 +182,7 @@
             // Fetch and display employee data using AJAX
             var xhttp = new XMLHttpRequest();
 
-            xhttp.onreadystatechange = function() {
+            xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     document.getElementById('contentContainer').innerHTML = this.responseText;
                 }
@@ -171,6 +191,76 @@
             xhttp.open("GET", "get_employees.php", true);
             xhttp.send();
         }
+
+        // Add this function to your existing JavaScript code
+        function loadMonthlySummary() {
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        generatePdf(JSON.parse(this.responseText));
+                    } else {
+                        console.error("AJAX Error:", this.status, this.statusText);
+                    }
+                }
+            };
+
+            xhttp.open("GET", "monthly_summary.php", true);
+            xhttp.send();
+        }
+
+        function displayMonthlySummary(summary) {
+            // Display the summary in the content container
+            var contentContainer = document.getElementById('contentContainer');
+            contentContainer.innerHTML = '<h1>Monthly Summary</h1>';
+
+            // Create a table to display the summary
+            var table = '<table border="1">';
+            table += '<tr><th>Status</th><th>Total</th></tr>';
+            for (var status in summary) {
+                table += '<tr>';
+                table += '<td>' + status.charAt(0).toUpperCase() + status.slice(1) + '</td>';
+                table += '<td>' + summary[status] + '</td>';
+                table += '</tr>';
+            }
+            table += '</table>';
+
+            contentContainer.innerHTML += table;
+        }
+
+        // Add this function to your existing JavaScript code
+        function downloadMonthlySummary() {
+            loadMonthlySummary();
+        }
+
+        function generatePdf(summary) {
+            // Create a new jsPDF instance
+            var pdf = new jsPDF();
+
+            // Add content to the PDF
+            pdf.text('Monthly Summary', 20, 20);
+
+            // Create a table to display the summary
+            var rows = [['Status', 'Total']];
+            for (var status in summary) {
+                rows.push([status.charAt(0).toUpperCase() + status.slice(1), summary[status]]);
+            }
+
+            pdf.autoTable({
+                head: rows.slice(0, 1),
+                body: rows.slice(1),
+                startY: 30,
+            });
+
+            // Save the PDF
+            pdf.save('monthly_summary.pdf');
+        }
+
+        // Add an event listener to a button or link for triggering the download
+        // For example, you can add a "Download Summary" button
+        document.getElementById('downloadSummaryButton').addEventListener('click', downloadMonthlySummary);
+
     </script>
 
 </body>
