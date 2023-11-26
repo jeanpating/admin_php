@@ -16,6 +16,7 @@
             background-color: #333;
             overflow: hidden;
             text-align: right;
+            padding-right: 20px;
         }
 
         nav a {
@@ -59,6 +60,16 @@
             margin-left: 220px;
             padding: 16px;
         }
+
+        /* Notification styles */
+        .notification {
+            display: inline-block;
+            margin-right: 20px; 
+            padding: 14px 16px;
+            text-decoration: none;
+            background-color: #333; 
+            color: white;
+        }
     </style>
 </head>
 
@@ -66,7 +77,7 @@
 
     <nav>
         <a href="#admin" style="float: right;">Admin Profile</a>
-        <a href="#notif" class="notification-button">Notification</a>
+        <a href="notification.php" class="notification">Notification</a>
     </nav>
 
     <!-- Sidebar -->
@@ -94,12 +105,12 @@
 
         document.getElementById('scheduleLink').addEventListener('click', function() {
             changeTitle('Schedule');
-            // Add your schedule-related functionality here
+            // functionality
         });
 
         document.getElementById('graphLink').addEventListener('click', function() {
             changeTitle('Graph');
-            // Add your graph-related functionality here
+            // functionality
         });
 
         function changeTitleAndLoadAttendance() {
@@ -160,9 +171,6 @@
             xhttp.open("GET", "get_employees.php", true);
             xhttp.send();
         }
-
-        // Add your functions for schedule and graph-related functionality
-
     </script>
 
 </body>
