@@ -62,7 +62,6 @@
             padding: 16px;
         }
 
-        /* Notification styles */
         .notification {
             display: inline-block;
             margin-right: 20px;
@@ -70,6 +69,27 @@
             text-decoration: none;
             background-color: #333;
             color: white;
+        }
+
+        .employee-list-item-container {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            max-width: fit-content;
+        }
+
+        .employee-picture {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .employee-details {
+            /* Add any additional styling for the employee details */
         }
 
         /* Style for the Download Summary button */
@@ -139,11 +159,9 @@
         }
 
         function changeTitle(title) {
-            // Get the current date
             var currentDate = new Date();
             var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-            // Extract the day of the week and format the date
             var dayOfWeek = daysOfWeek[currentDate.getDay()];
             var formattedDate = currentDate.toISOString().split('T')[0];
 
@@ -153,19 +171,15 @@
                 additionalText = 'Here is the list of attendances for today. ' + "(" + dayOfWeek + ", " + formattedDate + ")";
             }
 
-            // Page's title
             document.getElementById('contentContainer').innerHTML = '<h1>' + title + '</h1>' + '<p>' + additionalText + '</p>';
         }
 
-        // LOAD ATTENDANCES
         function loadAttendanceTables() {
-            // Fetch and display attendance tables using AJAX
             var xhttp = new XMLHttpRequest();
 
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4) {
                     if (this.status == 200) {
-                        // Append the table inside the existing container
                         var contentContainer = document.getElementById('contentContainer');
                         contentContainer.innerHTML += this.responseText;
                     } else {
@@ -179,12 +193,24 @@
         }
 
         function loadEmployees() {
+            // Set the title explicitly
+            changeTitle('Employees');
+
             // Fetch and display employee data using AJAX
             var xhttp = new XMLHttpRequest();
 
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
+                    // Display employee data
                     document.getElementById('contentContainer').innerHTML = this.responseText;
+
+                    // Add click event listener for each employee name
+                    var employeeNames = document.getElementsByClassName('employee-name');
+                    Array.from(employeeNames).forEach(function (element) {
+                        element.addEventListener('click', function () {
+                            loadEmployeeDetails(element.dataset.employeeId);
+                        });
+                    });
                 }
             };
 
@@ -192,75 +218,50 @@
             xhttp.send();
         }
 
-        // Add this function to your existing JavaScript code
-        function loadMonthlySummary() {
+
+        function loadEmployeeDetails(employeeId) {
             var xhttp = new XMLHttpRequest();
 
             xhttp.onreadystatechange = function () {
-                if (this.readyState == 4) {
-                    if (this.status == 200) {
-                        generatePdf(JSON.parse(this.responseText));
-                    } else {
-                        console.error("AJAX Error:", this.status, this.statusText);
-                    }
+                if (this.readyState == 4 && this.status == 200) {
+                    var contentContainer = document.getElementById('contentContainer');
+                    contentContainer.innerHTML = this.responseText;
                 }
             };
 
-            xhttp.open("GET", "monthly_summary.php", true);
+            xhttp.open("GET", "get_employee_details.php?employee_id=" + employeeId, true);
             xhttp.send();
         }
 
-        function displayMonthlySummary(summary) {
-            // Display the summary in the content container
-            var contentContainer = document.getElementById('contentContainer');
-            contentContainer.innerHTML = '<h1>Monthly Summary</h1>';
+        document.getElementById('downloadSummaryButton').addEventListener('click', function () {
+            window.location.href = 'monthly_summary.php';
+        });
 
-            // Create a table to display the summary
-            var table = '<table border="1">';
-            table += '<tr><th>Status</th><th>Total</th></tr>';
-            for (var status in summary) {
-                table += '<tr>';
-                table += '<td>' + status.charAt(0).toUpperCase() + status.slice(1) + '</td>';
-                table += '<td>' + summary[status] + '</td>';
-                table += '</tr>';
-            }
-            table += '</table>';
+        function uploadProfilePicture(employeeId) {
+            var fileInput = document.getElementById('profilePicture_' + employeeId);
+            var file = fileInput.files[0];
 
-            contentContainer.innerHTML += table;
+            var formData = new FormData();
+            formData.append('profile_picture', file);
+
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('POST', 'upload_profile_picture.php?employee_id=' + employeeId, true);
+
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    console.log('Upload successful');
+                } else {
+                    console.error('Upload failed');
+                }
+            };
+
+            xhr.onerror = function () {
+                console.error('Error connecting to the server');
+            };
+
+            xhr.send(formData);
         }
-
-        // Add this function to your existing JavaScript code
-        function downloadMonthlySummary() {
-            loadMonthlySummary();
-        }
-
-        function generatePdf(summary) {
-            // Create a new jsPDF instance
-            var pdf = new jsPDF();
-
-            // Add content to the PDF
-            pdf.text('Monthly Summary', 20, 20);
-
-            // Create a table to display the summary
-            var rows = [['Status', 'Total']];
-            for (var status in summary) {
-                rows.push([status.charAt(0).toUpperCase() + status.slice(1), summary[status]]);
-            }
-
-            pdf.autoTable({
-                head: rows.slice(0, 1),
-                body: rows.slice(1),
-                startY: 30,
-            });
-
-            // Save the PDF
-            pdf.save('monthly_summary.pdf');
-        }
-
-        // Add an event listener to a button or link for triggering the download
-        // For example, you can add a "Download Summary" button
-        document.getElementById('downloadSummaryButton').addEventListener('click', downloadMonthlySummary);
-
     </script>
 
 </body>
