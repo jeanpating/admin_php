@@ -85,14 +85,14 @@
     }
 
     // Fetch employee details
-    $employeeId = isset($_GET['employee_id']) ? $_GET['employee_id'] : null;
+    $employeeId = isset($_GET['emp_id']) ? $_GET['emp_id'] : null;
     $employeeId = filter_var($employeeId, FILTER_VALIDATE_INT);
 
     if ($employeeId === false) {
         die("Invalid employee ID");
     }
 
-    $sql = "SELECT emp_id, name, schedule, profile_picture_path FROM employees WHERE emp_id = $employeeId";
+    $sql = "SELECT * FROM employees WHERE emp_id = $employeeId";
     $result = $conn->query($sql);
 
     if ($result && $result->num_rows > 0) {
@@ -100,21 +100,33 @@
         $employeeId = $row['emp_id'];
         $employeeName = htmlspecialchars($row['name']);
         $schedule = htmlspecialchars($row['schedule']);
-        $profilePicturePath = $row['profile_picture_path'];
-    
+        $picturePath = $row['picture_path'];
+        $department = htmlspecialchars($row['department']);
+        $address = htmlspecialchars($row['address']);
+        $contactNumber = htmlspecialchars($row['contact_number']);
+        $emailAddress = htmlspecialchars($row['email_address']);
+        $startingSchedule = htmlspecialchars($row['schedule']);
+        $finalSchedule = htmlspecialchars($row['final_schedule']);
+
         echo "<h2>Employee Details</h2>";
         ?><hr><?php    
         // Display employee picture at the top right with border
-        if ($profilePicturePath) {
+        if ($picturePath) {
             echo "<div class='employee-details-header'>";
             echo "<div class='employee-name-border'><p class='employee-name'>$employeeName</p></div>";
-            echo "<img src='$profilePicturePath' alt='$employeeName's Profile Picture' class='employee-picture'>";
+            echo "<img src='$picturePath' alt='$employeeName's Profile Picture' class='employee-picture'>";
             echo "</div>";
         }
 
-        // Display employee details
+        // Display all employee details
         echo "<p>Employee ID: $employeeId</p>";
+        echo "<p>Department: $department</p>";
         echo "<p>Schedule: $schedule</p>";
+        echo "<p>Address: $address</p>";
+        echo "<p>Contact Number: $contactNumber</p>";
+        echo "<p>Email Address: $emailAddress</p>";
+        echo "<p>Starting Schedule: $startingSchedule</p>";
+        echo "<p>Final Schedule: $finalSchedule</p>";
     } else {
         echo "<p>No details found for the employee.</p>";
     }
