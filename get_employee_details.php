@@ -212,6 +212,7 @@ if ($result && $result->num_rows > 0) {
 
 // Back link
 echo "<a href='admin.php' class='back-link'>Back to Employees</a>";
+echo "<a href='edit_employee_details.php?emp_id=$employeeId' class='back-link'>Edit Employee</a>";
 
 // Handle form submission for changing the picture
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
