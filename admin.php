@@ -262,8 +262,55 @@
 
             xhr.send(formData);
         }
+
+        document.getElementById('scheduleLink').addEventListener('click', function () {
+            changeTitle('Schedule');
+            loadSchedule();
+        });
+
+        document.getElementById('scheduleLink').addEventListener('click', function () {
+            changeTitle('Schedule');
+            loadSchedule();
+        });
+
+        function loadSchedule() {
+            // Fetch and display schedule data using AJAX
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Display schedule data
+                    document.getElementById('contentContainer').innerHTML = this.responseText;
+
+                    // Add click event listener for each employee name to view their schedule
+                    var employeeNames = document.getElementsByClassName('employee-name');
+                    Array.from(employeeNames).forEach(function (element) {
+                        element.addEventListener('click', function () {
+                            viewEmployeeSchedule(element.dataset.employeeId);
+                        });
+                    });
+                }
+            };
+
+            xhttp.open("GET", "get_schedule.php", true);
+            xhttp.send();
+        }
+
+        function viewEmployeeSchedule(employeeId) {
+            // Fetch and display the schedule for the selected employee using AJAX
+            var xhttp = new XMLHttpRequest();
+
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    // Display employee schedule
+                    document.getElementById('contentContainer').innerHTML = this.responseText;
+                }
+            };
+
+            xhttp.open("GET", "get_employee_schedule.php?employee_id=" + employeeId, true);
+            xhttp.send();
+        }
+        
     </script>
-
 </body>
-
 </html>

@@ -1,6 +1,10 @@
 <html>
     <head>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
         .modern-table {
             width: 100%;
             border-collapse: collapse;
@@ -25,12 +29,13 @@
         .modern-table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
     </style>
 
     </head>
 <body>
     <?php
-    // Replace with your actual database connection details
+    //DB
     $servername = "localhost";
     $username = "root";
     $password = "";
@@ -66,7 +71,7 @@
 
             while ($row = $result->fetch_assoc()) {
                 // Determine the background color based on the 'status' value
-                $backgroundColor = ($row['status'] == 'Early') ? 'green' : (($row['status'] == 'Late') ? 'red' : '');
+                $backgroundColor = ($row['status'] == 'Early') ? '#1fab36' : (($row['status'] == 'Late') ? '#d9a71e' : '');
 
                 echo '<tr>';
                 echo '<td>' . $row['id'] . '</td>';
