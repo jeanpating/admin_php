@@ -53,6 +53,11 @@
 
         .sidebar a:hover {
             background-color: #ddd;
+            text-decoration: none;
+            color: black;
+        }
+        .sidebar a.active {
+            background-color: #ddd;
             color: black;
         }
 
@@ -128,12 +133,22 @@
 
     <!-- Content area -->
     <div class="content" id="contentContainer">
-        <!-- The content will be dynamically updated here -->
+        
     </div>
 
     <!-- Download Summary button -->
 
     <script>
+        // JavaScript to handle sidebar item clicks and apply active state
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function () {
+                sidebarLinks.forEach(link => link.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
         document.getElementById('attendanceLink').addEventListener('click', function () {
             changeTitleAndLoadAttendance();
         });
@@ -145,12 +160,11 @@
 
         document.getElementById('scheduleLink').addEventListener('click', function () {
             changeTitle('Schedule');
-            // functionality
+            loadSchedule();
         });
 
         document.getElementById('graphLink').addEventListener('click', function () {
             changeTitle('Graph');
-            // functionality
         });
 
         function changeTitleAndLoadAttendance() {
@@ -262,16 +276,6 @@
 
             xhr.send(formData);
         }
-
-        document.getElementById('scheduleLink').addEventListener('click', function () {
-            changeTitle('Schedule');
-            loadSchedule();
-        });
-
-        document.getElementById('scheduleLink').addEventListener('click', function () {
-            changeTitle('Schedule');
-            loadSchedule();
-        });
 
         function loadSchedule() {
             // Fetch and display schedule data using AJAX

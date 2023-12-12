@@ -64,6 +64,7 @@ $result = $conn->query($sql);
         }
 
         .employee-picture {
+            
             width: 100%;
             height: auto;
             border-radius: 20px 20px 5px 5px;
@@ -94,6 +95,26 @@ $result = $conn->query($sql);
         .status-early {
             color: green;
         }
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        td {
+            background-color: #fff;
+        }
     </style>
 </head>
 
@@ -106,26 +127,33 @@ if ($result && $result->num_rows > 0) {
         $employeeId = $row['emp_id'];
         $employeeName = $row['name'];
         $picturePath = $row['picture_path'];
-        $schedule = $row['schedule'];
+
+        // Fetch schedule details from scheduledb
+        $scheduleSql = "SELECT subject, time, classroom FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
+        $scheduleResult = $conn->query($scheduleSql);
 
         echo "<div class='employee-list-item-container'>";
-        echo "<img src='$picturePath' alt='$employeeName' class='employee-picture'>";
+        // echo "<img src='$picturePath' alt='$employeeName' class='employee-picture'>";
         echo "<div class='employee-details'>";
         echo "<p class='employee-name' data-employee-id='$employeeId'>$employeeName</p>";
+        echo "<p>Schedule</p>"
+        ?>
+        <hr>
+        <?php
 
-        // Fetch the attendance status for the current employee from attendancedb
-        $current_date = date("d_m_Y");
-        $table_name = "attendance_table_" . $current_date;
-        $sqlAttendance = "SELECT status FROM $table_name WHERE name = '$employeeName'";
-        $resultAttendance = $connAttendance->query($sqlAttendance);
-
-        if ($resultAttendance && $resultAttendance->num_rows > 0) {
-            $rowAttendance = $resultAttendance->fetch_assoc();
-            $attendanceStatus = $rowAttendance['status'];
-            $statusClass = ($attendanceStatus === 'Late') ? 'status-late' : 'status-early';
-            echo "<p class='employee-status $statusClass'>Status: $attendanceStatus</p>";
+        // Display schedule details using a table
+        if ($scheduleResult && $scheduleResult->num_rows > 0) {
+            echo "<table border='1' style='width: 100%; margin-top: 10px;'>";
+            echo "<tr><th>Subject</th><th>Time</th><th>Classroom</th></tr>";
+            while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+                $subject = $scheduleRow['subject'];
+                $time = $scheduleRow['time'];
+                $classroom = $scheduleRow['classroom'];
+                echo "<tr><td>$subject</td><td>$time</td><td>$classroom</td></tr>";
+            }
+            echo "</table>";
         } else {
-            echo "<p class='employee-status'>Status: Not available</p>";
+            echo "<p class='employee-schedule'>Schedule not available</p>";
         }
 
         echo "</div>";

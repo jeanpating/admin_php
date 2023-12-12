@@ -297,10 +297,10 @@ $conn->close();
     <!-- Back and Edit buttons -->
     <div class="button-container">
         <a href='admin.php' class='back-button'>
-            Back to Employees
+            Back
         </a>
         <a href='edit_employee_details.php?emp_id=<?php echo $employeeId; ?>' class='edit-button'>
-            Edit Employee
+            Edit Information
         </a>
     </div>
 </div>
