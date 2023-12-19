@@ -1,41 +1,64 @@
-<?php
-// Replace with your actual database connection details
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "attendancedb";
+<!DOCTYPE html>
+<html lang="en">
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Get the current date
-$currentDate = date("d_m_Y"); // Format the date as "24_11_2023"
-
-// Query to get the list of attendance tables
-$tableName = "attendance_table_" . $currentDate;
-$sql = "SELECT name, status FROM $tableName";
-$result = $conn->query($sql);
-
-if ($result === false) {
-    echo 'Error executing the query: ' . $conn->error;
-} else {
-    if ($result->num_rows > 0) {
-        // Display the data for the notification
-        $notificationData = '';
-        while ($row = $result->fetch_assoc()) {
-            $notificationData .= $row['name'] . ': ' . $row['status'] . '<br>';
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Notification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
         }
 
-        echo $notificationData;
-    } else {
-        echo 'No data found for the notification.';
-    }
-}
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
 
-$conn->close();
-?>
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Attendance Notification</h1>
+        <?php
+        // ... Your PHP code here ...
+        if ($result === false) {
+            echo '<p>Error executing the query: ' . $conn->error . '</p>';
+        } else {
+            if ($result->num_rows > 0) {
+                // Display the data for the notification
+                $notificationData = '';
+                while ($row = $result->fetch_assoc()) {
+                    $notificationData .= $row['name'] . ': ' . $row['status'] . '<br>';
+                }
+
+                echo $notificationData;
+            } else {
+                echo '<p>No data found for the notification.</p>';
+            }
+        }
+        $conn->close();
+        ?>
+    </div>
+</body>
+
+</html>

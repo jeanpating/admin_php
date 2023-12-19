@@ -5,139 +5,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Details</title>
-
     <style>
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            padding: 10px;
-            text-align: center;
+            display: flex;
+            height: 100vh;
+            background-color: #f4f4f4;
         }
 
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            text-align: right;
+        .card {
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            margin: 20px;
+        }
+
+        .employee-details-container {
+            text-align: center;
+        }
+
+        .employee-picture-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .employee-picture {
+            border-radius: 50%;
+            max-width: 200px;
+            border: 5px solid #fff;
         }
 
         .employee-details-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
 
-        .employee-picture {
-            max-width: 150px;
-            max-height: 150px;
-            border: 3px solid #ddd;
-            border-radius: 50%;
+        .employee-name-border {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .employee-content-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .change-picture-form {
+            display: flex;
+            align-items: center;
             margin-right: 20px;
         }
 
         .file-label,
         .change-picture-button {
-            font-size: 10px;
             padding: 10px;
             background-color: #333;
             color: white;
             border-radius: 5px;
             cursor: pointer;
-            display: inline-block;
-            margin-right: 10px;
-            transition: background-color 0.3s ease;
-        }
-
-        .file-label:hover,
-        .change-picture-button:hover {
-            background-color: #555;
         }
 
         .file-input {
             display: none;
         }
 
-        /* Modern design for employee details */
-        table {
+        .employee-details {
             width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border-collapse: collapse;
         }
 
         .employee-details th,
         .employee-details td {
             padding: 10px;
-            background-color: #ddd;
-            border-radius: 5px;
-        }
-
-        .employee-details th {
+            border: 1px solid #ddd;
             text-align: left;
-            background-color: #333;
-            color: white;
         }
 
-        .employee-details p {
-            margin: 0;
+        .attendance-table {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .attendance-table th,
+        .attendance-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
         }
 
         .button-container {
-            text-align: right;
             margin-top: 20px;
-            padding: 10px;
+            display: flex;
+            justify-content: space-between;
         }
 
-        .edit-button,
-        .back-button {
-            text-decoration: none;
-            margin-right: 20px;
-            padding: 10px 20px;
+        .back-button,
+        .edit-button {
+            padding: 10px;
             background-color: #333;
             color: white;
-            border: none;
+            text-decoration: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .edit-button:hover,
-        .back-button:hover {
-            background-color: #555;
-        }
-        .employee-details-container{
-            width: 75%;
-            float: left;
-        }
-        .employee-picture-container {
-            width: 25%;
-            float: right;
-        }
-        img {
-            float: right;
         }
     </style>
-
 </head>
 
 <body>
 
 <div class="container">
-
+<div class="card employee-info">
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -293,6 +290,7 @@ if ($result && $result->num_rows > 0) {
 
 $conn->close();
 ?>
+
 <hr>
     <!-- Back and Edit buttons -->
     <div class="button-container">
@@ -302,7 +300,171 @@ $conn->close();
         <a href='edit_employee_details.php?emp_id=<?php echo $employeeId; ?>' class='edit-button'>
             Edit Information
         </a>
+        <a href='employee_dtr.php?emp_id=<?php echo $employeeId; ?>' class='edit-button'>
+            Print DTR
+        </a>
     </div>
+
 </div>
+<div class="card employee-dtr">
+<?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbnameEmployees = "employeesdb";
+$dbnameAttendance = "attendancedb";
+
+// Create connection to employeesdb
+$connEmployees = new mysqli($servername, $username, $password, $dbnameEmployees);
+
+// Create connection to attendancedb
+$connAttendance = new mysqli($servername, $username, $password, $dbnameAttendance);
+
+// Check connections
+if ($connEmployees->connect_error || $connAttendance->connect_error) {
+    die("Connection failed: " . $connEmployees->connect_error . " " . $connAttendance->connect_error);
+}
+
+// Fetch employee details
+$employeeId = isset($_GET['emp_id']) ? $_GET['emp_id'] : null;
+$employeeId = filter_var($employeeId, FILTER_VALIDATE_INT);
+
+if ($employeeId === false) {
+    die("Invalid employee ID");
+}
+
+// Fetch employee details
+$sqlEmployee = "SELECT * FROM employees WHERE emp_id = $employeeId";
+$resultEmployee = $connEmployees->query($sqlEmployee);
+
+if ($resultEmployee && $resultEmployee->num_rows > 0) {
+    $rowEmployee = $resultEmployee->fetch_assoc();
+
+    echo "<h1>Daily Time Record</h1>";
+    echo "<p>Employee ID: " . $rowEmployee['emp_id'] . "</p>";
+    echo "<p>Name: " . $rowEmployee['name'] . "</p>";
+    echo "<p>Department: " . $rowEmployee['department'] . "</p>";
+
+    // Fetch attendance records using the name column from attendancedb
+    $employeeName = $rowEmployee['name'];
+    $currentDate = date('Y-m-d');
+    $firstDayOfMonth = date('Y-m-01', strtotime($currentDate));
+    $lastDayOfMonth = date('Y-m-t', strtotime($currentDate));
+    
+    $sqlAttendance = "SELECT * FROM attendance WHERE name = '$employeeName' AND date BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'";
+    // echo "SQL Query: $sqlAttendance<br>";
+
+    $resultAttendance = $connAttendance->query($sqlAttendance);
+    if ($resultAttendance === false) {
+        die("Error in SQL query: " . $connAttendance->error);
+    }
+
+    if ($resultAttendance && $resultAttendance->num_rows > 0) {
+        // Initialize arrays for TIME-IN and TIME-OUT
+        $amTimeIn = array_fill(1, date('t', strtotime($currentDate)), '');
+        $pmTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
+        $amTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
+        $pmTimeIn = array_fill(1, date('t', strtotime($currentDate)), '');
+        $underTimeHours = array_fill(1, date('t', strtotime($currentDate)), 0);
+        $underTimeMinutes = array_fill(1, date('t', strtotime($currentDate)), 0);
+
+        // Loop through the attendance records
+        while ($rowAttendance = $resultAttendance->fetch_assoc()) {
+            // Extract day of the month from the date
+            $day = date('j', strtotime($rowAttendance['date']));
+        
+            // Determine the type of record
+            $recordType = '';
+            if (strpos($rowAttendance['status'], 'AM Time-in') !== false || strpos($rowAttendance['status'], 'Late') !== false) {
+                $recordType = 'amTimeIn';
+            } elseif (strpos($rowAttendance['status'], 'PM Time-out') !== false || strpos($rowAttendance['status'], 'Late') !== false) {
+                $recordType = 'pmTimeOut';
+            } elseif (strpos($rowAttendance['status'], 'AM Time-out') !== false) {
+                $recordType = 'amTimeOut';
+            } elseif (strpos($rowAttendance['status'], 'PM Time-in') !== false) {
+                $recordType = 'pmTimeIn';
+            } else {
+                // Default case, in case the status doesn't match expected values
+                echo "Unexpected status: {$rowAttendance['status']}<br>";
+                print_r($rowAttendance);  // Output the entire record for further inspection
+                echo "<br>";
+            }
+        
+            // Store details in the corresponding array
+            if (!empty($recordType)) {
+                ${$recordType}[$day] = date('H:i:s', strtotime($rowAttendance['time']));
+                // echo "Day: $day, Record Type: $recordType, Time: " . date('H:i:s', strtotime($rowAttendance['time'])) . "<br>";
+                // echo "Status: {$rowAttendance['status']}<br>";
+            }
+
+            // Display information about each iteration
+            // echo "Day: $day, Record Type: $recordType, Time: " . date('H:i:s', strtotime($rowAttendance['time'])) . "<br>";
+            
+            // Calculate Under Time
+            if (!empty($amTimeIn[$day]) && !empty($amTimeOut[$day]) && !empty($pmTimeIn[$day]) && !empty($pmTimeOut[$day])) {
+                $dateTimeAMIn = new DateTime($amTimeIn[$day]);
+                $dateTimeAMOut = new DateTime($amTimeOut[$day]);
+                $dateTimePMIn = new DateTime($pmTimeIn[$day]);
+                $dateTimePMOut = new DateTime($pmTimeOut[$day]);
+
+                $intervalAM = $dateTimeAMOut->diff($dateTimeAMIn);
+                $intervalPM = $dateTimePMOut->diff($dateTimePMIn);
+
+                // Calculate total hours and minutes for underTime
+                $underTimeHours[$day] = $intervalAM->h + $intervalPM->h;
+                $underTimeMinutes[$day] = $intervalAM->i + $intervalPM->i;
+
+                // Adjust hours if minutes exceed 60
+                if ($underTimeMinutes[$day] >= 60) {
+                    $underTimeHours[$day] += floor($underTimeMinutes[$day] / 60);
+                    $underTimeMinutes[$day] %= 60;
+                }
+            }
+        }
+
+        // echo "<pre>";
+        // print_r($amTimeIn);
+        // print_r($pmTimeOut);
+        // print_r($amTimeOut);
+        // print_r($pmTimeIn);
+        // print_r($underTimeHours);
+        // print_r($underTimeMinutes);
+        // echo "</pre>";
+
+        // Display attendance records in a table format
+        echo "<h2>Attendance Records</h2>";
+        echo "<table border='1'>";
+        echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>UNDER TIME (HOURS)</th><th>UNDER TIME (MINUTES)</th></tr>";
+
+        foreach (range(1, date('t', strtotime($currentDate))) as $day) {
+            echo "<tr>";
+            echo "<td>$day</td>";
+            echo "<td>{$amTimeIn[$day]}</td>";
+            echo "<td>{$amTimeOut[$day]}</td>";
+            echo "<td>{$pmTimeIn[$day]}</td>";
+            echo "<td>{$pmTimeOut[$day]}</td>";
+            echo "<td>{$underTimeHours[$day]}</td>";
+            echo "<td>{$underTimeMinutes[$day]}</td>";
+            echo "</tr>";
+        }
+
+        echo "</table>";
+    } else {
+        echo "<p>No attendance records found for the employee in the specified date range.</p>";
+    }
+} else {
+    echo "<p>No employee details found.</p>";
+}
+
+$connEmployees->close();
+$connAttendance->close();
+?>
+
+</div>
+
 </body>
 </html>
