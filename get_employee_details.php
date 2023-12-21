@@ -197,7 +197,6 @@ if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $employeeId = $row['emp_id'];
     $employeeName = htmlspecialchars($row['name']);
-    $schedule = htmlspecialchars($row['schedule']);
     $picturePath = $row['picture_path'];
     $department = htmlspecialchars($row['department']);
     $address = htmlspecialchars($row['address']);
@@ -265,10 +264,6 @@ if ($result && $result->num_rows > 0) {
             <td><?php echo $department; ?></td>
         </tr>
         <tr>
-            <th>Schedule</th>
-            <td><?php echo $schedule; ?></td>
-        </tr>
-        <tr>
             <th>Address</th>
             <td><?php echo $address; ?></td>
         </tr>
@@ -299,9 +294,6 @@ $conn->close();
         </a>
         <a href='edit_employee_details.php?emp_id=<?php echo $employeeId; ?>' class='edit-button'>
             Edit Information
-        </a>
-        <a href='employee_dtr.php?emp_id=<?php echo $employeeId; ?>' class='edit-button'>
-            Print DTR
         </a>
     </div>
 
@@ -344,10 +336,32 @@ $resultEmployee = $connEmployees->query($sqlEmployee);
 if ($resultEmployee && $resultEmployee->num_rows > 0) {
     $rowEmployee = $resultEmployee->fetch_assoc();
 
-    echo "<h1>Daily Time Record</h1>";
-    echo "<p>Employee ID: " . $rowEmployee['emp_id'] . "</p>";
-    echo "<p>Name: " . $rowEmployee['name'] . "</p>";
-    echo "<p>Department: " . $rowEmployee['department'] . "</p>";
+    echo "<h1 style='text-align: center;'>Daily Time Record</h1>";
+    echo "<hr>";
+    echo "<p>Name: <b>" . $rowEmployee['name'] . "</b></p>";
+    echo "<p>Employee ID: <b>" . $rowEmployee['emp_id'] ."</b></p>";
+    echo "<p>Department: <b>" . $rowEmployee['department'] . "</b></p>";
+
+    $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
+    $scheduleResult = $connEmployees->query($scheduleSql);
+
+    if ($scheduleResult && $scheduleResult->num_rows > 0) {
+        // Display the schedule in a table
+        echo "<h3 style='text-align: center;'>Employee's Schedule</h3>";
+        echo "<table border='1' style='text-align: center; margin-left: auto; margin-right: auto;'>";
+        echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
+
+        while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+            echo "<td>{$scheduleRow['am_time_in']}</td>";
+            echo "<td>{$scheduleRow['am_time_out']}</td>";
+            echo "<td>{$scheduleRow['pm_time_in']}</td>";
+            echo "<td>{$scheduleRow['pm_time_out']}</td>";
+        }
+
+        echo "</table>";
+    } else {
+        echo "<p>No schedule found for the employee.</p>";
+    }
 
     // Fetch attendance records using the name column from attendancedb
     $employeeName = $rowEmployee['name'];
@@ -436,7 +450,7 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         // echo "</pre>";
 
         // Display attendance records in a table format
-        echo "<h2>Attendance Records</h2>";
+        echo "<h2 style='text-align: center;'>Attendance Records</h2>";
         echo "<table border='1'>";
         echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>UNDER TIME (HOURS)</th><th>UNDER TIME (MINUTES)</th></tr>";
 
@@ -453,6 +467,7 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         }
 
         echo "</table>";
+
     } else {
         echo "<p>No attendance records found for the employee in the specified date range.</p>";
     }
@@ -463,7 +478,11 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
 $connEmployees->close();
 $connAttendance->close();
 ?>
-
+<div class="button-container">
+    <a href='employee_dtr.php?emp_id=<?php echo $employeeId; ?>' class='edit-button'>
+        Download DTR
+    </a>
+</div>
 </div>
 
 </body>

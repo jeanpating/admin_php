@@ -66,10 +66,32 @@ $resultEmployee = $connEmployees->query($sqlEmployee);
 if ($resultEmployee && $resultEmployee->num_rows > 0) {
     $rowEmployee = $resultEmployee->fetch_assoc();
 
-    echo "<h1>Employee Details</h1>";
-    echo "<p>Employee ID: " . $rowEmployee['emp_id'] . "</p>";
-    echo "<p>Name: " . $rowEmployee['name'] . "</p>";
-    echo "<p>Department: " . $rowEmployee['department'] . "</p>";
+    echo "<h1 style='text-align: center;'>Daily Time Record</h1>";
+    echo "<hr>";
+    echo "<p>Name: <b>" . $rowEmployee['name'] . "</b></p>";
+    echo "<p>Employee ID: <b>" . $rowEmployee['emp_id'] ."</b></p>";
+    echo "<p>Department: <b>" . $rowEmployee['department'] . "</b></p>";
+
+    $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
+    $scheduleResult = $connEmployees->query($scheduleSql);
+
+    if ($scheduleResult && $scheduleResult->num_rows > 0) {
+        // Display the schedule in a table
+        echo "<h3 style='text-align: center;'>Employee's Schedule</h3>";
+        echo "<table border='1' style='text-align: center; margin-left: auto; margin-right: auto;'>";
+        echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
+
+        while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+            echo "<td>{$scheduleRow['am_time_in']}</td>";
+            echo "<td>{$scheduleRow['am_time_out']}</td>";
+            echo "<td>{$scheduleRow['pm_time_in']}</td>";
+            echo "<td>{$scheduleRow['pm_time_out']}</td>";
+        }
+
+        echo "</table>";
+    } else {
+        echo "<p>No schedule found for the employee.</p>";
+    }
 
     // Fetch attendance records using the name column from attendancedb
     $employeeName = $rowEmployee['name'];
@@ -175,6 +197,7 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         }
 
         echo "</table>";
+        
     } else {
         echo "<p>No attendance records found for the employee in the specified date range.</p>";
     }
@@ -183,21 +206,21 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
 }
 
 // Create a PDF instance
-$pdf = new TCPDF();
+// $pdf = new TCPDF();
 
-// Set document information
-$pdf->SetCreator(PDF_CREATOR);
-$pdf->SetAuthor('Your Name');
-$pdf->SetTitle('Employee Daily Time Record');
-$pdf->SetSubject('Employee Daily Time Record PDF');
-$pdf->SetKeywords('TCPDF, PDF, employee, time record');
+// // Set document information
+// $pdf->SetCreator(PDF_CREATOR);
+// $pdf->SetAuthor('Your Name');
+// $pdf->SetTitle('Employee Daily Time Record');
+// $pdf->SetSubject('Employee Daily Time Record PDF');
+// $pdf->SetKeywords('TCPDF, PDF, employee, time record');
 
-// Add a page
-$pdf->AddPage();
+// // Add a page
+// $pdf->AddPage();
 
-// Output HTML content to PDF
-$html = ob_get_clean(); // Get the HTML content from the output buffer
-$pdf->writeHTML($html, true, false, true, false, '');
+// // Output HTML content to PDF
+// $html = ob_get_clean(); // Get the HTML content from the output buffer
+// $pdf->writeHTML($html, true, false, true, false, '');
 
 // Close and output PDF
 $pdf->Output('Employee_Daily_Time_Record.pdf', 'D'); // D for download

@@ -129,7 +129,7 @@ if ($result && $result->num_rows > 0) {
         $picturePath = $row['picture_path'];
 
         // Fetch schedule details from scheduledb
-        $scheduleSql = "SELECT subject, time, classroom FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
+        $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
         $scheduleResult = $conn->query($scheduleSql);
 
         echo "<div class='employee-list-item-container'>";
@@ -144,18 +144,19 @@ if ($result && $result->num_rows > 0) {
         // Display schedule details using a table
         if ($scheduleResult && $scheduleResult->num_rows > 0) {
             echo "<table border='1' style='width: 100%; margin-top: 10px;'>";
-            echo "<tr><th>Subject</th><th>Time</th><th>Classroom</th></tr>";
+            echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
             while ($scheduleRow = $scheduleResult->fetch_assoc()) {
-                $subject = $scheduleRow['subject'];
-                $time = $scheduleRow['time'];
-                $classroom = $scheduleRow['classroom'];
-                echo "<tr><td>$subject</td><td>$time</td><td>$classroom</td></tr>";
+                $amTimeIn = $scheduleRow['am_time_in'];
+                $amTimeOut = $scheduleRow['am_time_out'];
+                $pmTimeIn = $scheduleRow['pm_time_in'];
+                $pmTimeOut = $scheduleRow['pm_time_out'];
+        
+                echo "<tr><td>$amTimeIn</td><td>$amTimeOut</td><td>$pmTimeIn</td><td>$pmTimeOut</td></tr>";
             }
             echo "</table>";
         } else {
             echo "<p class='employee-schedule'>Schedule not available</p>";
         }
-
         echo "</div>";
         echo "</div>";
     }

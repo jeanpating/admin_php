@@ -19,33 +19,57 @@ if ($connEmployee->connect_error) {
     die("Connection failed: " . $connEmployee->connect_error);
 }
 
+$createTableSql = "CREATE TABLE IF NOT EXISTS scheduledb.employee_schedule (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    emp_id INT,
+    name VARCHAR(255),
+    am_time_in VARCHAR(255),
+    am_time_out VARCHAR(255),
+    pm_time_in VARCHAR(255),
+    pm_time_out VARCHAR(255),
+    CONSTRAINT fk_employee_schedule_emp_id FOREIGN KEY (emp_id) REFERENCES scheduledb.employees(emp_id) ON UPDATE CASCADE ON DELETE CASCADE
+)";
+
+
+// if ($conn->query($createTableSql) === TRUE) {
+//     echo "Table 'employee_schedule' created or already exists.";
+// } else {
+//     echo "Error creating table: " . $conn->error;
+// }
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if "employee_id" key is set
     $employeeId = isset($_POST['employee_id']) ? $_POST['employee_id'] : null;
-    $subject = $_POST['subject'];
-    $time = $_POST['time'];
-    $classroom = $_POST['classroom'];
+    $employeeName = $_POST['name'];
+    $amTimeIn = $_POST['am_time_in'];
+    $amTimeOut = $_POST['am_time_out'];
+    $pmTimeIn = $_POST['pm_time_in'];
+    $pmTimeOut = $_POST['pm_time_out'];
+
 
     // Validate form data (add your validation logic here)
 
     if (isset($_POST['update'])) {
         // Update operation
-        $updateScheduleSql = "UPDATE employeesdb.employees SET schedule=? WHERE emp_id=?";
+        $updateScheduleSql = "UPDATE scheduledb.employee_schedule SET am_time_in=?, am_time_out=?, pm_time_in=?, pm_time_out=? WHERE emp_id=?";
         $stmtUpdateSchedule = $conn->prepare($updateScheduleSql);
-        $stmtUpdateSchedule->bind_param("si", $time, $employeeId);
+        $stmtUpdateSchedule->bind_param("ssssi", $amTimeIn, $amTimeOut, $pmTimeIn, $pmTimeOut, $employeeId);
+
 
         if ($stmtUpdateSchedule->execute()) {
             echo "Schedule updated successfully";
         } else {
             echo "Error updating schedule in employees table: " . $stmtUpdateSchedule->error;
-        }
+        }   
 
         $stmtUpdateSchedule->close();
     } elseif (isset($_POST['insert'])) {
-        // Insert operation
-        $insertScheduleSql = "INSERT INTO scheduledb.employee_schedule (emp_id, subject, time, classroom) VALUES (?, ?, ?, ?)";
+        //Insert operation
+        $insertScheduleSql = "INSERT INTO scheduledb.employee_schedule (emp_id, name, am_time_in, am_time_out, pm_time_in, pm_time_out) VALUES (?, ?, ?, ?, ?, ?)";
         $stmtInsertSchedule = $conn->prepare($insertScheduleSql);
-        $stmtInsertSchedule->bind_param("isss", $employeeId, $subject, $time, $classroom);
+        $stmtInsertSchedule->bind_param("isssss", $employeeId, $employeeName, $amTimeIn, $amTimeOut, $pmTimeIn, $pmTimeOut);
+        
+
 
         if ($stmtInsertSchedule->execute()) {
             echo "Inserted into employee_schedule successfully";
@@ -71,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$employeeId = $_GET['employee_id'];
+$employeeId = isset($_GET['employee_id']) ? $_GET['employee_id'] : null;
 $sql = "SELECT emp_id, name, picture_path, schedule FROM employeesdb.employees WHERE emp_id = $employeeId";
 $result = $connEmployee->query($sql);
 ?>
@@ -204,15 +228,22 @@ if ($result && $result->num_rows > 0) {
     // Add hidden input for employee ID
     echo "<input type='hidden' name='employee_id' value='$employeeId'>";
 
+    // Add hidden input for employee Name
+    echo "<input type='hidden' name='name' value='$employeeName'>";
+
     // Add input fields for subject, time, and classroom with correct names
-    echo "<label for='subject'>Subject:</label>";
-    echo "<input type='text' name='subject' id='subject' value='" . (isset($_POST['subject']) ? $_POST['subject'] : '') . "' required><br>";
-
-    echo "<label for='time'>Time:</label>";
-    echo "<input type='text' name='time' id='time' value='" . (isset($_POST['time']) ? $_POST['time'] : '') . "' required><br>";
-
-    echo "<label for='classroom'>Classroom:</label>";
-    echo "<input type='text' name='classroom' id='classroom' value='" . (isset($_POST['classroom']) ? $_POST['classroom'] : '') . "' required><br>";
+    
+    echo "<label for='am_time_in'>AM Time In:</label>";
+    echo "<input type='text' name='am_time_in' id='am_time_in' value='" . (isset($_POST['am_time_in']) ? $_POST['am_time_in'] : '') . "' required><br>";
+    
+    echo "<label for='am_time_out'>AM Time Out:</label>";
+    echo "<input type='text' name='am_time_out' id='am_time_out' value='" . (isset($_POST['am_time_out']) ? $_POST['am_time_out'] : '') . "' required><br>";
+    
+    echo "<label for='pm_time_in'>PM Time In:</label>";
+    echo "<input type='text' name='pm_time_in' id='pm_time_in' value='" . (isset($_POST['pm_time_in']) ? $_POST['pm_time_in'] : '') . "' required><br>";
+    
+    echo "<label for='pm_time_out'>PM Time Out:</label>";
+    echo "<input type='text' name='pm_time_out' id='pm_time_out' value='" . (isset($_POST['pm_time_out']) ? $_POST['pm_time_out'] : '') . "' required><br>";
 
     // Add submit buttons for update, insert, and delete
     echo "<input type='submit' name='update' value='Update' style='background-color: #304D30;'>";
@@ -221,21 +252,24 @@ if ($result && $result->num_rows > 0) {
     echo "</form>";
 
     // Display the employee_schedule table for the selected employee
-    $sqlAllEntries = "SELECT id, emp_id, subject, time, classroom FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
+    $sqlAllEntries = "SELECT id, emp_id, am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
     $resultAllEntries = $conn->query($sqlAllEntries);
+
 
     echo "<div class='employee-schedule-table-container'>";
     echo "<h2>Employee Schedule Table</h2>";
 
     if ($resultAllEntries && $resultAllEntries->num_rows > 0) {
         echo "<table border='1'>";
-        echo "<tr><th>Employee ID</th><th>Subject</th><th>Time</th><th>Classroom</th><th>Actions</th></tr>";
+        echo "<tr><th>Employee ID</th><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th><th>Actions</th></tr>";
+    
         while ($entry = $resultAllEntries->fetch_assoc()) {
             echo "<tr>";
             echo "<td>" . $entry['emp_id'] . "</td>";
-            echo "<td>" . $entry['subject'] . "</td>";
-            echo "<td>" . $entry['time'] . "</td>";
-            echo "<td>" . $entry['classroom'] . "</td>";
+            echo "<td>" . $entry['am_time_in'] . "</td>";
+            echo "<td>" . $entry['am_time_out'] . "</td>";
+            echo "<td>" . $entry['pm_time_in'] . "</td>";
+            echo "<td>" . $entry['pm_time_out'] . "</td>";
             echo "<td>";
             echo "<form action='' method='post'>";
             echo "<input type='hidden' name='entry_id' value='" . $entry['id'] . "'>";
@@ -244,10 +278,12 @@ if ($result && $result->num_rows > 0) {
             echo "</td>";
             echo "</tr>";
         }
+    
         echo "</table>";
     } else {
         echo "No entries found in the employee_schedule table for the selected employee.";
     }
+    
     ?>
     <hr>
         <div class="button-container">
