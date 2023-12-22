@@ -199,6 +199,7 @@ if ($result && $result->num_rows > 0) {
     $employeeName = htmlspecialchars($row['name']);
     $picturePath = $row['picture_path'];
     $department = htmlspecialchars($row['department']);
+    $position = htmlspecialchars($row['position']);
     $address = htmlspecialchars($row['address']);
     $contactNumber = htmlspecialchars($row['contact_number']);
     $emailAddress = htmlspecialchars($row['email_address']);
@@ -262,6 +263,10 @@ if ($result && $result->num_rows > 0) {
         <tr>
             <th>Department</th>
             <td><?php echo $department; ?></td>
+        </tr>
+        <tr>
+            <th>Position</th>
+            <td><?php echo $position; ?></td>
         </tr>
         <tr>
             <th>Address</th>

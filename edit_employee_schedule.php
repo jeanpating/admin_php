@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 $employeeId = isset($_GET['employee_id']) ? $_GET['employee_id'] : null;
-$sql = "SELECT emp_id, name, picture_path, schedule FROM employeesdb.employees WHERE emp_id = $employeeId";
+$sql = "SELECT emp_id, name, picture_path FROM employeesdb.employees WHERE emp_id = $employeeId";
 $result = $connEmployee->query($sql);
 ?>
 
@@ -213,14 +213,13 @@ if ($result && $result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $employeeName = $row['name'];
     $picturePath = $row['picture_path'];
-    $schedule = $row['schedule'];
 
     echo "<div class='employee-schedule-container'>";
     // echo "<img src='$picturePath' alt='$employeeName' class='employee-picture'>";
     echo "<h2>Edit $employeeName's Schedule</h2>";
 
     // Display the existing schedule information
-    echo "<p>Current Schedule: $schedule</p>";
+    // echo "<p>Current Schedule: $schedule</p>";
 
     // Add a form for editing schedule
     echo "<form action='' method='post'>"; // Empty action attribute to submit to the same page

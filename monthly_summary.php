@@ -18,15 +18,14 @@ if ($conn->connect_error) {
 }
 
 // Get the current month and year
-$currentDate = date("m_Y"); // Format the date as "11_2023"
-
+$currentDate = date("Y-m"); // Format the date as "2023-11"
 
 // Extract month and year from the current date
 $currentMonth = date("F");  // Full month name, e.g., November
 $currentYear = date("Y");
 
-// Query to get the list of attendance tables
-$sql = "SHOW TABLES LIKE 'attendance_table_%_$currentDate'";
+// Query to get the monthly summary from the attendance table
+$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$currentDate' GROUP BY name, status";
 $result = $conn->query($sql);
 
 if ($result === false) {
@@ -34,38 +33,25 @@ if ($result === false) {
 } else {
     $summary = array();
 
-    // Loop through each attendance table
-    while ($row = $result->fetch_row()) {
-        $tableName = $row[0];
+    // Calculate the totals for each employee and status
+    while ($row = $result->fetch_assoc()) {
+        $name = $row['name'];
+        $status = strtolower($row['status']);
+        if (!isset($summary[$name])) {
+            $summary[$name] = array(
+                'on_time' => 0,
+                'early' => 0,
+                'late' => 0,
+                'absent' => 0,
+                'on_official_business' => 0,
+                'perfect_attendance' => 'NO'
+            );
+        }
+        $summary[$name][$status] += $row['total'];
 
-        // Query to get the monthly summary for each table
-        $sql = "SELECT name, status, COUNT(*) as total FROM $tableName GROUP BY name, status";
-        $tableResult = $conn->query($sql);
-
-        if ($tableResult === false) {
-            echo 'Error executing the query: ' . $conn->error;
-        } else {
-            // Calculate the totals for each employee and status
-            while ($tableRow = $tableResult->fetch_assoc()) {
-                $name = $tableRow['name'];
-                $status = strtolower($tableRow['status']);
-                if (!isset($summary[$name])) {
-                    $summary[$name] = array(
-                        'on_time' => 0,
-                        'early' => 0,
-                        'late' => 0,
-                        'absent' => 0,
-                        'on_official_business' => 0,
-                        'perfect_attendance' => 'NO'
-                    );
-                }
-                $summary[$name][$status] += $tableRow['total'];
-
-                // Update perfect attendance status
-                if ($status === 'absent') {
-                    $summary[$name]['perfect_attendance'] = 'NO';
-                }
-            }
+        // Update perfect attendance status
+        if ($status === 'absent') {
+            $summary[$name]['perfect_attendance'] = 'NO';
         }
     }
 
@@ -74,7 +60,6 @@ if ($result === false) {
     $pdf->SetMargins(10, 10, 10);
     $pdf->AddPage();
 
-    // Add content to the PDF
     // Add content to the PDF
     $pdf->SetFont('helvetica', 'B', 16); // Set font to bold and increase font size
     $pdf->Cell(0, 10, 'BAWA ELEMENTARY SCHOOL', 0, 1, 'C');

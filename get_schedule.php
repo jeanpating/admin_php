@@ -21,7 +21,7 @@ if ($connAttendance->connect_error) {
 }
 
 // Fetch name, picture, and schedule information
-$sql = "SELECT emp_id, name, picture_path, schedule FROM employees";
+$sql = "SELECT emp_id, name, picture_path FROM employees";
 $result = $conn->query($sql);
 
 ?>

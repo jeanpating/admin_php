@@ -73,51 +73,68 @@
         <!-- Back button -->
         <a href="javascript:history.go(-1)" class="back-button"><</a>
         <?php
-        // Replace with your actual database connection details
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "attendancedb";
+        // get_notifications.php
 
-        // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
+        if ($_SERVER["REQUEST_METHOD"] == "GET") {
+            // Get the date parameter from the URL
+            $selectedDate = isset($_GET["date"]) ? $_GET["date"] : date("Y-m-d");
 
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+            // Replace with your actual database connection details
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "attendancedb";
 
-        // Get the current date
-        $currentDate = date("d_m_Y"); // Format the date as "24_11_2023"
+            // Create connection
+            $conn = new mysqli($servername, $username, $password, $dbname);
 
-        // Query to get the list of attendance tables
-        $tableName = "attendance_table_" . $currentDate;
-        $sql = "SELECT * FROM $tableName";
-        $result = $conn->query($sql);
-
-        if ($result === false) {
-            echo '<p>Error executing the query: ' . $conn->error . '</p>';
-        } else {
-            if ($result->num_rows > 0) {
-                // Display the data from the attendance table
-                echo '<h1>Notification</h1>';
-                echo '<table>';
-                echo '<tr><th>Name</th><th>Status</th></tr>';
-
-                while ($row = $result->fetch_assoc()) {
-                    echo '<tr>Today</tr>';
-                    echo '<tr>';
-                    echo '<td>' . $row['name'] . '</td>';
-                    echo '<td>' . $row['status'] . '</td>';
-                    echo '</tr>';
-                }
-
-                echo '</table>';
-            } else {
-                echo '<p>No notifications for today.</p>';
+            // Check connection
+            if ($conn->connect_error) {
+                die("Connection failed: " . $conn->connect_error);
             }
+
+            // Query to get attendance data for the selected date
+            $sql = "SELECT * FROM attendance WHERE DATE(date) = '$selectedDate'";
+            $result = $conn->query($sql);
+
+            if ($result === false) {
+                echo '<p>Error executing the query: ' . $conn->error . '</p>';
+            } else {
+                if ($result->num_rows > 0) {
+                    // Determine the title based on the date difference
+                    $today = date("Y-m-d");
+                    $dateDifference = date_diff(date_create($selectedDate), date_create($today))->format('%a');
+
+                    if ($dateDifference == 0) {
+                        $title = 'Today';
+                    } elseif ($dateDifference == 1) {
+                        $title = 'Yesterday';
+                    } else {
+                        $title = date('F j, Y', strtotime($selectedDate));
+                    }
+
+                    // Display the title
+                    echo '<h1>' . $title . '</h1>';
+
+                    // Display the data from the attendance table
+                    echo '<table>';
+                    echo '<tr><th>Name</th><th>Status</th></tr>';
+
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<tr>';
+                        echo '<td>' . $row['name'] . '</td>';
+                        echo '<td>' . $row['status'] . '</td>';
+                        echo '</tr>';
+                    }
+
+                    echo '</table>';
+                } else {
+                    echo '<p>No attendance data for the selected date.</p>';
+                }
+            }
+
+            $conn->close();
         }
-        $conn->close();
         ?>
     </div>
 </body>

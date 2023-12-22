@@ -1,5 +1,5 @@
 <html>
-    <head>
+<head>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -31,11 +31,10 @@
         }
 
     </style>
-
-    </head>
+</head>
 <body>
     <?php
-    //DB
+    // DB
     $servername = "localhost";
     $username = "root";
     $password = "";
@@ -49,48 +48,57 @@
         die("Connection failed: " . $conn->connect_error);
     }
 
-    // Get the current date
-    $currentDate = date("d_m_Y"); // Format the date as "24_11_2023"
+    // Handle form submission
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Get the selected date from the form
+        $selectedDate = $_POST["selected_date"];
 
-    // Query to get the list of attendance tables
-    $tableName = "attendance_table_" . $currentDate;
-    $sql = "SELECT * FROM $tableName";
-    $result = $conn->query($sql);
+        // Query to get attendance data for the selected date
+        $sql = "SELECT * FROM attendance WHERE date = '$selectedDate'";
+        $result = $conn->query($sql);
 
-    if ($result === false) {
-        echo 'Error executing the query: ' . $conn->error;
-    } else {
-        if ($result->num_rows > 0) {
-            // Display the data from the attendance table with dynamic background colors and text color
-            echo '<div style="overflow-x:auto;">';  // Add this div for horizontal scrolling
-            echo '<table class="modern-table">';
-            echo '<thead>';
-            echo '<tr><th>id</th><th>name</th><th>time</th><th>status</th></tr>';
-            echo '</thead>';
-            echo '<tbody>';
-
-            while ($row = $result->fetch_assoc()) {
-                // Determine the background color based on the 'status' value
-                $backgroundColor = ($row['status'] == 'Early') ? '#1fab36' : (($row['status'] == 'Late') ? '#d9a71e' : '');
-
-                echo '<tr>';
-                echo '<td>' . $row['id'] . '</td>';
-                echo '<td>' . $row['name'] . '</td>';
-                echo '<td>' . $row['time'] . '</td>';
-                echo '<td style="background-color: ' . $backgroundColor . '; color: white;">' . $row['status'] . '</td>'; // Add this line for the 'status' column
-                echo '</tr>';
-            }
-
-            echo '</tbody>';
-            echo '</table>';
-            echo '</div>';
+        if ($result === false) {
+            echo 'Error executing the query: ' . $conn->error;
         } else {
-            echo 'No data found in the attendance table for today.';
+            if ($result->num_rows > 0) {
+                // Display the data from the 'attendance' table with dynamic background colors and text color
+                echo '<div style="overflow-x:auto;">';  // Add this div for horizontal scrolling
+                echo '<table class="modern-table">';
+                echo '<thead>';
+                echo '<tr><th>id</th><th>name</th><th>time</th><th>status</th></tr>';
+                echo '</thead>';
+                echo '<tbody>';
+
+                while ($row = $result->fetch_assoc()) {
+                    // Determine the background color based on the 'status' value
+                    $backgroundColor = ($row['status'] == 'Early') ? '#1fab36' : (($row['status'] == 'Late') ? '#d9a71e' : '');
+
+                    echo '<tr>';
+                    echo '<td>' . $row['id'] . '</td>';
+                    echo '<td>' . $row['name'] . '</td>';
+                    echo '<td>' . $row['time'] . '</td>';
+                    echo '<td style="background-color: ' . $backgroundColor . '; color: white;">' . $row['status'] . '</td>'; // Add this line for the 'status' column
+                    echo '</tr>';
+                }
+
+                echo '</tbody>';
+                echo '</table>';
+                echo '</div>';
+            } else {
+                echo 'No data found in the attendance table for the selected date.';
+            }
         }
     }
+    ?>
 
+    <!-- Form for selecting a date -->
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        Select Date: <input type="date" name="selected_date">
+        <input type="submit" value="Submit">
+    </form>
+    <a href="javascript:history.go(-1)" class="back-button"><</a>
+    <?php
     $conn->close();
     ?>
 </body>
 </html>
-

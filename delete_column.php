@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "scheduledb";
+$dbname = "employeesdb";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $columnToDelete = $_POST['column_to_delete'];
 
         // SQL to delete the column
-        $deleteColumnSql = "ALTER TABLE employee_schedule DROP COLUMN $columnToDelete";
+        $deleteColumnSql = "ALTER TABLE employees DROP COLUMN $columnToDelete";
 
         // Execute the query
         if ($conn->query($deleteColumnSql) === TRUE) {
