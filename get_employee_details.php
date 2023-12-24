@@ -374,10 +374,10 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
     $firstDayOfMonth = date('Y-m-01', strtotime($currentDate));
     $lastDayOfMonth = date('Y-m-t', strtotime($currentDate));
     
+    // Fetch attendance records using the name column from attendancedb
     $sqlAttendance = "SELECT * FROM attendance WHERE name = '$employeeName' AND date BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'";
-    // echo "SQL Query: $sqlAttendance<br>";
-
     $resultAttendance = $connAttendance->query($sqlAttendance);
+
     if ($resultAttendance === false) {
         die("Error in SQL query: " . $connAttendance->error);
     }
@@ -395,34 +395,32 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         while ($rowAttendance = $resultAttendance->fetch_assoc()) {
             // Extract day of the month from the date
             $day = date('j', strtotime($rowAttendance['date']));
-        
-            // Determine the type of record
+
+            // Determine the type of record based on the clock value
             $recordType = '';
-            if (strpos($rowAttendance['status'], 'AM Time-in') !== false || strpos($rowAttendance['status'], 'Late') !== false) {
-                $recordType = 'amTimeIn';
-            } elseif (strpos($rowAttendance['status'], 'PM Time-out') !== false || strpos($rowAttendance['status'], 'Late') !== false) {
-                $recordType = 'pmTimeOut';
-            } elseif (strpos($rowAttendance['status'], 'AM Time-out') !== false) {
-                $recordType = 'amTimeOut';
-            } elseif (strpos($rowAttendance['status'], 'PM Time-in') !== false) {
-                $recordType = 'pmTimeIn';
-            } else {
-                // Default case, in case the status doesn't match expected values
-                echo "Unexpected status: {$rowAttendance['status']}<br>";
-                print_r($rowAttendance);  // Output the entire record for further inspection
-                echo "<br>";
+            switch ($rowAttendance['clock']) {
+                case 'AM-TIME-IN':
+                    $recordType = 'amTimeIn';
+                    break;
+                case 'AM-TIME-OUT':
+                    $recordType = 'amTimeOut';
+                    break;
+                case 'PM-TIME-IN':
+                    $recordType = 'pmTimeIn';
+                    break;
+                case 'PM-TIME-OUT':
+                    $recordType = 'pmTimeOut';
+                    break;
+                default:
+                    // Handle unexpected clock values if needed
+                    break;
             }
-        
+
             // Store details in the corresponding array
             if (!empty($recordType)) {
                 ${$recordType}[$day] = date('H:i:s', strtotime($rowAttendance['time']));
-                // echo "Day: $day, Record Type: $recordType, Time: " . date('H:i:s', strtotime($rowAttendance['time'])) . "<br>";
-                // echo "Status: {$rowAttendance['status']}<br>";
             }
 
-            // Display information about each iteration
-            // echo "Day: $day, Record Type: $recordType, Time: " . date('H:i:s', strtotime($rowAttendance['time'])) . "<br>";
-            
             // Calculate Under Time
             if (!empty($amTimeIn[$day]) && !empty($amTimeOut[$day]) && !empty($pmTimeIn[$day]) && !empty($pmTimeOut[$day])) {
                 $dateTimeAMIn = new DateTime($amTimeIn[$day]);
@@ -444,15 +442,6 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
                 }
             }
         }
-
-        // echo "<pre>";
-        // print_r($amTimeIn);
-        // print_r($pmTimeOut);
-        // print_r($amTimeOut);
-        // print_r($pmTimeIn);
-        // print_r($underTimeHours);
-        // print_r($underTimeMinutes);
-        // echo "</pre>";
 
         // Display attendance records in a table format
         echo "<h2 style='text-align: center;'>Attendance Records</h2>";

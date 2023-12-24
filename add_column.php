@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbnameScheduled = "employeesdb";
+$dbnameScheduled = "attendancedb";
 
 // Create connection to scheduledb
 $connScheduled = new mysqli($servername, $username, $password, $dbnameScheduled);
@@ -13,11 +13,11 @@ if ($connScheduled->connect_error) {
 }
 
 // Modify the table to add the emp_name column
-$alterTableSql = "ALTER TABLE employeesdb.employees
-                  ADD COLUMN position VARCHAR(255) AFTER department";
+$alterTableSql = "ALTER TABLE attendancedb.attendance
+                  ADD COLUMN clock VARCHAR(255) AFTER status";
 
 if ($connScheduled->query($alterTableSql) === TRUE) {
-    echo "Table altered successfully to add position column";
+    echo "Table altered successfully to add clock column";
 } else {
     echo "Error altering table: " . $connScheduled->error;
 }

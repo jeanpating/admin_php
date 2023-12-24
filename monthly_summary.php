@@ -24,9 +24,10 @@ $currentDate = date("Y-m"); // Format the date as "2023-11"
 $currentMonth = date("F");  // Full month name, e.g., November
 $currentYear = date("Y");
 
-// Query to get the monthly summary from the attendance table
-$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$currentDate' GROUP BY name, status";
+// Query to get the monthly summary from the attendance table for AM-TIME-IN
+$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$currentDate' AND clock = 'AM-TIME-IN' GROUP BY name, status";
 $result = $conn->query($sql);
+
 
 if ($result === false) {
     echo 'Error executing the query: ' . $conn->error;

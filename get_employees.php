@@ -129,14 +129,12 @@
                     die("Connection to attendance database failed: " . $connAttendance->connect_error);
                 }
 
-                $current_date = date("d_m_Y");
-                $table_name = "attendance_table_" . $current_date;
-
-                $create_table_query = "CREATE TABLE IF NOT EXISTS $table_name (
+                $create_table_query = "CREATE TABLE IF NOT EXISTS attendance (
                     id INT AUTO_INCREMENT PRIMARY KEY,
                     name VARCHAR(255),
                     time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    status VARCHAR(255)
+                    status VARCHAR(255),
+                    clock VARCHAR(255)
                 )";
                 $result = $connAttendance->query($create_table_query);
 
@@ -151,9 +149,9 @@
                         $department = $row["department"];
 
                         // Fetch the attendance status for the current employee from attendancedb
-                        $current_date = date("d_m_Y");
-                        $table_name = "attendance_table_" . $current_date;
-                        $sqlAttendance = "SELECT status FROM $table_name WHERE name = '$employeeName'";
+                        $current_date = date("Y_m_d");
+                        $sqlAttendance = "SELECT status FROM attendance WHERE name = '$employeeName' AND date = '$current_date' AND clock ='AM-TIME-IN'";
+
                         $resultAttendance = $connAttendance->query($sqlAttendance);
 
                         if ($resultAttendance && $resultAttendance->num_rows > 0) {

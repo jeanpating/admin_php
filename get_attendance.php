@@ -65,7 +65,7 @@
                 echo '<div style="overflow-x:auto;">';  // Add this div for horizontal scrolling
                 echo '<table class="modern-table">';
                 echo '<thead>';
-                echo '<tr><th>id</th><th>name</th><th>time</th><th>status</th></tr>';
+                echo '<tr><th>NAME</th><th>TIME</th><th>STATUS</th><th>CLOCK TYPE</th></tr>';
                 echo '</thead>';
                 echo '<tbody>';
 
@@ -74,10 +74,10 @@
                     $backgroundColor = ($row['status'] == 'Early') ? '#1fab36' : (($row['status'] == 'Late') ? '#d9a71e' : '');
 
                     echo '<tr>';
-                    echo '<td>' . $row['id'] . '</td>';
                     echo '<td>' . $row['name'] . '</td>';
                     echo '<td>' . $row['time'] . '</td>';
                     echo '<td style="background-color: ' . $backgroundColor . '; color: white;">' . $row['status'] . '</td>'; // Add this line for the 'status' column
+                    echo '<td>' .$row['clock'] . '</td>';
                     echo '</tr>';
                 }
 
