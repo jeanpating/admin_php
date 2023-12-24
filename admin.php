@@ -6,137 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+    <link rel="stylesheet" href="styles/admin_styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        nav {
-            background-color: #333;
-            overflow: hidden;
-            text-align: right;
-            padding-right: 20px;
-        }
-
-        nav a {
-            display: inline-block;
-            color: white;
-            padding: 14px 16px;
-            text-decoration: none;
-        }
-
-        nav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-
-        /* Sidebar styles */
-        .sidebar {
-            height: 100%;
-            width: 200px;
-            position: fixed;
-            background-color: #111;
-            padding-top: 20px;
-            text-align: center;
-        }
-
-        .sidebar a {
-            padding: 10px;
-            text-decoration: none;
-            font-size: 18px;
-            color: white;
-            display: block;
-            margin-bottom: 15px;
-        }
-
-        .sidebar a:hover {
-            background-color: #ddd;
-            text-decoration: none;
-            color: black;
-        }
-        .sidebar a.active {
-            background-color: #ddd;
-            color: black;
-        }
-
-        /* Content area styles */
-        .content {
-            margin-left: 220px;
-            padding: 16px;
-        }
-
-        .notification {
-            display: inline-block;
-            margin-right: 20px;
-            padding: 14px 16px;
-            text-decoration: none;
-            background-color: #333;
-            color: white;
-        }
-
-        .employee-list-item-container {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            max-width: fit-content;
-        }
-
-        .employee-picture {
-            max-width: 100px;
-            max-height: 100px;
-            margin-right: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .employee-details {
-            /* Add any additional styling for the employee details */
-        }
-
-        /* Style for the Download Summary button */
-        #downloadSummaryButton {
-            display: block;
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        #downloadSummaryButton:hover {
-            background-color: #ddd;
-            color: black;
-        }
-    </style>
 </head>
 
 <body>
 
     <nav>
-        <a href="#admin" style="float: right;">Admin Profile</a>
-        <a href="notification.php" class="notification">Notification</a>
+        
+        
     </nav>
-
     <!-- Sidebar -->
     <div class="sidebar">
+        <a href="#" id="dashboardLink" class="dashboard">Dashboard</a>
         <a href="#" id="attendanceLink">Attendance</a>
         <a href="#" id="employeesLink">Employees</a>
         <a href="#" id="scheduleLink">Schedule</a>
         <a href="#" id="graphLink">Graph</a>
-        <button id="downloadSummaryButton">Download Summary</button>
+        <br><br><br><br>
+        <a href="notification.php" class="notification">Notification</a>
+        <a href="#admin">Admin Profile</a>
     </div>
 
     <!-- Content area -->
     <div class="content" id="contentContainer">
-        
+        Hello WOrld
     </div>
-
-    <!-- Download Summary button -->
 
     <script>
         // JavaScript to handle sidebar item clicks and apply active state
@@ -144,8 +40,16 @@
 
         sidebarLinks.forEach(link => {
             link.addEventListener('click', function () {
+                // Remove 'active' class from all links
                 sidebarLinks.forEach(link => link.classList.remove('active'));
+                // Add 'active' class to the clicked link
                 this.classList.add('active');
+
+                // Check if the clicked link is the Dashboard link
+                if (this.id === 'dashboardLink') {
+                    // If it is, navigate to the main page
+                    window.location.href = 'admin.php';
+                }
             });
         });
 
@@ -247,10 +151,6 @@
             xhttp.send();
         }
 
-        document.getElementById('downloadSummaryButton').addEventListener('click', function () {
-            window.location.href = 'monthly_summary.php';
-        });
-
         function uploadProfilePicture(employeeId) {
             var fileInput = document.getElementById('profilePicture_' + employeeId);
             var file = fileInput.files[0];
@@ -313,6 +213,118 @@
 
             xhttp.open("GET", "get_employee_schedule.php?employee_id=" + employeeId, true);
             xhttp.send();
+        }
+
+        document.getElementById('graphLink').addEventListener('click', function () {
+        changeTitleAndLoadGraph();
+        });
+
+        function changeTitleAndLoadGraph() {
+            changeTitle('Graph');
+
+            // Fetch graph data using AJAX
+            var xhttpGraph = new XMLHttpRequest();
+
+            xhttpGraph.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var graphData = JSON.parse(this.responseText);
+                    displayGraphData(graphData);
+                } else if (this.readyState == 4 && this.status != 200) {
+                    console.error("AJAX Error:", this.status, this.statusText);
+                }
+            };
+
+            xhttpGraph.open("GET", "get_graph.php", true);
+            xhttpGraph.send();
+        }
+
+        function displayGraphData(data) {
+            // Display graph data as a line chart and individual cards
+            var contentContainer = document.getElementById('contentContainer');
+
+            // Clear the content container
+            contentContainer.innerHTML = '';
+
+            // Create a container for the cards
+            var cardsContainer = document.createElement('div');
+            cardsContainer.classList.add('cards-container', 'clearfix'); // Add clearfix for proper styling
+
+            // Create a card for each trend
+            data.forEach(function (item) {
+                // Create a card element
+                var card = document.createElement('div');
+                card.classList.add('card');
+
+                // Create a card body
+                var cardBody = document.createElement('div');
+                cardBody.classList.add('card-body');
+
+                // Create a heading for the card
+                var heading = document.createElement('h2');
+                heading.textContent = item.status;
+
+                // Create a paragraph for the total count
+                var totalParagraph = document.createElement('p');
+                totalParagraph.textContent = 'Total: ' + item.total;
+
+                // Append elements to the card body
+                cardBody.appendChild(heading);
+                cardBody.appendChild(totalParagraph);
+
+                // Append the card body to the card
+                card.appendChild(cardBody);
+
+                // Append the card to the cards container
+                cardsContainer.appendChild(card);
+            });
+
+            // Append the cards container to the content container
+            contentContainer.appendChild(cardsContainer);
+
+            // Create a container for the line chart
+            var chartContainer = document.createElement('div');
+            chartContainer.classList.add('chart-container');
+
+            // Create a canvas element for the chart
+            var canvas = document.createElement('canvas');
+            chartContainer.appendChild(canvas);
+
+            // Append the chart container to the content container
+            contentContainer.appendChild(chartContainer);
+
+            // Get the 2D context of the canvas
+            var ctx = canvas.getContext('2d');
+
+            // Extract labels and data from the provided data
+            var labels = data.map(function (item) {
+                return item.status;
+            });
+
+            var totals = data.map(function (item) {
+                return item.total;
+            });
+
+            // Create a line chart
+            var chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Attendance Trends',
+                        data: totals,
+                        borderColor: 'rgba(75, 192, 192, 1)', // Adjust the line color
+                        borderWidth: 2,
+                        fill: false
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
         
     </script>

@@ -18,7 +18,7 @@ if ($conn->connect_error) {
 }
 
 // Get the current month and year
-$currentDate = date("Y-m"); // Format the date as "2023-11"
+$currentDate = date("Y-m"); 
 
 // Extract month and year from the current date
 $currentMonth = date("F");  // Full month name, e.g., November

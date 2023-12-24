@@ -14,10 +14,10 @@ if ($connScheduled->connect_error) {
 
 // Modify the table to add the emp_name column
 $alterTableSql = "ALTER TABLE attendancedb.attendance
-                  ADD COLUMN clock VARCHAR(255) AFTER status";
+                  ADD COLUMN schedule VARCHAR(255) AFTER name";
 
 if ($connScheduled->query($alterTableSql) === TRUE) {
-    echo "Table altered successfully to add clock column";
+    echo "Table altered successfully to add schedule column";
 } else {
     echo "Error altering table: " . $connScheduled->error;
 }

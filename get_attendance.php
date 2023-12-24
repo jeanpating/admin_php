@@ -29,6 +29,24 @@
         .modern-table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+        .downloadButton {
+            display: inline-block;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #007bff;
+            color: #fff;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        /* Change background color on hover for a button-like effect */
+        a.downloadButton:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        
 
     </style>
 </head>
@@ -90,6 +108,8 @@
         }
     }
     ?>
+    <!--DOWNLOAD SUMMARY-->
+    <a href="monthly_summary.php" class="downloadButton">Download Summary</a>
 
     <!-- Form for selecting a date -->
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -100,5 +120,6 @@
     <?php
     $conn->close();
     ?>
+
 </body>
 </html>
