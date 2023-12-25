@@ -16,8 +16,8 @@ if ($connection->connect_error) {
 }
 
 // Your SQL query to calculate totals for each status
-$current_date = date("Y_m_d");
-$sql = "SELECT status, COUNT(*) as total FROM attendance WHERE date = '$current_date' and clock ='AM-TIME-IN' GROUP BY status";
+$current_date = date("Y-m");
+$sql = "SELECT status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$current_date' and clock ='AM-TIME-IN' GROUP BY status";
 
 // Execute the query
 $result = mysqli_query($connection, $sql);

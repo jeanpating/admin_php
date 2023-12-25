@@ -49,6 +49,7 @@
         
 
     </style>
+
 </head>
 <body>
     <?php
@@ -114,12 +115,11 @@
     <!-- Form for selecting a date -->
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         Select Date: <input type="date" name="selected_date">
-        <input type="submit" value="Submit">
+        <input type="submit" value="Submit" name="submit">
     </form>
     <a href="javascript:history.go(-1)" class="back-button"><</a>
     <?php
     $conn->close();
     ?>
-
 </body>
 </html>

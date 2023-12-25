@@ -138,3 +138,19 @@ h2 {
     width: 100%; /* Adjust the width based on your design */
     box-sizing: border-box;
 }
+/*dashbaord cards*/
+.cardDashboard {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.employees-card {
+    background-color: #f0f0f0;
+}
+
+.present-card {
+    background-color: #e0f7fa;
+}

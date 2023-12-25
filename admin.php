@@ -6,9 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <link rel="stylesheet" href="styles/admin_styles.css">
+    <link rel="stylesheet" type="text/css" href="styles/admin_styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /*dashbaord cards*/
+        .cardDashboard {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+            font-size: 30px;
+        }
 
+        .employees-card {
+            background-color: #346beb;
+            width: 30px;
+        }
+
+        .present-card {
+            background-color: #22b35e;
+            
+        }   
+        .column {
+            flex-basis: 45%; /* Adjust as needed */
+        }
+        .col {
+            display: flex;
+            justify-content: space-around; /* Adjust as needed */
+        }
+        
+    </style>
 </head>
 
 <body>
@@ -31,10 +60,69 @@
 
     <!-- Content area -->
     <div class="content" id="contentContainer">
-        Hello WOrld
-    </div>
 
+        <div class ="container">
+        <h1>Admin Dashboard</h1>
+            <div class ="col"> 
+                <div class="column cardDashboard employees-card">
+                    <?php
+                        // Database connection parameters
+                        $servername = "localhost";
+                        $username = "root";
+                        $password = "";
+
+                        // Create connection for employeesdb
+                        $connEmployees = new mysqli($servername, $username, $password, "employeesdb");
+
+                        // Create connection for attendancedb
+                        $connAttendance = new mysqli($servername, $username, $password, "attendancedb");
+
+                        // Check connections
+                        if ($connEmployees->connect_error || $connAttendance->connect_error) {
+                            die("Connection failed: " . $connEmployees->connect_error . " or " . $connAttendance->connect_error);
+                        }
+                        $current_date = date("Y_m_d");
+
+                        // SQL query to fetch total number of rows in the 'employees' table
+                        $sqlEmployees = "SELECT COUNT(*) as total_employees FROM employees";
+                        $resultEmployees = $connEmployees->query($sqlEmployees);
+
+                        if ($resultEmployees->num_rows > 0) {
+                            $rowEmployees = $resultEmployees->fetch_assoc();
+                            $totalEmployees = $rowEmployees['total_employees'];
+                            echo "<strong>Employees</strong><br> " . $totalEmployees;
+                        } else {
+                            echo "<strong>Employees</strong><br> 0";
+                        }
+
+                        // Close the connection for employeesdb
+                        $connEmployees->close();
+                    ?>
+                </div>
+
+                <div class="column cardDashboard present-card">
+                    <?php
+                        // SQL query for attendance from attendancedb
+                        $sqlAttendance = "SELECT status, COUNT(*) as total FROM attendance WHERE date = '$current_date' and clock ='AM-TIME-IN'";
+                        $resultAttendance = $connAttendance->query($sqlAttendance);
+
+                        if ($resultAttendance->num_rows > 0) {
+                            while ($rowAttendance = $resultAttendance->fetch_assoc()) {
+                                echo "<strong>Present</strong><br> " . $rowAttendance['total'];
+                            }
+                        } else {
+                            echo "<strong>Present</strong><br> 0";
+                        }
+
+                        // Close the connection for attendancedb
+                        $connAttendance->close();
+                    ?>
+                </div>
+            </div>
+        <div>
+    </div>
     <script>
+
         // JavaScript to handle sidebar item clicks and apply active state
         const sidebarLinks = document.querySelectorAll('.sidebar a');
 
@@ -75,7 +163,7 @@
             changeTitle('Attendance');
             loadAttendanceTables();
         }
-
+        
         function changeTitle(title) {
             var currentDate = new Date();
             var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -86,7 +174,7 @@
             var additionalText = '';
 
             if (title === 'Attendance') {
-                additionalText = 'Here is the list of attendances for today. ' + "(" + dayOfWeek + ", " + formattedDate + ")";
+                additionalText = 'Attendance List. ' + "(" + dayOfWeek + ", " + formattedDate + ")";
             }
 
             document.getElementById('contentContainer').innerHTML = '<h1>' + title + '</h1>' + '<p>' + additionalText + '</p>';

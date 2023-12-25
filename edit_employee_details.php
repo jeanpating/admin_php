@@ -135,7 +135,7 @@ function handleEditForm($conn) {
     $employeeId = $_GET['emp_id'];
     
     // Define an array to store the columns that can be updated
-    $updateableColumns = ['name', 'department', 'address', 'contact_number', 'email_address', 'schedule', 'final_schedule'];
+    $updateableColumns = ['name', 'department', 'position', 'address', 'contact_number', 'email_address'];
 
     $sqlUpdates = [];
 

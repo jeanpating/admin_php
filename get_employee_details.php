@@ -206,12 +206,12 @@ if ($result && $result->num_rows > 0) {
     // $startingSchedule = htmlspecialchars($row['schedule']);
     // $finalSchedule = htmlspecialchars($row['final_schedule']);
 
-    echo "<div class='employee-details-container'>";
-    echo "<h1>Employee Details</h1>";
-    echo "</div>";
-
     echo "<div class='employee-picture-container'>";
     echo "<img src='$picturePath' alt='$employeeName Profile Picture' class='employee-picture'>";
+    echo "</div>";
+
+    echo "<div class='employee-details-container'>";
+    echo "<h1>$employeeName</h1>";
     echo "</div>";
 
     ?>
@@ -222,7 +222,7 @@ if ($result && $result->num_rows > 0) {
     // Display employee picture at the top right with border
     if ($picturePath) {
         echo "<div class='employee-details-header'>";
-        echo "<div class='employee-name-border'><h2 class='employee-name'><b>$employeeName</b></h2></div>";
+        
     
         // Create a container for both picture and form
         echo "<div class='employee-content-container'>";
