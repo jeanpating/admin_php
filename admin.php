@@ -29,8 +29,12 @@
             background-color: #22b35e;
             
         }   
+        .late-card {
+            background-color: #d9a71e;
+            
+        }  
         .column {
-            flex-basis: 45%; /* Adjust as needed */
+            flex-basis: 30%; /* Adjust as needed */
         }
         .col {
             display: flex;
@@ -112,6 +116,21 @@
                             }
                         } else {
                             echo "<strong>Present</strong><br> 0";
+                        }
+                    ?>
+                </div>
+                <div class="column cardDashboard late-card">
+                    <?php
+                        // SQL query for attendance from attendancedb
+                        $sqlLate = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' AND clock = 'AM-TIME-IN' AND status = 'late'";
+                        $resultLate = $connAttendance   ->query($sqlLate);
+
+                        if ($resultLate->num_rows > 0) {
+                            while ($rowLate = $resultLate->fetch_assoc()) {
+                                echo "<strong>Late</strong><br> " . $rowLate['total'];
+                            }
+                        } else {
+                            echo "<strong>Late</strong><br> 0";
                         }
 
                         // Close the connection for attendancedb
