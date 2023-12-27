@@ -35,13 +35,15 @@ body {
     height: 100%;
     width: 200px;
     position: fixed;
-    background-color: #111;
+    background-color: #5B1515;
     padding-top: 20px;
-    text-align: center;
+    text-align: left;
 }
 
 .sidebar a {
+    margin-top: 20px;
     padding: 10px;
+    border-radius: 10px;
     text-decoration: none;
     font-size: 18px;
     color: white;
@@ -138,19 +140,4 @@ h2 {
     width: 100%; /* Adjust the width based on your design */
     box-sizing: border-box;
 }
-/*dashbaord cards*/
-.cardDashboard {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 10px;
-    border-radius: 5px;
-    text-align: center;
-}
 
-.employees-card {
-    background-color: #f0f0f0;
-}
-
-.present-card {
-    background-color: #e0f7fa;
-}

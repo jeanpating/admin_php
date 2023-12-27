@@ -17,17 +17,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Get the current month and year
-$currentDate = date("Y-m"); 
-
-// Extract month and year from the current date
-$currentMonth = date("F");  // Full month name, e.g., November
-$currentYear = date("Y");
+// Get the selected month and year from the URL parameters
+$selectedMonth = isset($_GET['month']) ? $_GET['month'] : date("m");
+$selectedYear = isset($_GET['year']) ? $_GET['year'] : date("Y");
 
 // Query to get the monthly summary from the attendance table for AM-TIME-IN
-$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$currentDate' AND clock = 'AM-TIME-IN' GROUP BY name, status";
+$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$selectedYear-$selectedMonth' AND clock = 'AM-TIME-IN' GROUP BY name, status";
 $result = $conn->query($sql);
-
 
 if ($result === false) {
     echo 'Error executing the query: ' . $conn->error;
@@ -65,37 +61,43 @@ if ($result === false) {
     $pdf->SetFont('helvetica', 'B', 16); // Set font to bold and increase font size
     $pdf->Cell(0, 10, 'BAWA ELEMENTARY SCHOOL', 0, 1, 'C');
     $pdf->SetFont('helvetica', '', 8); // Reset font to regular
-    $pdf->Cell(0, 10, "Monthly Summary - $currentMonth $currentYear", 0, 1, 'C');
 
-    // Create a table to display the summary
-    $pdf->SetFillColor(200, 220, 255);
-    $pdf->SetTextColor(0);
-    $pdf->SetDrawColor(0, 0, 0);
-    $pdf->SetLineWidth(0.3);
+    // Check if there are no attendance records
+    if (empty($summary)) {
+        $pdf->Cell(0, 10, "No attendance records for $selectedMonth-$selectedYear", 0, 1, 'C');
+    } else {
+        $pdf->Cell(0, 10, "Monthly Summary - " . date("F Y", strtotime("$selectedYear-$selectedMonth-01")), 0, 1, 'C');
 
-    $header = array('Name', 'On-Time', 'Early', 'Late', 'Absent', 'On-Official Business', 'Perfect Attendance');
-    $w = array(40, 20, 20, 20, 20, 30, 40);
-    for ($i = 0; $i < count($header); ++$i) {
-        $pdf->Cell($w[$i], 7, $header[$i], 1, 0, 'C', 1);
+        // Create a table to display the summary
+        $pdf->SetFillColor(200, 220, 255);
+        $pdf->SetTextColor(0);
+        $pdf->SetDrawColor(0, 0, 0);
+        $pdf->SetLineWidth(0.3);
+
+        $header = array('Name', 'On-Time', 'Early', 'Late', 'Absent', 'On-Official Business', 'Perfect Attendance');
+        $w = array(40, 20, 20, 20, 20, 30, 40);
+        for ($i = 0; $i < count($header); ++$i) {
+            $pdf->Cell($w[$i], 7, $header[$i], 1, 0, 'C', 1);
+        }
+        $pdf->Ln();
+
+        foreach ($summary as $name => $statusData) {
+            $pdf->Cell($w[0], 6, $name, 'LR');
+            $pdf->Cell($w[1], 6, $statusData['on_time'], 'LR');
+            $pdf->Cell($w[2], 6, $statusData['early'], 'LR');
+            $pdf->Cell($w[3], 6, $statusData['late'], 'LR');
+            $pdf->Cell($w[4], 6, $statusData['absent'], 'LR');
+            $pdf->Cell($w[5], 6, $statusData['on_official_business'], 'LR');
+
+            // Check if the employee has no absences for perfect attendance
+            $perfectAttendance = ($statusData['absent'] == 0) ? 'YES' : 'NO';
+
+            $pdf->Cell($w[6], 6, $perfectAttendance, 'LR', 1, 'R');
+        }
+
+        // Add a border below the table
+        $pdf->Cell(array_sum($w), 0, '', 'T');
     }
-    $pdf->Ln();
-
-    foreach ($summary as $name => $statusData) {
-        $pdf->Cell($w[0], 6, $name, 'LR');
-        $pdf->Cell($w[1], 6, $statusData['on_time'], 'LR');
-        $pdf->Cell($w[2], 6, $statusData['early'], 'LR');
-        $pdf->Cell($w[3], 6, $statusData['late'], 'LR');
-        $pdf->Cell($w[4], 6, $statusData['absent'], 'LR');
-        $pdf->Cell($w[5], 6, $statusData['on_official_business'], 'LR');
-    
-        // Check if the employee has no absences for perfect attendance
-        $perfectAttendance = ($statusData['absent'] == 0) ? 'YES' : 'NO';
-    
-        $pdf->Cell($w[6], 6, $perfectAttendance, 'LR', 1, 'R');
-    }
-    
-    // Add a border below the table
-    $pdf->Cell(array_sum($w), 0, '', 'T');
 
     $pdf->Output('monthly_summary.pdf', 'D');
 }

@@ -7,6 +7,7 @@
     <title>Admin Dashboard</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/admin_styles.css">
+    <link rel="stylesheet" href="icons/fontawesome-free-6.5.1-web/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /*dashbaord cards*/
@@ -52,14 +53,16 @@
     </nav>
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="#" id="dashboardLink" class="dashboard">Dashboard</a>
-        <a href="#" id="attendanceLink">Attendance</a>
-        <a href="#" id="employeesLink">Employees</a>
-        <a href="#" id="scheduleLink">Schedule</a>
-        <a href="#" id="graphLink">Graph</a>
+        <a href="#" id="dashboardLink"  class="fa-solid fa-gauge"> Dashboard</a>
+        <a href="#" id="attendanceLink" class="fa-solid fa-clipboard-user"> Attendance</a>
+        <a href="#" id="employeesLink" class="fa-solid fa-users"> Employees</a>
+        <a href="#" id="scheduleLink" class="fa-solid fa-calendar-days"> Schedule</a>
+        <a href="#" id="graphLink" class="fa-solid fa-chart-simple"> Graph</a>
+
         <br><br><br><br>
-        <a href="notification.php" class="notification">Notification</a>
-        <a href="#admin">Admin Profile</a>
+        
+        <a href="notification.php"  class="fa-solid fa-bell"> Notification</a>
+        <a href="#admin" class="fa-solid fa-user-gear"> Admin</a>
     </div>
 
     <!-- Content area -->
