@@ -177,7 +177,10 @@
                     }
 
                     // Display attendance records in a table format
-                    echo "<h2>Attendance Records</h2>";
+                    $currentMonth = date("F");
+                    $currentYear = date("Y");
+
+                    echo "<h2>Attendance Records ($currentMonth, $currentYear)</h2>";
                     echo "<table border='1'>";
                     echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>UNDER TIME (HOURS)</th><th>UNDER TIME (MINUTES)</th></tr>";
 
