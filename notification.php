@@ -60,9 +60,13 @@
             padding: 10px;
             text-decoration: none;
             color: #333;
-            background-color: #f2f2f2;
+            background-color: #5B1515;
             border: 1px solid #ddd;
             border-radius: 4px;
+            color: white;
+        }
+        a:hover {
+            background: #992828;
         }
     </style>
 </head>
@@ -129,7 +133,7 @@
 
                     echo '</table>';
                 } else {
-                    echo '<p>No attendance data for the selected date.</p>';
+                    echo '<p>No notifications for today.</p>';
                 }
             }
 

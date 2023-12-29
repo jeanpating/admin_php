@@ -126,6 +126,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
         a {
             text-decoration: none;
         }
+        .back-button {
+            background: #5B1515;
+            width: 100%;
+            padding: 6px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            color: white;
+        }
+        .back-button:hover {
+            background: #992828;
+        }
     </style>
 </head>
 <body>
@@ -133,6 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         Select Date: <input type="date" name="selected_date">
         <input type="submit" value="View Attendance" name="submitAttendance">
+        <a href="javascript:history.go(-1)" class="back-button">Go back</a>
     </form>
 
     <!-- Display the table HTML content -->
@@ -178,6 +193,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     }
     ?>
 
-    <a href="javascript:history.go(-1)" class="back-button"><</a>
 </body>
 </html>
