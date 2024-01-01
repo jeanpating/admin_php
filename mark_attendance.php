@@ -1,4 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $status = $_POST["status"];
+    $employeeName = $_POST["employeeName"];
+
     $servername = "localhost";
     $username = "root";
     $password = "";
@@ -10,22 +17,20 @@
         die("Connection to attendance database failed: " . $connAttendance->connect_error);
     }
 
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        $status = $_POST["status"];
-        $employeeName = $_POST["employeeName"];
-
-        $current_date = date("d_m_Y");
-        $table_name = "attendance_table_" . $current_date;
-
-        $insert_query = "INSERT INTO $table_name (name, time, status) VALUES ('$employeeName', NOW(), '$status')";
-        $result = $connAttendance->query($insert_query);
-
-        if ($result) {
-            echo "Attendance marked successfully";
-        } else {
-            echo "Error marking attendance";
-        }
+    // Use prepared statements to prevent SQL injection
+    $stmt = $connAttendance->prepare("UPDATE attendance SET status = ? WHERE name = ?");
+    $stmt->bind_param("ss", $status, $employeeName);
+    
+    if ($stmt->execute()) {
+        echo "Attendance updated successfully";
+    } else {
+        echo "Error updating attendance: " . $stmt->error;
     }
 
+    $stmt->close();
     $connAttendance->close();
+} else {
+    // Handle invalid requests
+    echo "Invalid request";
+}
 ?>

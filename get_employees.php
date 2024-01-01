@@ -3,103 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <title>Employee List</title>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script>
-        // Define the JavaScript function outside of the PHP block
-        function markAttendance(status, employeeName) {
-            $.ajax({
-                type: "POST",
-                url: "mark_attendance.php",
-                data: { status: status, employeeName: employeeName },
-                success: function (response) {
-                    console.log(response);
-                    location.reload();
-                },
-                error: function (error) {
-                    console.error("Error marking attendance:", error);
-                }
-            });
-        }
-    </script>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .container {
-            background-color: #ffffff;
-            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .list-group-item {
-            background-color: #ffffff;
-            border: 2px solid rgba(0, 0, 0, 0.125);
-            border-radius: 5px;
-            margin-bottom: 10px;
-            position: relative;
-        }
-
-        .attendance-buttons {
-            position: absolute;
-            top: 0;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            margin: 10px;
-        }
-
-        .absent-button, .on-business-button {
-            width: 100%;
-            margin-bottom: 5px;
-            color: #ffffff; /* Text color white */
-            background-color: #ff0000; /* Red */
-            border: none;
-            padding: 3px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .on-business-button {
-            background-color: #4287f5; /* Blue */
-        }
-
-        .absent-button {
-            background-color: #ff0000; /* Red */
-        }
-
-        .absent-button:hover,
-        .on-business-button:hover {
-            background-color: #555; /* Darker background on hover */
-        }
-
-        .absent-button {
-            background-color: #ff0000; /* Red */
-        }
-
-        .employee-status {
-            font-weight: bold;
-        }
-
-        @media (max-width: 576px) {
-            .attendance-buttons {
-                flex-direction: row;
-            }
-
-            .absent-button, .on-business-button {
-                width: 48%;
-                margin-right: 5px;
-                margin-bottom: 0;
-            }
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="styles/get_employees.css">
 </head>
+
 <body>
 
 <div class="container">
@@ -113,10 +21,11 @@
         </div>
         <button type="submit" class="btn btn-primary">Search</button>
     </form>
-    <hr>
 
     <div class="list-group">
         <?php
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
         $servername = "localhost";
         $username = "root";
         $password = "";
@@ -215,7 +124,29 @@
     </div>
 </div>
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+    function markAttendance(status, employeeName) {
+        $.ajax({
+            type: "POST",
+            url: "mark_attendance.php", // Create a separate PHP file for handling the update
+            data: { 
+                status: status,
+                employeeName: employeeName
+            },
+            success: function(response) {
+                // Handle the response (if needed)
+                console.log(response);
+            },
+            error: function(error) {
+                // Handle errors (if needed)
+                console.error(error);
+            }
+        });
+    }
+</script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 </html>

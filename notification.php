@@ -23,11 +23,14 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             padding: 20px;
             width: 70%;
-            text-align: center;
+        }
+        p {
+            text-align: left;
         }
 
         h1 {
             color: #333;
+            text-align: center;
         }
 
         table {
@@ -69,10 +72,10 @@
             background: #992828;
         }
     </style>
+
 </head>
 
 <body>
-    
     <div class="container">
         <!-- Back button -->
         <a href="javascript:history.go(-1)" class="back-button"><</a>
@@ -121,17 +124,19 @@
                     echo '<h1>' . $title . '</h1>';
 
                     // Display the data from the attendance table
-                    echo '<table>';
-                    echo '<tr><th>Name</th><th>Status</th></tr>';
-
                     while ($row = $result->fetch_assoc()) {
-                        echo '<tr>';
-                        echo '<td>' . $row['name'] . '</td>';
-                        echo '<td>' . $row['status'] . '</td>';
-                        echo '</tr>';
-                    }
+                        $status = '';
+                        
+                        // Check the clock value and set the status accordingly
+                        if ($row['clock'] == 'AM-TIME-IN' || $row['clock'] == 'PM-TIME-IN') {
+                            $status = 'Timed In';
+                        } elseif ($row['clock'] == 'AM-TIME-OUT' || $row['clock'] == 'PM-TIME-OUT') {
+                            $status = 'Timed Out';
+                        }
 
-                    echo '</table>';
+                        // Display the h2 element with name, time, and status
+                        echo '<p>' . $row['time'] . ': '. $row['name'] . ' has ' . $status . '</p    >';
+                    }
                 } else {
                     echo '<p>No notifications for today.</p>';
                 }

@@ -10,49 +10,23 @@
     <link rel="stylesheet" href="icons/fontawesome-free-6.5.1-web/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /*dashbaord cards*/
-        .cardDashboard {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 5px;
-            text-align: center;
-            color: white;
-            font-size: 30px;
-        }
 
-        .employees-card {
-            background-color: #346beb;
-            width: 30px;
-        }
-
-        .present-card {
-            background-color: #22b35e;
-            
-        }   
-        .late-card {
-            background-color: #d9a71e;
-            
-        }  
-        .column {
-            flex-basis: 30%; /* Adjust as needed */
-        }
-        .col {
-            display: flex;
-            justify-content: space-around; /* Adjust as needed */
-        }
-        
     </style>
 </head>
 
 <body>
 
     <nav>
-        
-        
+          
     </nav>
+    
     <!-- Sidebar -->
     <div class="sidebar">
+        <div class="logo">
+            <img src="bg/bawalogo.png" alt="Bawa Elementary School logo">
+            <h2>BAWA</h2>
+        </div>
+        <hr>
         <a href="#" id="dashboardLink"  class="fa-solid fa-gauge"> Dashboard</a>
         <a href="#" id="attendanceLink" class="fa-solid fa-clipboard-user"> Attendance</a>
         <a href="#" id="employeesLink" class="fa-solid fa-users"> Employees</a>
@@ -122,6 +96,7 @@
                         }
                     ?>
                 </div>
+
                 <div class="column cardDashboard late-card">
                     <?php
                         // SQL query for attendance from attendancedb
@@ -139,9 +114,50 @@
                         // Close the connection for attendancedb
                         $connAttendance->close();
                     ?>
-                </div>
+                </div>     
             </div>
         <div>
+        <hr>
+        <h3>Recent attendances</h3>
+        <div class="attendance-table-card" style="float: left; width: 50%;">
+            <?php
+                // Database connection parameters
+                $servername = "localhost";
+                $username = "root";
+                $password = "";
+
+                // Create connection for attendancedb
+                $connAttendance = new mysqli($servername, $username, $password, "attendancedb");
+
+                // Check connection
+                if ($connAttendance->connect_error) {
+                    die("Connection failed: " . $connAttendance->connect_error);
+                }
+
+                // SQL query to fetch attendance data
+                $sqlAttendanceTable = "SELECT name, time FROM attendance WHERE date = '$current_date'";
+                $resultAttendanceTable = $connAttendance->query($sqlAttendanceTable);
+
+                if ($resultAttendanceTable->num_rows > 0) {
+                    echo '<table class="attendance-table">';
+                    echo '<tr><th>Name</th><th>Time</th></tr>';
+
+                    while ($rowAttendanceTable = $resultAttendanceTable->fetch_assoc()) {
+                        echo '<tr>';
+                        echo '<td>' . $rowAttendanceTable['name'] . '</td>';
+                        echo '<td>' . $rowAttendanceTable['time'] . '</td>';
+                        echo '</tr>';
+                    }
+
+                    echo '</table>';
+                } else {
+                    echo '<p>No attendance records available.</p>';
+                }
+
+                // Close the connection for attendancedb
+                $connAttendance->close();
+            ?>
+        </div>
     </div>
     <script>
 

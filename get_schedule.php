@@ -38,7 +38,6 @@ $result = $conn->query($sql);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
         }
 
         .schedule-container {
