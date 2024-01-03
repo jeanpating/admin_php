@@ -12,7 +12,7 @@
             padding: 0;
             display: flex;
             height: 100vh;
-            background-color: #f4f4f4;
+            background-color: #FFFFEC;
         }
 
         .container {
@@ -75,10 +75,13 @@
         .file-label,
         .change-picture-button {
             padding: 10px;
-            background-color: #333;
+            background-color: #739072;
             color: white;
             border-radius: 5px;
             cursor: pointer;
+        }
+        .change-picture-button:hover {
+            background-color: #86A789;
         }
 
         .file-input {
@@ -119,14 +122,27 @@
             justify-content: space-between;
         }
 
-        .back-button,
-        .edit-button {
+        .back-button {
             padding: 10px;
-            background-color: #333;
+            background-color: #CD8D7A;
             color: white;
             text-decoration: none;
             border-radius: 5px;
             cursor: pointer;
+        }
+        .back-button:hover {
+            background: #DBCC95;
+        }
+        .edit-button {
+            padding: 10px;
+            background-color: #739072;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit-button:hover {
+            background-color: #86A789;
         }
     </style>
 </head>
@@ -246,7 +262,7 @@ if ($result && $result->num_rows > 0) {
     // echo ".employee-picture-container { border: 1px solid #ddd; border-radius: 5px; margin-right: 20px; }";
     echo ".file-label { display: inline-block; margin-right: 20px; }";
     echo ".file-input { display: none; }";
-    echo ".file-label, .change-picture-button { padding: 10px; background-color: #333; color: white; border-radius: 5px; cursor: pointer; }";
+    echo ".file-label, .change-picture-button { padding: 10px; color: white; border-radius: 5px; cursor: pointer; }";
     echo "</style>";
     ?>
     

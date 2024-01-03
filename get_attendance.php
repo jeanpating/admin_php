@@ -89,13 +89,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
         }
 
         input[type="submit"] {
-            background-color: #4caf50;
+            background-color: #739072;
             color: #ffffff;
             cursor: pointer;
         }
 
         input[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #86A789;
         }
 
         .modern-table {
@@ -127,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             text-decoration: none;
         }
         .back-button {
-            background: #5B1515;
+            background: #CD8D7A ;
             width: 100%;
             padding: 6px;
             margin-bottom: 15px;
@@ -138,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             color: white;
         }
         .back-button:hover {
-            background: #992828;
+            background: #DBCC95;
         }
     </style>
 </head>

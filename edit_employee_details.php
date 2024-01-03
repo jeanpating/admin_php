@@ -11,7 +11,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
+            background-color: #FFFFEC;
         }
 
         .container {
@@ -45,9 +45,12 @@
         }
 
         input[type="submit"] {
-            background-color: #333;
+            background-color: #86A789;
             color: white;
             cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
         }
 
         .back-link {
@@ -58,10 +61,13 @@
 
         .back-link a {
             text-decoration: none;
-            background-color: #333;
+            background-color: #CD8D7A;
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
+        }
+        .back-link a:hover {
+            background: #DBCC95;
         }
     </style>
 </head>

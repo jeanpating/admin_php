@@ -18,13 +18,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Use prepared statements to prevent SQL injection
-    $stmt = $connAttendance->prepare("UPDATE attendance SET status = ? WHERE name = ?");
-    $stmt->bind_param("ss", $status, $employeeName);
+    $stmt = $connAttendance->prepare("INSERT INTO attendance (name, status) VALUES (?, ?)");
+    $stmt->bind_param("ss", $employeeName, $status);
     
     if ($stmt->execute()) {
-        echo "Attendance updated successfully";
+        echo "Attendance inserted successfully";
     } else {
-        echo "Error updating attendance: " . $stmt->error;
+        echo "Error inserting attendance: " . $stmt->error;
     }
 
     $stmt->close();
