@@ -144,6 +144,48 @@
         .edit-button:hover {
             background-color: #86A789;
         }
+        .custom-confirm {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .confirm-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .confirm-buttons {
+            text-align: center;
+        }
+
+        .confirm-button {
+            padding: 10px;
+            margin: 0 10px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .confirm-button.cancel {
+            background-color: #739072;
+        }
+        .remove-button {
+            padding: 10px;
+            background-color: red;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -167,6 +209,10 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// Fetch employee details
+$employeeId = isset($_GET['emp_id']) ? $_GET['emp_id'] : null;
+$employeeId = filter_var($employeeId, FILTER_VALIDATE_INT);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     handlePictureChange($conn);
@@ -197,10 +243,6 @@ function handlePictureChange($conn) {
         }
     }
 }
-
-// Fetch employee details
-$employeeId = isset($_GET['emp_id']) ? $_GET['emp_id'] : null;
-$employeeId = filter_var($employeeId, FILTER_VALIDATE_INT);
 
 if ($employeeId === false) {
     die("Invalid employee ID");
@@ -316,6 +358,9 @@ $conn->close();
         <a href='edit_employee_details.php?emp_id=<?php echo $employeeId; ?>' class='edit-button'>
             Edit Information
         </a>
+        <button class='remove-button' onclick='confirmRemoveEmployee()'>
+            Remove Employee
+        </button>
     </div>
 
 </div>
@@ -497,6 +542,48 @@ $connAttendance->close();
     </a>
 </div>
 </div>
+<div id="customConfirm" class="custom-confirm">
+    <p id="confirmMessage" class="confirm-message"></p>
+    <div class="confirm-buttons">
+        <button id="confirmButton" class="confirm-button">Confirm</button>
+        <button id="cancelButton" class="confirm-button cancel">Cancel</button>
+    </div>
+</div>
+<input type="hidden" id="employeeId" value="<?php echo $employeeId; ?>">
 
+<script>
+    function confirmRemoveEmployee() {
+        var customConfirm = document.getElementById('customConfirm');
+        var result;
+
+        // Show the custom modal
+        customConfirm.style.display = 'block';
+
+        // You can customize the message here
+        document.getElementById('confirmMessage').innerHTML = "Are you sure you want to remove this employee?";
+
+        // Set up event listeners for buttons
+        document.getElementById('confirmButton').addEventListener('click', function () {
+            result = true;
+            customConfirm.style.display = 'none';
+            handleConfirmation(result);
+        });
+
+        document.getElementById('cancelButton').addEventListener('click', function () {
+            result = false;
+            customConfirm.style.display = 'none';
+            handleConfirmation(result);
+        });
+    }
+
+    function handleConfirmation(result) {
+        if (result) {
+            // If the user confirms, redirect to a PHP script to handle the removal
+            var employeeId = document.getElementById('employeeId').value;
+            console.log("Employee ID:", employeeId); // Debugging statement
+            window.location.href = 'remove_employee.php?emp_id=' + employeeId;
+        }
+    }
+</script>
 </body>
 </html>

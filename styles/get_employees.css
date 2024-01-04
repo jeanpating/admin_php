@@ -151,10 +151,20 @@ tr:hover {
     font-weight: bold;
 }
 
-
-
 .employee-status {
     font-weight: bold;
+}
+
+.searchBackBtn {
+    padding: 10px;
+    background-color: #CD8D7A;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.searchBackBtn:hover {
+    background: #DBCC95;
 }
 
 @media (max-width: 992px) {

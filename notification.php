@@ -135,7 +135,7 @@
                         }
 
                         // Display the h2 element with name, time, and status
-                        echo '<p>' . $row['time'] . ': '. $row['name'] . ' has ' . $status . '</p    >';
+                        echo '<p>' . '<b>' . $row['time'] . '</b>' . ': '. $row['name'] . ' has ' . $status . '</p    >';
                     }
                 } else {
                     echo '<p>No notifications for today.</p>';

@@ -19,7 +19,26 @@
             <label for="searchInput">Search by Name or Employee ID:</label>
             <input type="text" class="form-control" id="searchInput" name="search" placeholder="Enter name or employee ID">
         </div>
-        <button type="submit" class="btn btn-primary">Search</button>
+        <button type="submit" class="btn btn-primary" style="
+            padding: 10px;
+            background-color: #739072;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;">
+            Search
+        </button>
+
+        <a href="admin.php" class="searchBackBtn" style="
+            padding: 10px;
+            margin-left: 15px;
+            background-color: #CD8D7A;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;">
+            Go Back
+        </a>
+
     </form>
 
     <div class="list-group">
@@ -75,7 +94,7 @@
 
                 // Fetch the attendance status for the current employee from attendancedb
                 $current_date = date("Y_m_d");
-                $sqlAttendance = "SELECT status FROM attendance WHERE name = '$employeeName' AND date = '$current_date' AND clock ='AM-TIME-IN'";
+                $sqlAttendance = "SELECT status FROM attendance WHERE name = '$employeeName' AND date = '$current_date' AND clock ='AM-TIME-IN' OR clock ='PM-TIME-IN'";
 
                 $resultAttendance = $connAttendance->query($sqlAttendance);
 

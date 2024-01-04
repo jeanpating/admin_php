@@ -84,7 +84,7 @@
                 <div class="column cardDashboard present-card">
                     <?php
                         // SQL query for attendance from attendancedb
-                        $sqlAttendance = "SELECT status, COUNT(*) as total FROM attendance WHERE date = '$current_date' and clock ='AM-TIME-IN'";
+                        $sqlAttendance = "SELECT status, COUNT(*) as total FROM attendance WHERE date = '$current_date' and clock ='AM-TIME-IN' OR clock ='PM-TIME-IN'";
                         $resultAttendance = $connAttendance->query($sqlAttendance);
 
                         if ($resultAttendance->num_rows > 0) {
@@ -100,7 +100,7 @@
                 <div class="column cardDashboard late-card">
                     <?php
                         // SQL query for attendance from attendancedb
-                        $sqlLate = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' AND clock = 'AM-TIME-IN' AND status = 'late'";
+                        $sqlLate = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' AND clock = 'AM-TIME-IN' OR clock ='PM-TIME-IN' AND status = 'late'";
                         $resultLate = $connAttendance   ->query($sqlLate);
 
                         if ($resultLate->num_rows > 0) {

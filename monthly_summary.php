@@ -22,7 +22,7 @@ $selectedMonth = isset($_GET['month']) ? $_GET['month'] : date("m");
 $selectedYear = isset($_GET['year']) ? $_GET['year'] : date("Y");
 
 // Query to get the monthly summary from the attendance table for AM-TIME-IN
-$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$selectedYear-$selectedMonth' AND clock = 'AM-TIME-IN' GROUP BY name, status";
+$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$selectedYear-$selectedMonth' AND clock = 'AM-TIME-IN' or clock ='PM-TIME-IN' GROUP BY name, status";
 $result = $conn->query($sql);
 
 if ($result === false) {
