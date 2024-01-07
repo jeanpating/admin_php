@@ -25,7 +25,7 @@
     <div class="sidebar">
         <div class="logo">
             <img src="bg/bawalogo.png" alt="Bawa Elementary School logo">
-            <h1>BAWA</h1>
+            <h1 style="color: white;">BAWA</h1>
         </div>
         <hr>
         <a href="#" id="dashboardLink"  class="fa-solid fa-gauge"> Dashboard</a>
@@ -220,6 +220,11 @@
             loadSchedule();
         });
 
+        document.getElementById('summaryLink').addEventListener('click', function () {
+            changeTitle('Summary')
+            changeTitleAndLoadSummary();
+        });
+
         document.getElementById('graphLink').addEventListener('click', function () {
             changeTitle('Graph');
         });
@@ -368,50 +373,22 @@
             xhttp.send();
         }
 
-        document.getElementById('summaryLink').addEventListener('click', function () {
-            changeTitleAndLoadSummary();
-        });
-
-        document.getElementById('summaryLink').addEventListener('click', function () {
-            changeTitleAndLoadSummary();
-        });
-
         function changeTitleAndLoadSummary() {
-            changeTitle('Summary');
+            var xhttp = new XMLHttpRequest();
 
-            // Fetch summary data using AJAX
-            var xhttpSummary = new XMLHttpRequest();
-
-            xhttpSummary.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    var summaryData = JSON.parse(this.responseText);
-                    displaySummaryData(summaryData);
-                } else if (this.readyState == 4 && this.status != 200) {
-                    console.error("AJAX Error:", this.status, this.statusText);
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var contentContainer = document.getElementById('contentContainer');
+                        contentContainer.innerHTML += this.responseText;
+                    } else {
+                        console.error("AJAX Error:", this.status, this.statusText);
+                    }
                 }
             };
 
-            xhttpSummary.open("GET", "get_summary.php", true);
-            xhttpSummary.send();
-        }
-
-        function displaySummaryData(data) {
-            // Display summary data as needed
-            var contentContainer = document.getElementById('contentContainer');
-
-            // Clear the content container
-            contentContainer.innerHTML = '';
-
-            // You can handle the data and display it as you see fit for your summary
-            // For example, you can create HTML elements and append them to contentContainer
-            // based on the structure of your summary data.
-
-            // Example: Display summary data in a div
-            var summaryDiv = document.createElement('div');
-            summaryDiv.innerHTML = '<h2>Summary Data</h2>' + JSON.stringify(data);
-
-            // Append the summaryDiv to the content container
-            contentContainer.appendChild(summaryDiv);
+            xhttp.open("GET", "get_summary.php", true);
+            xhttp.send();
         }
 
         document.getElementById('graphLink').addEventListener('click', function () {

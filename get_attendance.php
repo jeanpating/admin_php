@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             $tableHTML .= '</table>';
             $tableHTML .= '</div>';
         } else {
-            echo 'No data found in the attendance table for the selected date.';
+            echo '<script>showModal();</script>';
         }
     }
     // Close the database connection
@@ -77,16 +77,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
         }
 
         form {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 95%;
+            margin: 20px;
+            text-align: left;
         }
 
         label {
-            display: block;
-            margin-bottom: 8px;
+            margin-right: 10px;
+        }
+
+        select, input {
+            margin-right: 10px;
         }
 
         input[type="date"],
@@ -111,7 +111,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             background-color: #86A789;
         }
 
+
         .modern-table {
+            margin-left: auto;
+            margin-right: auto;
+            width: 70%;
+            font-size: 20px;
+            border-collapse: collapse;
+            
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: transform 0.3s ease-in-out;
+        }
+        .modern-table th {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .modern-table td {
+            padding: 10px;
+            background-color: #F1E4C3;
+            color: #191919;
+        }
+        .modern-table:hover {
+            background-color: #f5f5f5;
+            transform: scale(1.05);
+        }
+
+
+
+
+        /* .modern-table {
             width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
@@ -134,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
 
         .modern-table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
-        }
+        } */
 
         a {
             text-decoration: none;
@@ -153,9 +183,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
         .back-button:hover {
             background: #DBCC95;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
+    <!-- Modal for no data found -->
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="noDataModal">
+        <p>No data found in the attendance table for the selected date.</p>
+        <button onclick="closeModal()">OK</button>
+    </div>
     <!-- Form for selecting a date -->
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         Select Date: <input type="date" name="selected_date">
@@ -173,7 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     
         if ($selectedDate !== null) {
             // Display the selected date in a paragraph
-            echo "<p>Selected Date: " . htmlspecialchars($selectedDate) . "</p>";
+            echo "<p style='margin-left: 40px;'>Selected Date: " . '<b>' .htmlspecialchars($selectedDate) . '</b>' . "</p>";
         } else {
             echo "<p>No date selected.</p>";
         }
@@ -181,45 +239,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     echo $tableHTML; 
     ?>
 
-    <!-- Form for selecting a date / Download Monthly Summary -->
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        Select Month and Year:
-        <select name="selected_month">
-            <?php
-            $months = array("01" => "January", "02" => "February", "03" => "March", "04" => "April", "05" => "May", "06" => "June", "07" => "July", "08" => "August", "09" => "September", "10" => "October", "11" => "November", "12" => "December");
+    <script>
+        // JavaScript function to show the modal
+        function showModal() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('noDataModal').style.display = 'block';
+        }
 
-            foreach ($months as $monthNum => $monthName) {
-                echo "<option value=\"$monthNum\">$monthName</option>";
-            }
-            ?>
-        </select>
-
-        <select name="selected_year">
-            <?php
-            $currentYear = date("Y");
-            $startYear = $currentYear - 5;
-
-            for ($year = $startYear; $year <= $currentYear; $year++) {
-                echo "<option value=\"$year\">$year</option>";
-            }
-            ?>
-        </select>
-
-        <input type="submit" value="View Monthly Summary" name="submitMonthlySummary">
-    </form>
-
-    <?php
-    // Handle form submission for View Monthly Summary
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitMonthlySummary"])) {
-        // Get the selected month and year from the form
-        $selectedMonth = $_POST["selected_month"];
-        $selectedYear = $_POST["selected_year"];
-
-        // Redirect to monthly_summary.php with selected parameters
-        header("Location: monthly_summary.php?month=$selectedMonth&year=$selectedYear");
-        exit();
-    }
-    ?>
+        // JavaScript function to close the modal
+        function closeModal() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('noDataModal').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>
