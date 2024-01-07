@@ -8,6 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <link rel="stylesheet" type="text/css" href="styles/admin_styles.css">
     <link rel="stylesheet" href="icons/fontawesome-free-6.5.1-web/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
 
@@ -24,13 +25,14 @@
     <div class="sidebar">
         <div class="logo">
             <img src="bg/bawalogo.png" alt="Bawa Elementary School logo">
-            <h2>BAWA</h2>
+            <h1>BAWA</h1>
         </div>
         <hr>
         <a href="#" id="dashboardLink"  class="fa-solid fa-gauge"> Dashboard</a>
         <a href="#" id="attendanceLink" class="fa-solid fa-clipboard-user"> Attendance</a>
         <a href="#" id="employeesLink" class="fa-solid fa-users"> Employees</a>
         <a href="#" id="scheduleLink" class="fa-solid fa-calendar-days"> Schedule</a>
+        <a href="#" id="summaryLink" class="fa-solid fa-check-to-slot"> Summary</a>
         <a href="#" id="graphLink" class="fa-solid fa-chart-simple"> Graph</a>
 
         <br><br><br><br>
@@ -84,7 +86,7 @@
                 <div class="column cardDashboard present-card">
                     <?php
                         // SQL query for attendance from attendancedb
-                        $sqlAttendance = "SELECT status, COUNT(*) as total FROM attendance WHERE date = '$current_date' and clock ='AM-TIME-IN' OR clock ='PM-TIME-IN'";
+                        $sqlAttendance = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' and (clock ='AM-TIME-IN' OR 'PM-TIME-IN')";
                         $resultAttendance = $connAttendance->query($sqlAttendance);
 
                         if ($resultAttendance->num_rows > 0) {
@@ -100,7 +102,7 @@
                 <div class="column cardDashboard late-card">
                     <?php
                         // SQL query for attendance from attendancedb
-                        $sqlLate = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' AND clock = 'AM-TIME-IN' OR clock ='PM-TIME-IN' AND status = 'late'";
+                        $sqlLate = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' AND (clock = 'AM-TIME-IN' OR 'PM-TIME-IN') AND status = 'late'";
                         $resultLate = $connAttendance   ->query($sqlLate);
 
                         if ($resultLate->num_rows > 0) {
@@ -117,8 +119,33 @@
                 </div>     
             </div>
         <div>
+
         <hr>
+
         <h3>Recent attendances</h3>
+        <div id="current_date"></div>
+
+        <script>
+            // Function to refresh the page
+            function refreshPage() {
+                // Set the current date
+                var currentDate = new Date();
+                document.getElementById("current_date").innerHTML = currentDate;
+                
+                // Use jQuery AJAX to load only the necessary part of the page
+                $.ajax({
+                    url: 'partial-content.html', // Replace with the actual URL of the partial content
+                    success: function(data) {
+                        // Replace the content of a specific element with the new data
+                        $('#content-container').html($(data).find('#content-container').html());
+                    }
+                });
+            }
+
+            // Refresh the page every second
+            setInterval(refreshPage, 1000);
+        </script>
+
         <div class="attendance-table-card" style="float: left; width: 50%;">
             <?php
                 // Database connection parameters
@@ -212,7 +239,7 @@
             var additionalText = '';
 
             if (title === 'Attendance') {
-                additionalText = 'Attendance List. ' + "(" + dayOfWeek + ", " + formattedDate + ")";
+                //additionalText = 'Attendance List. ' + "(" + dayOfWeek + ", " + formattedDate + ")";
             }
 
             document.getElementById('contentContainer').innerHTML = '<h1>' + title + '</h1>' + '<p>' + additionalText + '</p>';
@@ -339,6 +366,52 @@
 
             xhttp.open("GET", "get_employee_schedule.php?employee_id=" + employeeId, true);
             xhttp.send();
+        }
+
+        document.getElementById('summaryLink').addEventListener('click', function () {
+            changeTitleAndLoadSummary();
+        });
+
+        document.getElementById('summaryLink').addEventListener('click', function () {
+            changeTitleAndLoadSummary();
+        });
+
+        function changeTitleAndLoadSummary() {
+            changeTitle('Summary');
+
+            // Fetch summary data using AJAX
+            var xhttpSummary = new XMLHttpRequest();
+
+            xhttpSummary.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var summaryData = JSON.parse(this.responseText);
+                    displaySummaryData(summaryData);
+                } else if (this.readyState == 4 && this.status != 200) {
+                    console.error("AJAX Error:", this.status, this.statusText);
+                }
+            };
+
+            xhttpSummary.open("GET", "get_summary.php", true);
+            xhttpSummary.send();
+        }
+
+        function displaySummaryData(data) {
+            // Display summary data as needed
+            var contentContainer = document.getElementById('contentContainer');
+
+            // Clear the content container
+            contentContainer.innerHTML = '';
+
+            // You can handle the data and display it as you see fit for your summary
+            // For example, you can create HTML elements and append them to contentContainer
+            // based on the structure of your summary data.
+
+            // Example: Display summary data in a div
+            var summaryDiv = document.createElement('div');
+            summaryDiv.innerHTML = '<h2>Summary Data</h2>' + JSON.stringify(data);
+
+            // Append the summaryDiv to the content container
+            contentContainer.appendChild(summaryDiv);
         }
 
         document.getElementById('graphLink').addEventListener('click', function () {

@@ -29,7 +29,7 @@ if (!$result) {
 }
 
 // Define all possible statuses
-$allStatuses = ['on-time', 'early', 'late', 'absent', 'on-official business', 'perfect attendance'];
+$allStatuses = ['on-time', 'early', 'late', 'absent', 'on-official business', 'on-leave'];
 
 // Fetch the data and convert it to JSON
 $data = mysqli_fetch_all($result, MYSQLI_ASSOC);

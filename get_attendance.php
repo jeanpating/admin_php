@@ -33,7 +33,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             $tableHTML .= '<tbody>';
 
             while ($row = $result->fetch_assoc()) {
-                $backgroundColor = ($row['status'] == 'Early') ? '#1fab36' : (($row['status'] == 'Late') ? '#d9a71e' : '');
+                $backgroundColor = '';
+
+                if ($row['status'] == 'Early') {
+                    $backgroundColor = '#1fab36'; // Green color for Early
+                } elseif ($row['status'] == 'Late') {
+                    $backgroundColor = '#d9a71e'; // Orange color for Late
+                } elseif ($row['status'] == 'Absent') {
+                    $backgroundColor = 'red'; // Red color for Absent
+                } elseif ($row['status'] == 'On-Official Business') {
+                    $backgroundColor = '#7FC7D9'; // Light blue color for On-Official Business
+                } elseif ($row['status'] == 'On-Leave') {
+                    $backgroundColor = '#EEC759'; // Light yellow color for On-Leave
+                }
+
 
                 $tableHTML .= '<tr>';
                 $tableHTML .= '<td>' . $row['name'] . '</td>';
@@ -68,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            width: 300px;
+            width: 95%;
         }
 
         label {
@@ -151,7 +164,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     </form>
 
     <!-- Display the table HTML content -->
-    <?php echo $tableHTML; ?>
+    <hr>
+    <?php 
+    
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
+        // Check if the form is submitted and 'submitAttendance' is set
+        $selectedDate = isset($_POST["selected_date"]) ? $_POST["selected_date"] : null;
+    
+        if ($selectedDate !== null) {
+            // Display the selected date in a paragraph
+            echo "<p>Selected Date: " . htmlspecialchars($selectedDate) . "</p>";
+        } else {
+            echo "<p>No date selected.</p>";
+        }
+    }
+    echo $tableHTML; 
+    ?>
 
     <!-- Form for selecting a date / Download Monthly Summary -->
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">

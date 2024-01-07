@@ -21,8 +21,8 @@ if ($conn->connect_error) {
 $selectedMonth = isset($_GET['month']) ? $_GET['month'] : date("m");
 $selectedYear = isset($_GET['year']) ? $_GET['year'] : date("Y");
 
-// Query to get the monthly summary from the attendance table for AM-TIME-IN
-$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$selectedYear-$selectedMonth' AND clock = 'AM-TIME-IN' or clock ='PM-TIME-IN' GROUP BY name, status";
+// Query to get the monthly summary from the attendance table for AM-TIME-IN and PM-TIME-IN
+$sql = "SELECT name, status, COUNT(*) as total FROM attendance WHERE DATE_FORMAT(date, '%Y-%m') = '$selectedYear-$selectedMonth' AND (clock ='AM-TIME-IN' OR clock ='PM-TIME-IN' OR status = 'On-Leave') GROUP BY name, status";
 $result = $conn->query($sql);
 
 if ($result === false) {
@@ -40,7 +40,8 @@ if ($result === false) {
                 'early' => 0,
                 'late' => 0,
                 'absent' => 0,
-                'on_official_business' => 0,
+                'on-official business' => 0,
+                'on-leave' => 0,
                 'perfect_attendance' => 'NO'
             );
         }
@@ -74,8 +75,8 @@ if ($result === false) {
         $pdf->SetDrawColor(0, 0, 0);
         $pdf->SetLineWidth(0.3);
 
-        $header = array('Name', 'On-Time', 'Early', 'Late', 'Absent', 'On-Official Business', 'Perfect Attendance');
-        $w = array(40, 20, 20, 20, 20, 30, 40);
+        $header = array('Name', 'On-Time', 'Early', 'Late', 'Absent', 'On-Official Business', 'On-Leave', 'Perfect Attendance');
+        $w = array(40, 18, 18, 18, 18, 30, 18, 28);
         for ($i = 0; $i < count($header); ++$i) {
             $pdf->Cell($w[$i], 7, $header[$i], 1, 0, 'C', 1);
         }
@@ -87,12 +88,13 @@ if ($result === false) {
             $pdf->Cell($w[2], 6, $statusData['early'], 'LR');
             $pdf->Cell($w[3], 6, $statusData['late'], 'LR');
             $pdf->Cell($w[4], 6, $statusData['absent'], 'LR');
-            $pdf->Cell($w[5], 6, $statusData['on_official_business'], 'LR');
+            $pdf->Cell($w[5], 6, $statusData['on-official business'], 'LR');
+            $pdf->Cell($w[6], 6, $statusData['on-leave'], 'LR');
 
             // Check if the employee has no absences for perfect attendance
             $perfectAttendance = ($statusData['absent'] == 0) ? 'YES' : 'NO';
 
-            $pdf->Cell($w[6], 6, $perfectAttendance, 'LR', 1, 'R');
+            $pdf->Cell($w[7], 6, $perfectAttendance, 'LR', 1, 'R');
         }
 
         // Add a border below the table

@@ -72,6 +72,7 @@
             status VARCHAR(255),
             clock VARCHAR(255)
         )";
+
         $result = $connAttendance->query($create_table_query);
 
         // Fetch employees from the employees database
@@ -94,14 +95,31 @@
 
                 // Fetch the attendance status for the current employee from attendancedb
                 $current_date = date("Y_m_d");
-                $sqlAttendance = "SELECT status FROM attendance WHERE name = '$employeeName' AND date = '$current_date' AND clock ='AM-TIME-IN' OR clock ='PM-TIME-IN'";
+                $sqlAttendance = "SELECT status FROM attendance WHERE name = '$employeeName' AND date = '$current_date' AND clock ='AM-TIME-IN'";
 
                 $resultAttendance = $connAttendance->query($sqlAttendance);
 
                 if ($resultAttendance && $resultAttendance->num_rows > 0) {
                     $rowAttendance = $resultAttendance->fetch_assoc();
                     $attendanceStatus = $rowAttendance['status'];
-                    $statusColor = ($attendanceStatus === 'Late') ? '#d9a71e' : (($attendanceStatus === 'Early') ? '#1fab36' : '');
+
+                    // Define custom status colors
+                    $customStatusColors = array(
+                        'On-Official Business' => '#7FC7D9',
+                        'On-Leave' => '#EEC759',
+                        'Absent' => 'red'
+                    );
+
+                    // Set default color
+                    $statusColor = '';
+
+                    // Check if the attendance status is a custom status
+                    if (isset($customStatusColors[$attendanceStatus])) {
+                        $statusColor = $customStatusColors[$attendanceStatus];
+                    } else {
+                        // Use default logic for 'Late' and 'Early'
+                        $statusColor = ($attendanceStatus === 'Late') ? '#d9a71e' : (($attendanceStatus === 'Early') ? '#1fab36' : '');
+                    }
                 } else {
                     // If attendance status is not available, set defaults
                     $attendanceStatus = '';
@@ -120,16 +138,16 @@
                 echo "</a>";
                 // Display buttons for Absent and On-Official-Business when the attendance status is empty
                 if (empty($attendanceStatus)) {
-                    echo "<p class='employee-status' style='color: #ff0000'><small><b>Status: Not Available</b></small></p>";
-                    echo "<div class='attendance-buttons'>"; 
+                    echo "<p class='employee-status' style='color: #ff0000; text-align: right;'><small><b>Status: Not Available</b></small></p>";
+                    // echo "<div class='attendance-buttons'>"; 
                     // Use a span to wrap the buttons, preventing the default behavior of the <a> tag
-                    echo "<span onclick='event.stopPropagation();'>";
-                    echo "<button class='absent-button' onclick='markAttendance(\"Absent\", \"$employeeName\")'>Absent</button>";
-                    echo "<button class='on-business-button' onclick='markAttendance(\"On-Official-Business\", \"$employeeName\")'>On-Official Business</button>";
-                    echo "</span>";
-                    echo "</div>";
+                    // echo "<span onclick='event.stopPropagation();'>";
+                    // echo "<button class='absent-button' onclick='markAttendance(\"Absent\", \"$employeeName\")'>Absent</button>";
+                    // echo "<button class='on-business-button' onclick='markAttendance(\"On-Official-Business\", \"$employeeName\")'>On-Official Business</button>";
+                    // echo "</span>";
+                    // echo "</div>";
                 } else {
-                    echo "<p class='employee-status' style='color: $statusColor;'><small><b>Status: $attendanceStatus</b></small></p>";
+                    echo "<p class='employee-status' style='color: $statusColor; text-align: right;'><small><b>Status: $attendanceStatus</b></small></p>";
                 }
                 echo "</div>";
             }
@@ -144,28 +162,6 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
-<script>
-    function markAttendance(status, employeeName) {
-        $.ajax({
-            type: "POST",
-            url: "mark_attendance.php", // Create a separate PHP file for handling the update
-            data: { 
-                status: status,
-                employeeName: employeeName
-            },
-            success: function(response) {
-                // Handle the response (if needed)
-                console.log(response);
-            },
-            error: function(error) {
-                // Handle errors (if needed)
-                console.error(error);
-            }
-        });
-    }
-</script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 </body>
 </html>

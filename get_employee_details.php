@@ -186,6 +186,63 @@
             border-radius: 5px;
             cursor: pointer;
         }
+        #custom-confirm-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        #confirm-yes, #confirm-no {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        #confirm-yes {
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 10px;
+        }
+
+        #confirm-no {
+            background-color: red;
+            color: #fff;
+            border-radius: 10px;
+        }
+        button {
+            border: none;
+            
+        }
+        .markAbsent {
+            background-color: red;
+        }
+        .markOnOfficialBusiness {
+            background-color: #7FC7D9;
+        }
+        .markOnLeave {
+            background-color: #EEC759;
+        }
+        .markAbsent, .markOnOfficialBusiness, .markOnLeave {
+            margin-right: 10px;
+            padding: 10px;
+            width: 100%;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+        .markAbsent:hover, .markOnOfficialBusiness:hover, .markOnLeave:hover {
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
@@ -344,10 +401,30 @@ if ($result && $result->num_rows > 0) {
     echo "<p>No details found for the employee.</p>";
 }
 
-
-
 $conn->close();
 ?>
+
+<hr>
+
+<div id="custom-confirm-modal">
+    <p id="confirm-message"></p>
+    <button id="confirm-yes">Yes</button>
+    <button id="confirm-no">No</button>
+</div>
+
+<p>Mark employee as</p>
+    <!-- mark attendances -->
+    <div class="button-container">
+        <button class='markOnOfficialBusiness'>
+            On-Official Business
+        </button>
+        <button class='markOnLeave'>
+            On-Leave
+        </button>
+        <button class='markAbsent'>
+            Absent
+        </button>
+    </div>
 
 <hr>
     <!-- Back and Edit buttons -->
@@ -364,6 +441,53 @@ $conn->close();
     </div>
 
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.markOnOfficialBusiness, .markOnLeave, .markAbsent').on('click', function () {
+            var status = $(this).text();
+            showCustomConfirm('Are you sure you want to mark attendance as ' + status + '?', function () {
+                markAttendance(status);
+            });
+        });
+
+        function showCustomConfirm(message, callback) {
+            $('#confirm-message').text(message);
+            $('#custom-confirm-modal').show();
+
+            $('#confirm-yes').on('click', function () {
+                callback();
+                $('#custom-confirm-modal').hide();
+            });
+
+            $('#confirm-no').on('click', function () {
+                console.log('Attendance marking canceled.');
+                $('#custom-confirm-modal').hide();
+            });
+        }
+
+        function markAttendance(status) {
+            var empId = <?php echo $employeeId; ?>;
+            var employeeName = <?php echo json_encode($employeeName); ?>;
+            var url = 'mark_attendance.php';
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: { emp_id: empId, status: status, employee_name: employeeName },
+                success: function (response) {
+                    console.log(response);
+                    // Handle success response if needed
+                },
+                error: function (error) {
+                    console.error('Error marking attendance: ' + error);
+                }
+            });
+        }
+    });
+</script>
+
 <div class="card employee-dtr">
 <?php
 
@@ -449,8 +573,8 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         $pmTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
         $amTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
         $pmTimeIn = array_fill(1, date('t', strtotime($currentDate)), '');
-        $underTimeHours = array_fill(1, date('t', strtotime($currentDate)), 0);
-        $underTimeMinutes = array_fill(1, date('t', strtotime($currentDate)), 0);
+        $amStatus = array_fill(1, date('t', strtotime($currentDate)), '');
+        $pmStatus = array_fill(1, date('t', strtotime($currentDate)), '');
 
         // Loop through the attendance records
         while ($rowAttendance = $resultAttendance->fetch_assoc()) {
@@ -462,12 +586,14 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
             switch ($rowAttendance['clock']) {
                 case 'AM-TIME-IN':
                     $recordType = 'amTimeIn';
+                    $amStatus[$day] = $rowAttendance['status'];
                     break;
                 case 'AM-TIME-OUT':
                     $recordType = 'amTimeOut';
                     break;
                 case 'PM-TIME-IN':
                     $recordType = 'pmTimeIn';
+                    $pmStatus[$day] = $rowAttendance['status'];
                     break;
                 case 'PM-TIME-OUT':
                     $recordType = 'pmTimeOut';
@@ -492,15 +618,8 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
                 $intervalAM = $dateTimeAMOut->diff($dateTimeAMIn);
                 $intervalPM = $dateTimePMOut->diff($dateTimePMIn);
 
-                // Calculate total hours and minutes for underTime
-                $underTimeHours[$day] = $intervalAM->h + $intervalPM->h;
-                $underTimeMinutes[$day] = $intervalAM->i + $intervalPM->i;
-
-                // Adjust hours if minutes exceed 60
-                if ($underTimeMinutes[$day] >= 60) {
-                    $underTimeHours[$day] += floor($underTimeMinutes[$day] / 60);
-                    $underTimeMinutes[$day] %= 60;
-                }
+                $status[$day] = ($rowAttendance['clock'] === 'AM-TIME-IN' || $rowAttendance['clock'] === 'AM-TIME-OUT') ? $amStatus[$day] : $pmStatus[$day];
+    
             }
         }
 
@@ -510,19 +629,20 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
 
         echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
         echo "<table border='1'>";
-        echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>UNDER TIME (HOURS)</th><th>UNDER TIME (MINUTES)</th></tr>";
+        echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>AM-STATUS</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>PM-STATUS</th></tr>";
 
         foreach (range(1, date('t', strtotime($currentDate))) as $day) {
             echo "<tr>";
             echo "<td>$day</td>";
-            echo "<td>{$amTimeIn[$day]}</td>";
-            echo "<td>{$amTimeOut[$day]}</td>";
-            echo "<td>{$pmTimeIn[$day]}</td>";
-            echo "<td>{$pmTimeOut[$day]}</td>";
-            echo "<td>{$underTimeHours[$day]}</td>";
-            echo "<td>{$underTimeMinutes[$day]}</td>";
+            echo "<td>" . (isset($amTimeIn[$day]) ? $amTimeIn[$day] : '') . "</td>";
+            echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
+            echo "<td>" . (isset($amStatus[$day]) ? $amStatus[$day] : '') . "</td>";
+            echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
+            echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
+            echo "<td>" . (isset($pmStatus[$day]) ? $pmStatus[$day] : '') . "</td>";
             echo "</tr>";
         }
+        
 
         echo "</table>";
 

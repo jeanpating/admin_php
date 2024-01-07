@@ -121,25 +121,27 @@
                     $pmTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
                     $amTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
                     $pmTimeIn = array_fill(1, date('t', strtotime($currentDate)), '');
-                    $underTimeHours = array_fill(1, date('t', strtotime($currentDate)), 0);
-                    $underTimeMinutes = array_fill(1, date('t', strtotime($currentDate)), 0);
-
+                    $amStatus = array_fill(1, date('t', strtotime($currentDate)), '');
+                    $pmStatus = array_fill(1, date('t', strtotime($currentDate)), '');
+            
                     // Loop through the attendance records
                     while ($rowAttendance = $resultAttendance->fetch_assoc()) {
                         // Extract day of the month from the date
                         $day = date('j', strtotime($rowAttendance['date']));
-
+            
                         // Determine the type of record based on the clock value
                         $recordType = '';
                         switch ($rowAttendance['clock']) {
                             case 'AM-TIME-IN':
                                 $recordType = 'amTimeIn';
+                                $amStatus[$day] = $rowAttendance['status'];
                                 break;
                             case 'AM-TIME-OUT':
                                 $recordType = 'amTimeOut';
                                 break;
                             case 'PM-TIME-IN':
                                 $recordType = 'pmTimeIn';
+                                $pmStatus[$day] = $rowAttendance['status'];
                                 break;
                             case 'PM-TIME-OUT':
                                 $recordType = 'pmTimeOut';
@@ -148,54 +150,48 @@
                                 // Handle unexpected clock values if needed
                                 break;
                         }
-
+            
                         // Store details in the corresponding array
                         if (!empty($recordType)) {
                             ${$recordType}[$day] = date('H:i:s', strtotime($rowAttendance['time']));
                         }
-
+            
                         // Calculate Under Time
                         if (!empty($amTimeIn[$day]) && !empty($amTimeOut[$day]) && !empty($pmTimeIn[$day]) && !empty($pmTimeOut[$day])) {
                             $dateTimeAMIn = new DateTime($amTimeIn[$day]);
                             $dateTimeAMOut = new DateTime($amTimeOut[$day]);
                             $dateTimePMIn = new DateTime($pmTimeIn[$day]);
                             $dateTimePMOut = new DateTime($pmTimeOut[$day]);
-
+            
                             $intervalAM = $dateTimeAMOut->diff($dateTimeAMIn);
                             $intervalPM = $dateTimePMOut->diff($dateTimePMIn);
-
-                            // Calculate total hours and minutes for underTime
-                            $underTimeHours[$day] = $intervalAM->h + $intervalPM->h;
-                            $underTimeMinutes[$day] = $intervalAM->i + $intervalPM->i;
-
-                            // Adjust hours if minutes exceed 60
-                            if ($underTimeMinutes[$day] >= 60) {
-                                $underTimeHours[$day] += floor($underTimeMinutes[$day] / 60);
-                                $underTimeMinutes[$day] %= 60;
-                            }
+            
+                            $status[$day] = ($rowAttendance['clock'] === 'AM-TIME-IN' || $rowAttendance['clock'] === 'AM-TIME-OUT') ? $amStatus[$day] : $pmStatus[$day];
+                
                         }
                     }
-
+            
                     // Display attendance records in a table format
                     $currentMonth = date("F");
                     $currentYear = date("Y");
-
-                    echo "<h2>Attendance Records ($currentMonth, $currentYear)</h2>";
+            
+                    echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
                     echo "<table border='1'>";
-                    echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>UNDER TIME (HOURS)</th><th>UNDER TIME (MINUTES)</th></tr>";
-
+                    echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>AM-STATUS</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>PM-STATUS</th></tr>";
+            
                     foreach (range(1, date('t', strtotime($currentDate))) as $day) {
                         echo "<tr>";
                         echo "<td>$day</td>";
-                        echo "<td>{$amTimeIn[$day]}</td>";
-                        echo "<td>{$amTimeOut[$day]}</td>";
-                        echo "<td>{$pmTimeIn[$day]}</td>";
-                        echo "<td>{$pmTimeOut[$day]}</td>";
-                        echo "<td>{$underTimeHours[$day]}</td>";
-                        echo "<td>{$underTimeMinutes[$day]}</td>";
+                        echo "<td>" . (isset($amTimeIn[$day]) ? $amTimeIn[$day] : '') . "</td>";
+                        echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
+                        echo "<td>" . (isset($amStatus[$day]) ? $amStatus[$day] : '') . "</td>";
+                        echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
+                        echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
+                        echo "<td>" . (isset($pmStatus[$day]) ? $pmStatus[$day] : '') . "</td>";
                         echo "</tr>";
                     }
-
+                    
+            
                     echo "</table>";
 
                 } else {
@@ -216,9 +212,6 @@
 
                 // Add a page
                 $pdf->AddPage();
-
-                // Fetch employee details and generate HTML content
-                // ... your existing code ...
 
                 // Output HTML content to PDF
                 $html = ob_get_clean(); // Get the HTML content from the output buffer
