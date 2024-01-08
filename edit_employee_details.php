@@ -5,71 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Employee</title>
-    
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #FFFFEC;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-
-        h2 {
-            margin-top: 0;
-            text-align: center;
-        }
-
-        form {
-            display: grid;
-            gap: 20px;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 100%;
-        }
-
-        input[type="submit"] {
-            background-color: #86A789;
-            color: white;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        .back-link {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .back-link a {
-            text-decoration: none;
-            background-color: #CD8D7A;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-        .back-link a:hover {
-            background: #DBCC95;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="styles/edit_employee_details.css">
 </head>
 
 <body>

@@ -1,0 +1,237 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background-color: #FFFFEC;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.card {
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin: 20px;
+}
+
+.employee-details-container {
+    text-align: center;
+}
+
+.employee-picture-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.employee-picture {
+    border-radius: 50%;
+    max-width: 150px;
+    border: 5px solid #fff;
+}
+
+.employee-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.employee-name-border {
+    border-bottom: 2px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.employee-content-container {
+    display: flex;
+    align-items: center;
+}
+
+.change-picture-form {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.file-label,
+.change-picture-button {
+    padding: 10px;
+    background-color: #739072;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.change-picture-button:hover {
+    background-color: #86A789;
+}
+
+.file-input {
+    display: none;
+}
+
+.employee-details {
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+.employee-details th,
+.employee-details td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.attendance-table {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.back-button {
+    padding: 10px;
+    background-color: #CD8D7A;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.back-button:hover {
+    background: #DBCC95;
+}
+.edit-button {
+    padding: 10px;
+    background-color: #739072;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.edit-button:hover {
+    background-color: #86A789;
+}
+.custom-confirm {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.confirm-message {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.confirm-buttons {
+    text-align: center;
+}
+
+.confirm-button {
+    padding: 10px;
+    margin: 0 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-button.cancel {
+    background-color: #739072;
+}
+.remove-button {
+    padding: 10px;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+#custom-confirm-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+#confirm-yes, #confirm-no {
+    margin-top: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    text-align: center;
+}
+
+#confirm-yes {
+    background-color: #4CAF50;
+    color: #fff;
+    border-radius: 10px;
+}
+
+#confirm-no {
+    background-color: red;
+    color: #fff;
+    border-radius: 10px;
+}
+button {
+    border: none;
+    
+}
+.markAbsent {
+    background-color: red;
+}
+.markOnOfficialBusiness {
+    background-color: #7FC7D9;
+}
+.markOnLeave {
+    background-color: #EEC759;
+}
+.markAbsent, .markOnOfficialBusiness, .markOnLeave {
+    margin-right: 10px;
+    padding: 10px;
+    width: 100%;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+.markAbsent:hover, .markOnOfficialBusiness:hover, .markOnLeave:hover {
+    transform: scale(1.05);
+}
