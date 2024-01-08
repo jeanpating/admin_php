@@ -95,7 +95,7 @@ function handlePictureChange($conn) {
 
         .employee-picture {
             border-radius: 50%;
-            max-width: 200px;
+            max-width: 150px;
             border: 5px solid #fff;
         }
 

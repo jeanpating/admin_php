@@ -122,8 +122,19 @@
 
         <hr>
 
-        <h3>Recent attendances</h3>
-        <div id="current_date"></div>
+        <div id="current_date" 
+        style="font-size: 24px; 
+        color: #163020; 
+        font-weight: bold; 
+        background-color: #C3E2C2; 
+        text-align: center;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+        "></div>
 
         <script>
             // Function to refresh the page
@@ -146,6 +157,7 @@
             setInterval(refreshPage, 1000);
         </script>
 
+        <h3>Recent attendances</h3>
         <div class="attendance-table-card" style="float: left; width: 50%;">
             <?php
                 // Database connection parameters
