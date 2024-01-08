@@ -2,7 +2,6 @@
 <?php
 // get_graph.php
 
-// Replace with your actual database connection details
 $servername = "localhost";
 $username = "root";
 $password = "";
