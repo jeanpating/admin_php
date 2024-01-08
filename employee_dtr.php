@@ -220,7 +220,7 @@
                 $pdf->writeHTML($html, true, false, true, false, '');
 
                 // Close and output PDF
-                $pdf->Output('Employee_Daily_Time_Record.pdf', 'D'); // D for download
+                $pdf->Output($employeeName. '_Employee_Daily_Time_Record.pdf', 'D'); // D for download
 
                 $connEmployees->close();
                 $connAttendance->close();

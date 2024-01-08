@@ -101,7 +101,7 @@ if ($result === false) {
         $pdf->Cell(array_sum($w), 0, '', 'T');
     }
 
-    $pdf->Output('monthly_summary.pdf', 'D');
+    $pdf->Output($selectedYear . '_' . $selectedMonth . '_monthly_summary.pdf', 'D');
 }
 
 $conn->close();
