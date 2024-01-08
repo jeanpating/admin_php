@@ -157,7 +157,7 @@
             setInterval(refreshPage, 1000);
         </script>
 
-        <h3>Recent attendances</h3>
+        <h3>Recent Time-ins</h3>
         <div class="attendance-table-card" style="float: left; width: 50%;">
             <?php
                 // Database connection parameters
@@ -174,7 +174,7 @@
                 }
 
                 // SQL query to fetch attendance data
-                $sqlAttendanceTable = "SELECT name, time FROM attendance WHERE date = '$current_date'";
+                $sqlAttendanceTable = "SELECT name, time FROM attendance WHERE date = '$current_date' and clock='AM-TIME-IN'";
                 $resultAttendanceTable = $connAttendance->query($sqlAttendanceTable);
 
                 if ($resultAttendanceTable->num_rows > 0) {
