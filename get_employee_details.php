@@ -1,3 +1,54 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "employeesdb";
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch employee details
+$employeeId = isset($_GET['emp_id']) ? $_GET['emp_id'] : null;
+$employeeId = filter_var($employeeId, FILTER_VALIDATE_INT);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    handlePictureChange($conn);
+}
+
+function handlePictureChange($conn) {
+    $newPicture = $_FILES['new_picture'];
+
+    // Check if a new picture was uploaded
+    if ($newPicture['error'] === UPLOAD_ERR_OK) {
+        $tempFilePath = $newPicture['tmp_name'];
+        $newPicturePath = "profilepics/" . $newPicture['name']; // Modify the path as needed
+
+        // Move the uploaded file to the desired location
+        move_uploaded_file($tempFilePath, $newPicturePath);
+
+        // Update the picture path in the database
+        $employeeId = $_GET['emp_id'];
+        $sql = "UPDATE employees SET picture_path = '$newPicturePath' WHERE emp_id = $employeeId";
+
+        // Perform the update
+        if ($conn->query($sql) === TRUE) {
+            // Reload the page to reflect the changes
+            header("Location: {$_SERVER['PHP_SELF']}?emp_id=$employeeId");
+            exit();
+        } else {
+            echo "Error updating picture: " . $conn->error;
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -250,57 +301,8 @@
 
 <div class="container">
 <div class="card employee-info">
+    
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "employeesdb";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Fetch employee details
-$employeeId = isset($_GET['emp_id']) ? $_GET['emp_id'] : null;
-$employeeId = filter_var($employeeId, FILTER_VALIDATE_INT);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    handlePictureChange($conn);
-}
-
-function handlePictureChange($conn) {
-    $newPicture = $_FILES['new_picture'];
-
-    // Check if a new picture was uploaded
-    if ($newPicture['error'] === UPLOAD_ERR_OK) {
-        $tempFilePath = $newPicture['tmp_name'];
-        $newPicturePath = "profilepics/" . $newPicture['name']; // Modify the path as needed
-
-        // Move the uploaded file to the desired location
-        move_uploaded_file($tempFilePath, $newPicturePath);
-
-        // Update the picture path in the database
-        $employeeId = $_GET['emp_id'];
-        $sql = "UPDATE employees SET picture_path = '$newPicturePath' WHERE emp_id = $employeeId";
-
-        // Perform the update
-        if ($conn->query($sql) === TRUE) {
-            // Reload the page to reflect the changes
-            header("Location: {$_SERVER['PHP_SELF']}?emp_id=$employeeId");
-            exit();
-        } else {
-            echo "Error updating picture: " . $conn->error;
-        }
-    }
-}
-
 if ($employeeId === false) {
     die("Invalid employee ID");
 }
