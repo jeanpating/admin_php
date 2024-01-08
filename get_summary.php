@@ -70,7 +70,7 @@
             SUM(CASE WHEN status = 'On-Leave' THEN 1 ELSE 0 END) AS OnLeave
         FROM attendance 
         WHERE clock ='AM-TIME-IN'
-        OR 'PM-TIME-IN'
+        OR clock='PM-TIME-IN'
         GROUP BY name";
 
         $resultSummary = $connAttendance->query($sqlSummary);
