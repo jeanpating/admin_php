@@ -1,3 +1,22 @@
+<?php
+  session_start(); 
+
+  if (!isset($_SESSION['username1'])) {
+  	$_SESSION['msg'] = "You must log in first";
+  	header('location: ../../login.php');
+  }
+  if (isset($_GET['logout'])) {
+    if(isset($_SESSION['username1'])){
+      unset($_SESSION['username1']);
+      session_destroy();
+      header("location: ../../login.php?out='1'");
+    }/*elseif(isset($_SESSION['username2'])){
+      unset($_SESSION['username2']);
+      session_destroy();
+      header("location: ../../login.php?out='1'");
+    }*/
+  }
+?>
 <!DOCTYPE html>
 <html lang="en">
 
