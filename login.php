@@ -1,3 +1,4 @@
+<?php include_once('conns/server.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,11 +63,33 @@
 <body>
     <form action="login.php" method="post">
         <h2>Admin Login</h2>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <input type="submit" value="Login">
+
+        <?php 
+        include_once('conns/errors.php'); 
+        if(isset($_GET['out'])){
+        echo "<div class='error'>You've been Logout</div>";
+        }
+        if(isset($_GET['wup'])){
+        echo "<div class='error'>".$_GET['wup']."</div>";
+        }
+        if(isset($_SESSION['msg'])){
+        echo "<div class='error'>".$_SESSION['msg']."</div>";
+        } 
+        ?>
+
+        <label for="in" class="userlabel">User:
+            <input id="in" type="text" name="uname" 
+                <?php   include_once('conns/server.php'); 
+                        session_start();
+                        if(isset($_GET['user'])){  echo 'value="'. $_GET['user'].'"';}
+            ?>>
+        </label>
+
+        <label for="pass" class="passlabel">Password:
+            <input id="pass" type="password" name="upass">
+        </label>
+
+        <input type="submit" value="Okay" class="oksbut" name="oksbut">
     </form>
 </body>
 </html>
