@@ -1,7 +1,4 @@
 <?php
-// get_employee_schedule.php
-
-// Your database connection code
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -15,8 +12,6 @@ if ($conn->connect_error) {
 
 // Retrieve the employee ID from the AJAX request
 $employeeId = $_GET['employee_id'];
-
-
 
 // Fetch the schedule information for the selected employee
 $sql = "SELECT emp_id, name, picture_path FROM employees WHERE emp_id = $employeeId";
@@ -78,9 +73,7 @@ if ($result && $result->num_rows > 0) {
         echo "<p class='employee-schedule'>Schedule not available</p>";
     }
     
-    // Add an "Edit" button that links to edit_employee_schedule.php
     echo "<a href='edit_employee_schedule.php?employee_id=$employeeId' class='edit-button'>Edit</a>";
-    
     echo "</div>";
 } else {
     echo "No schedule information found for the selected employee.";
@@ -90,5 +83,4 @@ $conn->close();
 ?>
 
 </body>
-
 </html>

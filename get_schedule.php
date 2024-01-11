@@ -1,5 +1,4 @@
 <?php
-// Your employees database connection code
 $servername = "localhost";
 $username = "root";
 $password = "";

@@ -34,7 +34,6 @@
     <div class="container">
 
         <?php   
-            // Include the TCPDF library
             require_once('tcpdf/tcpdf.php');
 
             error_reporting(E_ALL);
@@ -87,12 +86,12 @@
                     echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
                 
                     while ($scheduleRow = $scheduleResult->fetch_assoc()) {
-                        echo "<tr>"; // Added this line to start a new row
+                        echo "<tr>";
                         echo "<td>{$scheduleRow['am_time_in']}</td>";
                         echo "<td>{$scheduleRow['am_time_out']}</td>";
                         echo "<td>{$scheduleRow['pm_time_in']}</td>";
                         echo "<td>{$scheduleRow['pm_time_out']}</td>";
-                        echo "</tr>"; // Added this line to close the row
+                        echo "</tr>";
                     }
                 
                     echo "</table>";
@@ -224,7 +223,6 @@
 
                 $connEmployees->close();
                 $connAttendance->close();
-
 
             ?>
 

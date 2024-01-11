@@ -1,7 +1,5 @@
 
 <?php
-// get_graph.php
-
 $servername = "localhost";
 $username = "root";
 $password = "";

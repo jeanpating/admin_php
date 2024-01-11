@@ -222,10 +222,19 @@ button {
 .markOnLeave {
     background-color: #EEC759;
 }
-.markAbsent, .markOnOfficialBusiness, .markOnLeave {
+.markOnOfficialBusiness, .markOnLeave {
     margin-right: 10px;
     padding: 10px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+}
+.markAbsent {
+    margin-right: 10px;
     width: 100%;
+    padding: 10px;
     color: white;
     text-decoration: none;
     border-radius: 5px;

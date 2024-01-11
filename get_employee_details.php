@@ -82,9 +82,7 @@ if ($result && $result->num_rows > 0) {
     $address = htmlspecialchars($row['address']);
     $contactNumber = htmlspecialchars($row['contact_number']);
     $emailAddress = htmlspecialchars($row['email_address']);
-    // $startingSchedule = htmlspecialchars($row['schedule']);
-    // $finalSchedule = htmlspecialchars($row['final_schedule']);
-
+    
     echo "<div class='employee-picture-container'>";
     echo "<img src='$picturePath' alt='$employeeName Profile Picture' class='employee-picture'>";
     echo "</div>";
@@ -98,7 +96,6 @@ if ($result && $result->num_rows > 0) {
     <hr>
 
     <?php    
-    // Display employee picture at the top right with border
     if ($picturePath) {
         echo "<div class='employee-details-header'>";
         
@@ -119,7 +116,6 @@ if ($result && $result->num_rows > 0) {
         echo "</div>"; // Close the employee-details-header
     }
     
-    // Add or update the following CSS styles
     echo "<style>";
     // echo ".employee-content-container { display: flex; justify-content: flex-end; align-items: center; }";
     // echo ".employee-picture-container { border: 1px solid #ddd; border-radius: 5px; margin-right: 20px; }";
@@ -177,18 +173,39 @@ $conn->close();
 </div>
 
 <p>Mark employee as</p>
-    <!-- mark attendances -->
-    <div class="button-container">
-        <button class='markOnOfficialBusiness'>
+<!-- mark attendances -->
+<div class="button-container">
+    <div id="onOfficialBusinessDates">
+        <button class='markOnOfficialBusiness' onclick="showDateFields('onOfficialBusinessDates')">
             On-Official Business
         </button>
-        <button class='markOnLeave'>
+        <!-- Date fields for On-Official Business -->
+        <label for="onOfficialBusinessStartDate">From:</label>
+        <input type="date" id="onOfficialBusinessStartDate" name="onOfficialBusinessStartDate">
+
+        <label for="onOfficialBusinessEndDate">Until:</label>
+        <input type="date" id="onOfficialBusinessEndDate" name="onOfficialBusinessEndDate">
+    </div>
+</div>
+<div class="button-container">
+    <!-- Date fields for On-Leave -->
+    <div id="onLeaveDates">
+        <button class='markOnLeave' onclick="showDateFields('onLeaveDates')">
             On-Leave
         </button>
-        <button class='markAbsent'>
-            Absent
-        </button>
+        <label for="onLeaveStartDate">From:</label>
+        <input type="date" id="onLeaveStartDate" name="onLeaveStartDate">
+
+        <label for="onLeaveEndDate">Until:</label>
+        <input type="date" id="onLeaveEndDate" name="onLeaveEndDate">
     </div>
+</div>
+<div class="button-container">
+    <button class='markAbsent'>
+        Absent
+    </button>
+</div>
+
 
 <hr>
     <!-- Back and Edit buttons -->
@@ -208,12 +225,52 @@ $conn->close();
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
+    function showDateFields(containerId) {
+        $('#' + containerId).show();
+    }
     $(document).ready(function () {
         $('.markOnOfficialBusiness, .markOnLeave, .markAbsent').on('click', function () {
             var status = $(this).text();
-            showCustomConfirm('Are you sure you want to mark attendance as ' + status + '?', function () {
-                markAttendance(status);
-            });
+            var startDate, endDate;
+
+            if (status === 'On-Official Business') {
+                OBStartDate = $('#onOfficialBusinessStartDate').val();
+                OBEndDate = $('#onOfficialBusinessEndDate').val();
+            } 
+
+            if (status === 'On-Leave') {
+                LStartDate = $('#onLeaveStartDate').val();
+                LEndDate = $('#onLeaveEndDate').val();
+            }
+            
+            OBStartDate = $('#onOfficialBusinessStartDate').val();
+            OBEndDate = $('#onOfficialBusinessEndDate').val();
+
+            LStartDate = $('#onLeaveStartDate').val();
+            LEndDate = $('#onLeaveEndDate').val();
+
+            console.log('Status:', status);
+            console.log('Start Date:', OBStartDate);
+            console.log('End Date:', OBEndDate);
+
+            console.log('Start Date:', LStartDate);
+            console.log('End Date:', LEndDate);
+
+
+            if (OBStartDate && OBEndDate) {
+                showCustomConfirm('Are you sure you want to mark attendance as ' + status + ' from ' + OBStartDate + ' to ' + OBEndDate + '?', function () {
+                    markAttendance(status, OBStartDate, OBEndDate);
+                });
+            } else {
+                console.error('Invalid date values');
+            }
+            if (LStartDate && LEndDate) {
+                showCustomConfirm('Are you sure you want to mark attendance as ' + status + ' from ' + LStartDate + ' to ' + LEndDate + '?', function () {
+                    markAttendance(status, LStartDate, LEndDate);
+                });
+            } else {
+                console.error('Invalid date values');
+            }
         });
 
         function showCustomConfirm(message, callback) {
@@ -231,7 +288,7 @@ $conn->close();
             });
         }
 
-        function markAttendance(status) {
+        function markAttendance(status, startDate, endDate) {
             var empId = <?php echo $employeeId; ?>;
             var employeeName = <?php echo json_encode($employeeName); ?>;
             var url = 'mark_attendance.php';
@@ -239,7 +296,13 @@ $conn->close();
             $.ajax({
                 type: 'POST',
                 url: url,
-                data: { emp_id: empId, status: status, employee_name: employeeName },
+                data: {
+                    emp_id: empId,
+                    status: status,
+                    employee_name: employeeName,
+                    start_date: startDate,
+                    end_date: endDate
+                },
                 success: function (response) {
                     console.log(response);
                     // Handle success response if needed

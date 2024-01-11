@@ -32,13 +32,11 @@
         <!-- Back button -->
         <a href="javascript:history.go(-1)" class="back-button"><</a>
         <?php
-        // get_notifications.php
-
+        
         if ($_SERVER["REQUEST_METHOD"] == "GET") {
             // Get the date parameter from the URL
             $selectedDate = isset($_GET["date"]) ? $_GET["date"] : date("Y-m-d");
 
-            // Replace with your actual database connection details
             $servername = "localhost";
             $username = "root";
             $password = "";

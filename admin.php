@@ -3,13 +3,13 @@
 
   if (!isset($_SESSION['username1'])) {
   	$_SESSION['msg'] = "You must log in first";
-  	header('location: ../../login.php');
+  	header('location: login.php');
   }
   if (isset($_GET['logout'])) {
     if(isset($_SESSION['username1'])){
       unset($_SESSION['username1']);
       session_destroy();
-      header("location: ../../login.php?out='1'");
+      header("location: login.php?out='1'");
     }/*elseif(isset($_SESSION['username2'])){
       unset($_SESSION['username2']);
       session_destroy();
@@ -164,9 +164,8 @@
                 
                 // Use jQuery AJAX to load only the necessary part of the page
                 $.ajax({
-                    url: 'partial-content.html', // Replace with the actual URL of the partial content
+                    url: 'partial-content.html',
                     success: function(data) {
-                        // Replace the content of a specific element with the new data
                         $('#content-container').html($(data).find('#content-container').html());
                     }
                 });

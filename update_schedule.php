@@ -1,7 +1,4 @@
 <?php
-// update_schedule.php
-
-// Your database connection code
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -30,8 +27,6 @@ $stmtCheck->execute();
 $stmtCheck->store_result();
 
 if ($stmtCheck->num_rows > 0) {
-    // Emp_id exists in the employee_schedule table, proceed with the update
-
     // Update the schedule in the database
     $updateSql = "UPDATE employee_schedule SET subject=?, time=?, classroom=? WHERE emp_id=?";
     $stmt = $conn->prepare($updateSql);
@@ -45,8 +40,6 @@ if ($stmtCheck->num_rows > 0) {
 
     $stmt->close();
 } else {
-    // Emp_id does not exist in the employee_schedule table, insert a new row
-
     // Insert into the employee_schedule table
     $insertSql = "INSERT INTO employee_schedule (emp_id, subject, time, classroom) VALUES (?, ?, ?, ?)";
     $stmtInsert = $conn->prepare($insertSql);

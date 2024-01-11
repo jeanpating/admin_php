@@ -3,7 +3,6 @@ require_once('tcpdf/tcpdf.php');
 
 error_log('Monthly Summary PDF generation started.');
 
-// Replace with your actual database connection details
 $servername = "localhost";
 $username = "root";
 $password = "";

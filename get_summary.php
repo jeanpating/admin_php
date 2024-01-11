@@ -105,14 +105,13 @@
                 );
             }
 
-            // Close the connection for attendancedb
             $connAttendance->close();
         } else {
             // No results found
             echo json_encode(array('error' => 'No data available.'));
             // Close the connection for attendancedb
             $connAttendance->close();
-            exit(); // exit the script if there is no data
+            exit();
         }
         ?>
         <hr style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-color: #F1E4C3;">
