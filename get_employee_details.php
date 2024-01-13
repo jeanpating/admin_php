@@ -233,6 +233,10 @@ $conn->close();
             var status = $(this).text();
             var startDate, endDate;
 
+            showCustomConfirm('Are you sure you want to mark attendance as ' + status + '?', function () {
+                markAttendance(status);
+            });
+
             if (status === 'On-Official Business') {
                 OBStartDate = $('#onOfficialBusinessStartDate').val();
                 OBEndDate = $('#onOfficialBusinessEndDate').val();
@@ -256,8 +260,11 @@ $conn->close();
             console.log('Start Date:', LStartDate);
             console.log('End Date:', LEndDate);
 
-
-            if (OBStartDate && OBEndDate) {
+            if (status === 'Absent') {
+                showCustomConfirm('Are you sure you want to mark attendance as ' + status + '?', function () {
+                    markAttendance(status);
+               });
+            } else if (OBStartDate && OBEndDate) {
                 showCustomConfirm('Are you sure you want to mark attendance as ' + status + ' from ' + OBStartDate + ' to ' + OBEndDate + '?', function () {
                     markAttendance(status, OBStartDate, OBEndDate);
                 });
@@ -316,6 +323,36 @@ $conn->close();
 </script>
 
 <div class="card employee-dtr">
+<form>
+    <label for="month">Month:</label>
+    <select id="month" name="month">
+      <option value="01">January</option>
+      <option value="02">February</option>
+      <option value="03">March</option>
+      <option value="04">April</option>
+      <option value="05">May</option>
+      <option value="06">June</option>
+      <option value="07">July</option>
+      <option value="08">August</option>
+      <option value="09">September</option>
+      <option value="10">October</option>
+      <option value="11">November</option>
+      <option value="12">December</option>
+    </select>
+
+    <label for="year">Year:</label>
+    <select id="year" name="year">
+      <!-- Adjust the range of years as needed -->
+      <?php
+        $currentYear = date("Y");
+        for ($i = $currentYear; $i >= $currentYear - 10; $i--) {
+          echo "<option value=\"$i\">$i</option>";
+        }
+      ?>
+    </select>
+
+    <input type="submit" value="submit">
+  </form>
 <?php
 
 error_reporting(E_ALL);
