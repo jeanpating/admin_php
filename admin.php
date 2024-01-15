@@ -57,7 +57,7 @@
         <br><br><br><br>
         
         <a href="notification.php"  class="fa-solid fa-bell"> Notification</a>
-        <a href="admin.php?logout='1'" class="fa-solid fa-user-gear"> LOGOUT</a>
+        <a href="admin.php?logout='1'" class="fa-solid fa-right-from-bracket"> LOGOUT</a>
     </div>
 
     <!-- Content area -->

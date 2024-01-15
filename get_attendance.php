@@ -17,7 +17,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     $selectedDate = $_POST["selected_date"];
 
     // Query to get attendance data for the selected date
-    $sql = "SELECT * FROM attendance WHERE date = '$selectedDate'";
+    $sql = "SELECT name, time, status FROM attendance WHERE date = '$selectedDate' AND (clock ='AM-TIME-IN' OR clock ='PM-TIME-IN')";
+
     $result = $conn->query($sql);
 
     if ($result === false) {
@@ -28,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             $tableHTML .= '<div style="overflow-x:auto;">';
             $tableHTML .= '<table class="modern-table">';
             $tableHTML .= '<thead>';
-            $tableHTML .= '<tr><th>NAME</th><th>TIME</th><th>STATUS</th><th>CLOCK TYPE</th></tr>';
+            $tableHTML .= '<tr><th>NAME</th><th>TIME</th><th>STATUS</th></tr>';
             $tableHTML .= '</thead>';
             $tableHTML .= '<tbody>';
 
@@ -52,16 +53,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
                 $tableHTML .= '<td>' . $row['name'] . '</td>';
                 $tableHTML .= '<td>' . $row['time'] . '</td>';
                 $tableHTML .= '<td style="background-color: ' . $backgroundColor . '; color: white;">' . $row['status'] . '</td>';
-                $tableHTML .= '<td>' . $row['clock'] . '</td>';
                 $tableHTML .= '</tr>';
             }
 
             $tableHTML .= '</tbody>';
             $tableHTML .= '</table>';
             $tableHTML .= '</div>';
-        } else {
-            echo '<script>showModal();</script>';
-        }
+        } 
     }
     // Close the database connection
     $conn->close();
@@ -78,7 +76,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     <div class="overlay" id="overlay"></div>
     <div class="modal" id="noDataModal">
         <p>No data found in the attendance table for the selected date.</p>
-        <button onclick="closeModal()">OK</button>
+        <button onclick="closeModal()" 
+        style="    
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;"
+        >OK</button>
     </div>
     <!-- Form for selecting a date -->
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -117,7 +123,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('noDataModal').style.display = 'none';
         }
-    </script>
 
+        <?php
+        // This part should now be at the end of the body, ensuring it runs after the functions are defined
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"]) && $result->num_rows === 0) {
+            echo 'showModal();';
+        }
+        ?>
+    </script>
 </body>
 </html>
