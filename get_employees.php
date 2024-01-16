@@ -95,7 +95,7 @@
 
                 // Fetch the attendance status for the current employee from attendancedb
                 $current_date = date("Y_m_d");
-                $sqlAttendance = "SELECT status FROM attendance WHERE name = '$employeeName' AND date = '$current_date' AND clock ='AM-TIME-IN'";
+                $sqlAttendance = "SELECT status FROM attendance WHERE name = '$employeeName' AND date = '$current_date' AND (clock ='AM-TIME-IN' or clock='PM-TIME-IN')";
 
                 $resultAttendance = $connAttendance->query($sqlAttendance);
 
