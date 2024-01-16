@@ -40,11 +40,13 @@ $createTableSql = "CREATE TABLE IF NOT EXISTS scheduledb.employee_schedule (
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if "employee_id" key is set
     $employeeId = isset($_POST['employee_id']) ? $_POST['employee_id'] : null;
-    $employeeName = $_POST['name'];
-    $amTimeIn = $_POST['am_time_in'];
-    $amTimeOut = $_POST['am_time_out'];
-    $pmTimeIn = $_POST['pm_time_in'];
-    $pmTimeOut = $_POST['pm_time_out'];
+    $employeeName = isset($_POST['name']) ? $_POST['name'] : null;
+    $amTimeIn = isset($_POST['am_time_in']) ? $_POST['am_time_in'] : null;
+    $amTimeOut = isset($_POST['am_time_out']) ? $_POST['am_time_out'] : null;
+    $pmTimeIn = isset($_POST['pm_time_in']) ? $_POST['pm_time_in'] : null;
+    $pmTimeOut = isset($_POST['pm_time_out']) ? $_POST['pm_time_out'] : null;
+    $alertMessage = isset($_POST['alertMessage']) ? $_POST['alertMessage'] : null;
+    $alertClass = isset($_POST['alertClass']) ? $_POST['alertClass'] : null;
 
 
     // Validate form data (add your validation logic here)
@@ -55,12 +57,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmtUpdateSchedule = $conn->prepare($updateScheduleSql);
         $stmtUpdateSchedule->bind_param("ssssi", $amTimeIn, $amTimeOut, $pmTimeIn, $pmTimeOut, $employeeId);
 
-
         if ($stmtUpdateSchedule->execute()) {
-            echo "Schedule updated successfully";
+            $alertMessage = "Schedule updated successfully";
+            $alertClass = "alert-message-success";
         } else {
-            echo "Error updating schedule in employees table: " . $stmtUpdateSchedule->error;
-        }   
+            $alertMessage = "Error updating schedule in employees table: " . $stmtUpdateSchedule->error;
+            $alertClass = "alert-message-error";
+        }
+        
+        echo "<div class='alert-message $alertClass' style='display: none;'>$alertMessage</div>";
 
         $stmtUpdateSchedule->close();
     } elseif (isset($_POST['insert'])) {
@@ -69,13 +74,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmtInsertSchedule = $conn->prepare($insertScheduleSql);
         $stmtInsertSchedule->bind_param("isssss", $employeeId, $employeeName, $amTimeIn, $amTimeOut, $pmTimeIn, $pmTimeOut);
         
-
-
+        $alertMessage = "";
         if ($stmtInsertSchedule->execute()) {
-            echo "Inserted into employee_schedule successfully";
+            echo "<script>alert('Inserted into employee schedule successfully');</script>";
         } else {
-            echo "Error inserting into employee_schedule: " . $stmtInsertSchedule->error;
+            echo "<script>alert('Error inserting into employee schedule: " . $stmtInsertSchedule->error . "');</script>";
         }
+        
+        echo "<div class='alert-message' style='display: none;'>" . $alertMessage . "</div>";
 
         $stmtInsertSchedule->close();
     } elseif (isset($_POST['delete'])) {
@@ -85,11 +91,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmtDelete = $conn->prepare($deleteSql);
         $stmtDelete->bind_param("i", $entryId);
 
+        $alertMessage = "";
         if ($stmtDelete->execute()) {
-            echo "Entry deleted successfully";
+            echo "<script>alert('Entry deleted successfully');</script>";
         } else {
-            echo "Error deleting entry: " . $stmtDelete->error;
+            echo "<script>alert('Error deleting entry: " . $stmtDelete->error . "');</script>";
         }
+        
+        echo "<div class='alert-message' style='display: none;'>" . $alertMessage . "</div>";
 
         $stmtDelete->close();
     }
@@ -107,6 +116,36 @@ $result = $connEmployee->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Employee Schedule</title>
+    <style>
+        .show-alert {
+            display: block;
+            background: black;
+        }
+
+        .alert-message,
+        .alert-message-success,
+        .alert-message-error {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #31708f;
+            background-color: #d9edf7;
+            display: none;
+        }
+
+        /* Style for success message */
+        .alert-message-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+        }
+
+        /* Style for error message */
+        .alert-message-error {
+            color: #a94442;
+            background-color: #f2dede;
+        }
+    </style>
     <link rel="stylesheet" href="styles/edit_employee_schedule.css">
 </head>
 
@@ -183,6 +222,7 @@ if ($result && $result->num_rows > 0) {
         }
     
         echo "</table>";
+        echo "</div>"; // Close the 'employee-schedule-container' div
     } else {
         echo "No entries found in the employee_schedule table for the selected employee.";
     }
@@ -206,7 +246,18 @@ if ($result && $result->num_rows > 0) {
 $conn->close();
 $connEmployee->close();
 ?>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var alertMessages = document.querySelectorAll('.alert-message');
 
+        alertMessages.forEach(function (message) {
+            if (message.innerText.trim() !== '') {
+                message.classList.add('show-alert', message.classList[1]);
+                alert(message.innerText); // Display alert
+            }
+        });
+    });
+</script>
 
 </body>
 
