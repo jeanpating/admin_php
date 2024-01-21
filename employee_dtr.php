@@ -191,9 +191,9 @@
                     
                         // Check if it's Saturday (0) or Sunday (6)
                         if ($currentDayOfWeek == 0) {
-                            echo '<b>'."Saturday".'</b>';
-                        } elseif ($currentDayOfWeek == 6) {
                             echo '<b>'."Sunday".'</b>';
+                        } elseif ($currentDayOfWeek == 6) {
+                            echo '<b>'."Saturday".'</b>';
                         } else {
                             // Show the regular status
                             echo (isset($amStatus[$day]) ? $amStatus[$day] : '');
@@ -206,9 +206,9 @@
                     
                         // Check if it's Saturday (0) or Sunday (6)
                         if ($currentDayOfWeek == 0) {
-                            echo '<b>'."Saturday".'</b>';
-                        } elseif ($currentDayOfWeek == 6) {
                             echo '<b>'."Sunday".'</b>';
+                        } elseif ($currentDayOfWeek == 6) {
+                            echo '<b>'."Saturday".'</b>';
                         } else {
                             // Show the regular status
                             echo (isset($pmStatus[$day]) ? $pmStatus[$day] : '');
