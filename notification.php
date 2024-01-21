@@ -71,9 +71,6 @@ if (isset($_GET['logout'])) {
                     // Display the title
                     echo '<h1>' . $title . '</h1>';
                 
-                    // Flag to check if Absent status is found
-                    $absentFound = false;
-                
                     // Display the data from the attendance table
                     while ($row = $result->fetch_assoc()) {
                         $status = '';
@@ -84,29 +81,12 @@ if (isset($_GET['logout'])) {
                         } elseif ($row['clock'] == 'AM-TIME-OUT' || $row['clock'] == 'PM-TIME-OUT') {
                             $status = 'Timed Out';
                         }
-                    
-                        // Display the h2 element with name, time, and status
-                        echo '<p>' . '<b>' . $row['time'] . '</b>' . ': ' . $row['name'] . ' has ' . $status . '</p>';
-                    
-                        // Debug information
-                        echo '<p>Debug: Status for ' . $row['name'] . ' is ' . $status . '</p>';
-                    
-                        // Check if the status is 'Absent'
-                        if ($status == 'Absent') {
-                            $absentFound = true;
-                        }
-                    
-                
                         // Display the h2 element with name, time, and status
                         echo '<p>' . '<b>' . $row['time'] . '</b>' . ': ' . $row['name'] . ' has ' . $status . '</p>';
                     }
                 
                     // Print the 'Absent' message if it's found
-                    if ($absentFound) {
-                        echo '<p>' . '<b>' . 'Absent: ' . '</b>' . 'Some users have been marked as ' . 'Absent' . '</p>';
-                    } else {
-                        echo '<p>' . '<b>' . 'Absent: ' . '</b>' . 'No users have been marked as ' . 'Absent' . '</p>';
-                    }
+                    // 
                 } else {
                     echo '<p>No notifications for today.</p>';
                 }

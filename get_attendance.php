@@ -35,24 +35,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
 
             while ($row = $result->fetch_assoc()) {
                 $backgroundColor = '';
-
-                if ($row['status'] == 'Early') {
-                    $backgroundColor = '#1fab36'; // Green color for Early
-                } elseif ($row['status'] == 'Late') {
-                    $backgroundColor = '#d9a71e'; // Orange color for Late
+            
+                if ($row['status'] == 'Late' || $row['status'] == 'Early' || $row['status'] == 'On-Time' || $row['status'] == 'Present') {
+                    $backgroundColor = '#5abf5f'; // Green
+                    $statusText = 'Present';
                 } elseif ($row['status'] == 'Absent') {
-                    $backgroundColor = 'red'; // Red color for Absent
+                    $backgroundColor = 'red'; // Red 
+                    $statusText = 'Absent';
                 } elseif ($row['status'] == 'On-Official Business') {
-                    $backgroundColor = '#7FC7D9'; // Light blue color for On-Official Business
+                    $backgroundColor = '#7FC7D9'; // Light blue
+                    $statusText = 'On-Official Business';
                 } elseif ($row['status'] == 'On-Leave') {
-                    $backgroundColor = '#EEC759'; // Light yellow color for On-Leave
+                    $backgroundColor = '#EEC759'; // Light yellow
+                    $statusText = 'On-Leave';
                 }
-
-
+            
                 $tableHTML .= '<tr>';
                 $tableHTML .= '<td>' . $row['name'] . '</td>';
                 $tableHTML .= '<td>' . $row['time'] . '</td>';
-                $tableHTML .= '<td style="background-color: ' . $backgroundColor . '; color: white;">' . $row['status'] . '</td>';
+                $tableHTML .= '<td style="background-color: ' . $backgroundColor . '; color: white;">' . $statusText . '</td>';
                 $tableHTML .= '</tr>';
             }
 
