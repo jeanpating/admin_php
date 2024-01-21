@@ -5,6 +5,7 @@ if (!isset($_SESSION['username1'])) {
     $_SESSION['msg'] = "You must log in first";
     header('location: ../../login.php');
 }
+
 if (isset($_GET['logout'])) {
     if (isset($_SESSION['username1'])) {
         unset($_SESSION['username1']);
@@ -59,7 +60,7 @@ if (isset($_GET['logout'])) {
                     // Determine the title based on the date difference
                     $today = date("Y-m-d");
                     $dateDifference = date_diff(date_create($selectedDate), date_create($today))->format('%a');
-                
+
                     if ($dateDifference == 0) {
                         $title = 'Today';
                     } elseif ($dateDifference == 1) {
@@ -67,30 +68,32 @@ if (isset($_GET['logout'])) {
                     } else {
                         $title = date('F j, Y', strtotime($selectedDate));
                     }
-                
+
                     // Display the title
                     echo '<h1>' . $title . '</h1>';
-                
+
                     // Display the data from the attendance table
                     while ($row = $result->fetch_assoc()) {
-                        $status = '';
-                    
-                        // Check the clock value and set the status accordingly
-                        if ($row['clock'] == 'AM-TIME-IN' || $row['clock'] == 'PM-TIME-IN') {
-                            $status = 'Timed In';
-                        } elseif ($row['clock'] == 'AM-TIME-OUT' || $row['clock'] == 'PM-TIME-OUT') {
-                            $status = 'Timed Out';
+                        // Check if the status is 'Absent'
+                        if ($row['status'] !== 'Absent' && $row['status'] !== 'On-Leave' && $row['status'] !== 'On-Official Business') {
+                            $status = '';
+
+                            // Check the clock value and set the status accordingly
+                            if ($row['clock'] == 'AM-TIME-IN' || $row['clock'] == 'PM-TIME-IN') {
+                                $status = 'Timed In';
+                            } elseif ($row['clock'] == 'AM-TIME-OUT' || $row['clock'] == 'PM-TIME-OUT') {
+                                $status = 'Timed Out';
+                            }
+                            // Display the h2 element with name, time, and status
+                            echo '<p>' . '<b>' . $row['time'] . '</b>' . ': ' . $row['name'] . ' has ' . $status . '</p>';
                         }
-                        // Display the h2 element with name, time, and status
-                        echo '<p>' . '<b>' . $row['time'] . '</b>' . ': ' . $row['name'] . ' has ' . $status . '</p>';
                     }
-                
+
                     // Print the 'Absent' message if it's found
                     // 
                 } else {
                     echo '<p>No notifications for today.</p>';
                 }
-                
             }
 
             $conn->close();
