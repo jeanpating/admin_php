@@ -490,26 +490,53 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         // Display attendance records in a table format
         $currentMonth = date("F");
         $currentYear = date("Y");
-
+        
         echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
         echo "<table border='1'>";
         echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>AM-STATUS</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>PM-STATUS</th></tr>";
+        
+        $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
-        foreach (range(1, date('t', strtotime($currentDate))) as $day) {
+        foreach (range(1, date('t', strtotime("$currentYear-$currentMonth-01"))) as $day) {
+            $currentDayOfWeek = ($firstDayOfMonth + $day - 1) % 7; // Calculate the day of the week
+        
             echo "<tr>";
             echo "<td>$day</td>";
             echo "<td>" . (isset($amTimeIn[$day]) ? $amTimeIn[$day] : '') . "</td>";
             echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
-            echo "<td>" . (isset($amStatus[$day]) ? $amStatus[$day] : '') . "</td>";
+            echo "<td>";
+        
+            // Check if it's Saturday (0) or Sunday (6)
+            if ($currentDayOfWeek == 0) {
+                echo '<b>'."Saturday".'</b>';
+            } elseif ($currentDayOfWeek == 6) {
+                echo '<b>'."Sunday".'</b>';
+            } else {
+                // Show the regular status
+                echo (isset($amStatus[$day]) ? $amStatus[$day] : '');
+            }
+        
+            echo "</td>";
             echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
             echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
-            echo "<td>" . (isset($pmStatus[$day]) ? $pmStatus[$day] : '') . "</td>";
+            echo "<td>";
+        
+            // Check if it's Saturday (0) or Sunday (6)
+            if ($currentDayOfWeek == 0) {
+                echo '<b>'."Saturday".'</b>';
+            } elseif ($currentDayOfWeek == 6) {
+                echo '<b>'."Sunday".'</b>';
+            } else {
+                // Show the regular status
+                echo (isset($pmStatus[$day]) ? $pmStatus[$day] : '');
+            }
+        
+            echo "</td>";
             echo "</tr>";
         }
         
-
         echo "</table>";
-
+        
     } else {
         echo "<p>No attendance records found for the employee in the specified date range.</p>";
     }
