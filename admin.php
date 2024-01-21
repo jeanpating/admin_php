@@ -104,13 +104,13 @@
 
                 <div class="column cardDashboard present-card">
                     <?php
-                        // SQL query for attendance from attendancedb
-                        $sqlAttendance = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' and (clock ='AM-TIME-IN' OR 'PM-TIME-IN')";
-                        $resultAttendance = $connAttendance->query($sqlAttendance);
+                        // SQL query for counting present attendees in attendancedb
+                        $sqlPresentCount = "SELECT COUNT(*) as total FROM attendance WHERE date = '$current_date' AND (clock ='AM-TIME-IN' OR clock ='PM-TIME-IN') AND status NOT IN ('Absent', 'On-Leave', 'On-Official Business')";
+                        $resultPresentCount = $connAttendance->query($sqlPresentCount);
 
-                        if ($resultAttendance->num_rows > 0) {
-                            while ($rowAttendance = $resultAttendance->fetch_assoc()) {
-                                echo "<strong>Present</strong><br> " . $rowAttendance['total'];
+                        if ($resultPresentCount->num_rows > 0) {
+                            while ($rowPresentCount = $resultPresentCount->fetch_assoc()) {
+                                echo "<strong>Present</strong><br> " . $rowPresentCount['total'];
                             }
                         } else {
                             echo "<strong>Present</strong><br> 0";
@@ -143,7 +143,7 @@
 
         <div id="current_date" 
         style="font-size: 24px; 
-        color: #163020; 
+        color: #5e7a60; 
         font-weight: bold; 
         background-color: #C3E2C2; 
         text-align: center;
@@ -177,42 +177,45 @@
 
         <h3>Recent Time-ins</h3>
         <div class="attendance-table-card" style="float: left; width: 50%;">
-            <?php
-                // Database connection parameters
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
+        <?php
+            // Database connection parameters
+            $servername = "localhost";
+            $username = "root";
+            $password = "";
 
-                // Create connection for attendancedb
-                $connAttendance = new mysqli($servername, $username, $password, "attendancedb");
+            // Create connection for attendancedb
+            $connAttendance = new mysqli($servername, $username, $password, "attendancedb");
 
-                // Check connection
-                if ($connAttendance->connect_error) {
-                    die("Connection failed: " . $connAttendance->connect_error);
-                }
+            // Check connection
+            if ($connAttendance->connect_error) {
+                die("Connection failed: " . $connAttendance->connect_error);
+            }
 
-                // SQL query to fetch attendance data
-                $sqlAttendanceTable = "SELECT name, time FROM attendance WHERE date = '$current_date' and clock='AM-TIME-IN'";
-                $resultAttendanceTable = $connAttendance->query($sqlAttendanceTable);
+            // SQL query to fetch attendance data
+            $sqlAttendanceTable = "SELECT name, time, status FROM attendance WHERE date = '$current_date' AND clock='AM-TIME-IN'";
+            $resultAttendanceTable = $connAttendance->query($sqlAttendanceTable);
 
-                if ($resultAttendanceTable->num_rows > 0) {
-                    echo '<table class="attendance-table">';
-                    echo '<tr><th>Name</th><th>Time</th></tr>';
+            if ($resultAttendanceTable->num_rows > 0) {
+                echo '<table class="attendance-table">';
+                echo '<tr><th>Name</th><th>Time</th></tr>';
 
-                    while ($rowAttendanceTable = $resultAttendanceTable->fetch_assoc()) {
+                while ($rowAttendanceTable = $resultAttendanceTable->fetch_assoc()) {
+                    // Check if the status is 'Absent', 'On-Leave', or 'On-Official Business'
+                    if (!in_array($rowAttendanceTable['status'], array('Absent', 'On-Leave', 'On-Official Business'))) {
                         echo '<tr>';
                         echo '<td>' . $rowAttendanceTable['name'] . '</td>';
                         echo '<td>' . $rowAttendanceTable['time'] . '</td>';
                         echo '</tr>';
                     }
-
-                    echo '</table>';
-                } else {
-                    echo '<p>No attendance records available.</p>';
                 }
 
-                // Close the connection for attendancedb
-                $connAttendance->close();
+                echo '</table>';
+            } else {
+                echo '<p>No attendance records available.</p>';
+            }
+
+            // Close the connection for attendancedb
+            $connAttendance->close();
             ?>
         </div>
     </div>
