@@ -74,7 +74,7 @@ if (isset($_GET['logout'])) {
 
                     // Display the data from the attendance table
                     while ($row = $result->fetch_assoc()) {
-                        // Check if the status is 'Absent'
+                        // Check if the status is 'Absent', 'On-Leave', 'On-Official Business'
                         if ($row['status'] !== 'Absent' && $row['status'] !== 'On-Leave' && $row['status'] !== 'On-Official Business') {
                             $status = '';
 
@@ -89,8 +89,6 @@ if (isset($_GET['logout'])) {
                         }
                     }
 
-                    // Print the 'Absent' message if it's found
-                    // 
                 } else {
                     echo '<p>No notifications for today.</p>';
                 }
