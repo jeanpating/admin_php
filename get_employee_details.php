@@ -323,36 +323,39 @@ $conn->close();
 </script>
 
 <div class="card employee-dtr">
-<form>
+<form method="post" action="employee_selected_dtr.php">
     <label for="month">Month:</label>
     <select id="month" name="month">
-      <option value="01">January</option>
-      <option value="02">February</option>
-      <option value="03">March</option>
-      <option value="04">April</option>
-      <option value="05">May</option>
-      <option value="06">June</option>
-      <option value="07">July</option>
-      <option value="08">August</option>
-      <option value="09">September</option>
-      <option value="10">October</option>
-      <option value="11">November</option>
-      <option value="12">December</option>
+        <option value="01">January</option>
+        <option value="02">February</option>
+        <option value="03">March</option>
+        <option value="04">April</option>
+        <option value="05">May</option>
+        <option value="06">June</option>
+        <option value="07">July</option>
+        <option value="08">August</option>
+        <option value="09">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
     </select>
 
     <label for="year">Year:</label>
     <select id="year" name="year">
-      <!-- Adjust the range of years as needed -->
-      <?php
-        $currentYear = date("Y");
-        for ($i = $currentYear; $i >= $currentYear - 10; $i--) {
-          echo "<option value=\"$i\">$i</option>";
-        }
-      ?>
+        <?php
+            $currentYear = date("Y");
+            for ($i = $currentYear; $i >= $currentYear - 10; $i--) {
+                echo "<option value=\"$i\">$i</option>";
+            }
+        ?>
     </select>
 
-    <input type="submit" value="submit">
-  </form>
+    <!-- Add a hidden input field to capture the employee ID -->
+    <input type="hidden" name="emp_id" value="<?php echo htmlspecialchars($_GET['emp_id']); ?>">
+
+    <input type="submit" value="View DTR">
+</form>
+
 <?php
 
 error_reporting(E_ALL);

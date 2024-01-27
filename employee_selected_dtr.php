@@ -57,7 +57,7 @@
             }
 
             // Fetch employee details
-            $employeeId = isset($_GET['emp_id']) ? $_GET['emp_id'] : null;
+            $employeeId = isset($_POST['emp_id']) ? $_POST['emp_id'] : null;
             $employeeId = filter_var($employeeId, FILTER_VALIDATE_INT);
 
             if ($employeeId === false) {
@@ -102,9 +102,13 @@
 
                 // Fetch attendance records using the name column from attendancedb
                 $employeeName = $rowEmployee['name'];
-                $currentDate = date('Y-m-d');
-                $firstDayOfMonth = date('Y-m-01', strtotime($currentDate));
-                $lastDayOfMonth = date('Y-m-t', strtotime($currentDate));
+
+                // Process the selected month and year
+                $selectedMonth = isset($_POST['month']) ? $_POST['month'] : date('m');
+                $selectedYear = isset($_POST['year']) ? $_POST['year'] : date('Y');
+
+                $firstDayOfMonth = date("Y-m-d", strtotime("$selectedYear-$selectedMonth-01"));
+                $lastDayOfMonth = date("Y-m-t", strtotime("$selectedYear-$selectedMonth-01"));
                 
                 // Fetch attendance records using the name column from attendancedb
                 $sqlAttendance = "SELECT * FROM attendance WHERE name = '$employeeName' AND date BETWEEN '$firstDayOfMonth' AND '$lastDayOfMonth'";
@@ -116,12 +120,12 @@
 
                 if ($resultAttendance && $resultAttendance->num_rows > 0) {
                     // Initialize arrays for TIME-IN and TIME-OUT
-                    $amTimeIn = array_fill(1, date('t', strtotime($currentDate)), '');
-                    $pmTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
-                    $amTimeOut = array_fill(1, date('t', strtotime($currentDate)), '');
-                    $pmTimeIn = array_fill(1, date('t', strtotime($currentDate)), '');
-                    $amStatus = array_fill(1, date('t', strtotime($currentDate)), '');
-                    $pmStatus = array_fill(1, date('t', strtotime($currentDate)), '');
+                    $amTimeIn = array_fill(1, date('t', strtotime($firstDayOfMonth)), '');
+                    $pmTimeOut = array_fill(1, date('t', strtotime($firstDayOfMonth)), '');
+                    $amTimeOut = array_fill(1, date('t', strtotime($firstDayOfMonth)), '');
+                    $pmTimeIn = array_fill(1, date('t', strtotime($firstDayOfMonth)), '');
+                    $amStatus = array_fill(1, date('t', strtotime($firstDayOfMonth)), '');
+                    $pmStatus = array_fill(1, date('t', strtotime($firstDayOfMonth)), '');
             
                     // Loop through the attendance records
                     while ($rowAttendance = $resultAttendance->fetch_assoc()) {
@@ -171,16 +175,16 @@
                     }
             
                     // Display attendance records in a table format
-                    $currentMonth = date("F");
-                    $currentYear = date("Y");
+                    $currentMonth = date("F", strtotime("$selectedYear-$selectedMonth-01"));
+                    $currentYear = date("Y", strtotime("$selectedYear-$selectedMonth-01"));
             
                     echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
                     echo "<table border='1'>";
                     echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>AM-STATUS</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>PM-STATUS</th></tr>";
             
-                    $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
+                    $firstDayOfMonth = date('N', strtotime("$selectedYear-$selectedMonth-01"));
 
-                    foreach (range(1, date('t', strtotime("$currentYear-$currentMonth-01"))) as $day) {
+                    foreach (range(1, date('t', strtotime("$selectedYear-$selectedMonth-01"))) as $day) {
                         $currentDayOfWeek = ($firstDayOfMonth + $day - 1) % 7; // Calculate the day of the week
                     
                         echo "<tr>";
@@ -222,38 +226,37 @@
 
                 } else {
                     echo "<p>No attendance records found for the employee in the specified date range.</p>";
-                } 
-                } else {
-                    echo "<p>No employee details found.</p>";
                 }
+            } else {
+                echo "<p>No employee details found.</p>";
+            }
 
-                // Create a PDF instance
-                $pdf = new TCPDF();
+            // Create a PDF instance
+            $pdf = new TCPDF();
 
-                // Set document information
-                $pdf->SetCreator(PDF_CREATOR);
-                $pdf->SetAuthor('Admin');
-                $pdf->SetTitle('Employee Daily Time Record');
-                $pdf->SetSubject('Employee Daily Time Record PDF');
-                $pdf->SetKeywords('TCPDF, PDF, employee, time record');
+            // Set document information
+            $pdf->SetCreator(PDF_CREATOR);
+            $pdf->SetAuthor('Admin');
+            $pdf->SetTitle('Employee Daily Time Record');
+            $pdf->SetSubject('Employee Daily Time Record PDF');
+            $pdf->SetKeywords('TCPDF, PDF, employee, time record');
 
-                // Add a page
-                $pdf->AddPage();
+            // Add a page
+            $pdf->AddPage();
 
-                // Output HTML content to PDF
-                $html = ob_get_clean(); // Get the HTML content from the output buffer
+            // Output HTML content to PDF
+            $html = ob_get_clean(); // Get the HTML content from the output buffer
 
-                // Write HTML content to PDF
-                $pdf->writeHTML($html, true, false, true, false, '');
+            // Write HTML content to PDF
+            $pdf->writeHTML($html, true, false, true, false, '');
 
-                // Close and output PDF
-                $pdf->Output($employeeName. '_Employee_Daily_Time_Record.pdf', 'D'); // D for download
+            // Close and output PDF
+            $pdf->Output($employeeName. '_Employee_Daily_Time_Record.pdf', 'D'); // D for download
 
-                $connEmployees->close();
-                $connAttendance->close();
+            $connEmployees->close();
+            $connAttendance->close();
+        ?>
+    </div>
+</body>
 
-            ?>
-
-        </div>
-    </body>
 </html>
