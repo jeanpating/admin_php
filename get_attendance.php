@@ -91,7 +91,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         Select Date: <input type="date" name="selected_date">
         <input type="submit" value="View Attendance" name="submitAttendance">
-        <a href="javascript:history.go(-1)" class="back-button">Go back</a>
+        <a href="admin.php" class="back-button">Go back</a>
     </form>
 
     <!-- Display the table HTML content -->
