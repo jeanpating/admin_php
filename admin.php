@@ -30,8 +30,41 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        .confirmation-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
 
+        .confirmation-box h2 {
+            margin-top: 0;
+        }
+
+        .confirmation-box button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .confirmation-box button#confirmButton {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .confirmation-box button#cancelButton {
+            background-color: #ff4444; /* Red color */
+            color: #fff;
+        }
     </style>
+
 </head>
 
 <body>
@@ -57,7 +90,7 @@
         <br><br><br><br>
         
         <a href="notification.php"  class="fa-solid fa-bell"> Notification</a>
-        <a href="admin.php?logout='1'" class="fa-solid fa-right-from-bracket"> LOGOUT</a>
+        <a href="#" onclick="confirmLogout()" class="fa-solid fa-right-from-bracket"> LOGOUT</a>
     </div>
 
     <!-- Content area -->
@@ -220,5 +253,32 @@
         </div>
     </div>
     <script src="script/admin_script.js"></script>
+
+    <script>
+        function confirmLogout() {
+            var confirmationBox = document.getElementById("confirmationBox");
+            confirmationBox.style.display = "block";
+
+            var confirmButton = document.getElementById("confirmButton");
+            var cancelButton = document.getElementById("cancelButton");
+
+            confirmButton.onclick = function () {
+                window.location.href = "admin.php?logout=1";
+            };
+
+            cancelButton.onclick = function () {
+                confirmationBox.style.display = "none";
+            };
+        }
+        </script>
+
+    <div id="confirmationBox" class="confirmation-box">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to logout?</p>
+        <button id="confirmButton">Logout</button>
+        <button class="cancel" id="cancelButton">Cancel</button>
+    </div>
+
+
 </body>
 </html>
