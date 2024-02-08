@@ -4,7 +4,7 @@
 <head>
     <style>
         body {
-            font-size: 11px;
+            font-size: 10.5px;
         }
         table {
             border-collapse: collapse;
@@ -222,7 +222,11 @@
 
                 } else {
                     echo "<p>No attendance records found for the employee in the specified date range.</p>";
-                } 
+                }?>
+                <br><br>
+                <?php
+                echo"<h4 style='text-align: right;'>__________________</h4>";
+                echo"<h4 style='text-align: right;'>Employee Signature</h4>"; 
                 } else {
                     echo "<p>No employee details found.</p>";
                 }
