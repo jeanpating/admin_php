@@ -66,15 +66,15 @@
 
         <?php 
         include_once('conns/errors.php'); 
-        if(isset($_GET['out'])){
-        echo "<div class='error'>You've been Logout</div>";
-        }
         if(isset($_GET['wup'])){
-        echo "<div class='error'>".$_GET['wup']."</div>";
+        echo "<div class='error' style='text-align: center; border-radius: 8px; background-color: #E21818; color: white;'>".$_GET['wup']."</div>";
         }
         if(isset($_SESSION['msg'])){
         echo "<div class='error'>".$_SESSION['msg']."</div>";
         } 
+        if(isset($_GET['out'])){
+        echo "<div class='error' style='text-align: center; background-color: #C1F2B0; border-radius: 8px;'> Successfully logged out</div><br>";
+        }
         ?>
 
         <label for="in" class="userlabel">User:

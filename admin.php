@@ -278,7 +278,7 @@
         <button id="confirmButton">Logout</button>
         <button class="cancel" id="cancelButton">Cancel</button>
     </div>
-
-
+   
+    
 </body>
 </html>

@@ -26,6 +26,9 @@
         h1, h2, h3 {
             text-align: center;
         }
+        h4 {
+            text-align: right;
+        }
     </style>
 </head>
 
@@ -225,8 +228,8 @@
                 }?>
                 <br><br>
                 <?php
-                echo"<h4 style='text-align: right;'>__________________</h4>";
-                echo"<h4 style='text-align: right;'>Employee Signature</h4>"; 
+                echo"<h4>__________________</h4>";
+                echo"<h4>Employee Signature</h4>"; 
                 } else {
                     echo "<p>No employee details found.</p>";
                 }
