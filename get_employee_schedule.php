@@ -51,8 +51,12 @@ if ($result && $result->num_rows > 0) {
     $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
     $scheduleResult = $conn->query($scheduleSql);
 
+    // Fetch the additional columns (time, subject, classroom) from the schedule table
+    $scheduleDetailsSql = "SELECT time, subject, classroom FROM scheduledb.schedule WHERE emp_id = $employeeId";
+    $scheduleDetailsResult = $conn->query($scheduleDetailsSql);
+
     // Debugging statement
-    if (!$scheduleResult) {
+    if (!$scheduleResult || !$scheduleDetailsResult) {
         echo "Error: " . $conn->error;
     }
 
@@ -71,6 +75,22 @@ if ($result && $result->num_rows > 0) {
         echo "</table>";
     } else {
         echo "<p class='employee-schedule'>Schedule not available</p>";
+    }
+
+    // Display additional schedule details (time, subject, classroom) using a table
+    if ($scheduleDetailsResult && $scheduleDetailsResult->num_rows > 0) {
+        echo "<table border='1' style='width: 100%; margin-top: 10px;'>";
+        echo "<tr><th>Time</th><th>Subject</th><th>Classroom</th></tr>";
+        while ($scheduleDetailsRow = $scheduleDetailsResult->fetch_assoc()) {
+            $time = $scheduleDetailsRow['time'];
+            $subject = $scheduleDetailsRow['subject'];
+            $classroom = $scheduleDetailsRow['classroom'];
+        
+            echo "<tr><td>$time</td><td>$subject</td><td>$classroom</td></tr>";
+        }
+        echo "</table>";
+    } else {
+        echo "<p class='employee-schedule'>Additional schedule details not available</p>";
     }
     
     echo "<a href='edit_employee_schedule.php?employee_id=$employeeId' class='edit-button'>Edit</a>";
