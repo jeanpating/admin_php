@@ -168,6 +168,9 @@ img {
     background-color: #fff;
     transition: transform 0.3s ease-in-out;
 }
+.calendar-table {
+    transition: transform 0.3s ease-in-out;
+}
 tr {
     padding: 15px;
     text-align: left;

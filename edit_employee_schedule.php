@@ -199,12 +199,12 @@
             $time = $_POST['time'];
             $subject = $_POST['subject'];
             $classroom = $_POST['classroom'];
-        
+    
             // Insert data into 'schedule' table with emp_id
             $insertScheduleSql = "INSERT INTO scheduledb.schedule (emp_id, time, subject, classroom) VALUES (?, ?, ?, ?)";
             $stmtInsertSchedule = $conn->prepare($insertScheduleSql);
-            $stmtInsertSchedule->bind_param("isss", $employeeId, $time, $subject, $classroom);    
-
+            $stmtInsertSchedule->bind_param("isss", $employeeId, $time, $subject, $classroom);
+    
             $alertMessage = "";
             if ($stmtInsertSchedule->execute()) {
                 echo "<script>alert('Inserted into schedule successfully');</script>";
@@ -213,15 +213,13 @@
             } else {
                 echo "<script>alert('Error inserting into schedule: " . $stmtInsertSchedule->error . "');</script>";
             }
-
+    
             echo "<div class='alert-message' style='display: none;'>" . $alertMessage . "</div>";
-
+    
             $stmtInsertSchedule->close();
         }
     }
-
-
-
+    
     ?>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -235,10 +233,13 @@
             });
         });
     </script>
-    <!-- Add this form after the existing form for 'employee_schedule' table -->
-    <div class="form-container">
+<!-- Add this form after the existing form for 'employee_schedule' table -->
+<div class="form-container">
     <form action='' method='post' class="add-schedule-form">
         <h2>Add Schedule Entry</h2>
+
+        <!-- Add hidden input field for entry_id -->
+        <input type='hidden' name='entry_id1' value='<?php echo $employeeId; ?>'>
 
         <!-- Add input fields for time, subject, and classroom with correct names -->
         <div class="form-group">
@@ -263,7 +264,7 @@
     <!-- Display existing entries for the specific emp_id -->
     <h2>Existing Entries</h2>
     <?php
-    $sqlExistingEntries = "SELECT emp_id, time, subject, classroom FROM scheduledb.schedule WHERE emp_id = $employeeId";
+    $sqlExistingEntries = "SELECT id, time, subject, classroom FROM scheduledb.schedule WHERE emp_id = $employeeId";
     $resultExistingEntries = $conn->query($sqlExistingEntries);
 
     if (!$resultExistingEntries) {
@@ -280,8 +281,14 @@
             echo "<td>" . $entry['subject'] . "</td>";
             echo "<td>" . $entry['classroom'] . "</td>";
             echo "<td>";
-            echo "<input type='hidden' name='entry_id' value='" . $entry['emp_id'] . "'>";
-            echo "<input type='submit' name='delete_schedule_entry' value='Delete' style='background-color: red; color: white; border-radius: 10px;'>";
+            echo "<form action='' method='post'>";
+            
+            // Use 'id' for the entry_id1 field
+            $entryId = isset($entry['id']) ? $entry['id'] : null;
+        
+            echo "<input type='hidden' name='entry_id1' value='" . $entryId . "'>";
+            echo "<input type='submit' name='delete_schedule_entry' value='Delete' style='background-color: red; color: white; border-radius: 10px;' onclick='return confirm(\"Are you sure you want to delete this entry?\");'>";
+            echo "</form>";
             echo "</td>";
             echo "</tr>";
         }
@@ -292,32 +299,34 @@
         echo "No existing entries found for the selected employee.";
     }
 
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_schedule_entry'])) {
         // Check if "delete_schedule_entry" key is set
-        if (isset($_POST['delete_schedule_entry'])) {
-            // Delete operation
-            $entryId = $_POST['entry_id'];
+        $entryId = isset($_POST['entry_id1']) ? $_POST['entry_id1'] : null;
+        if ($entryId !== null) {
             $deleteSql = "DELETE FROM scheduledb.schedule WHERE id = ?";
             $stmtDelete = $conn->prepare($deleteSql);
-            $stmtDelete->bind_param("i", $entryId); // Corrected parameter name
-
+            
+            // Corrected parameter binding for deletion
+            $stmtDelete->bind_param("i", $entryId);
+            
             if ($stmtDelete->execute()) {
                 echo "<script>alert('Entry Deleted successfully');</script>";
             } else {
                 echo "<script>alert('Error deleting entry: " . $stmtDelete->error . "');</script>";
             }
-
+    
             // Close the prepared statement
             $stmtDelete->close();
+        } else {
+            echo "<script>alert('Entry ID not set or invalid.');</script>";
         }
-    }
+    }    
 
     $conn->close();
     $connEmployee->close();
     ?>
     <br>
-
+    <br>
     <a href='admin.php' class='back-button'>
         Back
     </a>
