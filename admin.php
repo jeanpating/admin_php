@@ -285,8 +285,9 @@
                     '12-31' => 'New Year\'s Eve'
                     ];
                     $events = [
-                        '01-01' => 'New Year\'s Day',
-                        '03-04' => 'Teacher\'s Day'
+                        '07-13' => 'Nutrition Day',
+                        '10-03' => 'Teacher\'s Day',
+                        '08-31' => 'Araw ng Wika'
                     ];
             
                     // Start building the table with modern design
