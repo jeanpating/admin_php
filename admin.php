@@ -290,7 +290,6 @@
                         '08-31' => 'Araw ng Wika'
                     ];
             
-                    // Start building the table with modern design
                     echo '<div style="font-family: Arial, sans-serif;">';
                     echo '<table style="width: 100%; border-collapse: collapse; margin: 20px; background-color: #f0f0f0; border: 1px solid #ddd; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">';
                     echo '<caption style="font-size: 1.5em; padding: 10px; text-align: center; background-color: #3498db; color: #fff;">' . date('F Y', $firstDay) . '</caption>';
