@@ -60,7 +60,11 @@
             die("Connection failed: " . $connAttendance->connect_error);
         }
 
-        // SQL query to get summary data grouped by name and status
+        // Get the current month and year
+        $currentMonth = date("m");
+        $currentYear = date("Y");
+
+        // SQL query to get summary data grouped by name and status for the current month and year
         $sqlSummary = "SELECT name,
             SUM(CASE WHEN status = 'On-Time' THEN 1 ELSE 0 END) AS OnTime,
             SUM(CASE WHEN status = 'Early' THEN 1 ELSE 0 END) AS Early,
@@ -69,8 +73,9 @@
             SUM(CASE WHEN status = 'On-Official Business' THEN 1 ELSE 0 END) AS OnOfficialBusiness,
             SUM(CASE WHEN status = 'On-Leave' THEN 1 ELSE 0 END) AS OnLeave
         FROM attendance 
-        WHERE clock ='AM-TIME-IN'
-        OR clock ='PM-TIME-IN'
+        WHERE (clock ='AM-TIME-IN' OR clock ='PM-TIME-IN')
+            AND MONTH(date) = $currentMonth
+            AND YEAR(date) = $currentYear
         GROUP BY name";
 
         $resultSummary = $connAttendance->query($sqlSummary);
