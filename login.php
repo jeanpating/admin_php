@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url("bg/img-bg.jpg");
+            background-image: url("bg/bawa-login-bg.jpg");
             background-size: 100%;
             margin: 0;
             padding: 0;
