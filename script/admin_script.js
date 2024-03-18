@@ -312,3 +312,22 @@ function displayGraphData(data) {
         }
     });
 }
+
+//darkmode
+        
+// var colorButton = document.getElementById("colorButton");
+
+// // Function to toggle the background color
+// function toggleBackgroundColor() {
+//     var body = document.body;
+//     var currentColor = window.getComputedStyle(body).getPropertyValue("background-color");
+
+//     if (currentColor === "rgb(255, 255, 255)") {
+//         body.style.backgroundColor = "black";
+//     } else {
+//         body.style.backgroundColor = "white";
+//     }
+// }
+
+// // Add event listener to the button
+// colorButton.addEventListener("click", toggleBackgroundColor);
