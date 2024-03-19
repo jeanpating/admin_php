@@ -412,8 +412,9 @@
 
                 // Array of events (format: 'month-day' => 'Event Name')
                 $events = [
-                    '01-01' => 'New Year\'s Day',
-                    '03-04' => 'Teacher\'s Day'
+                    '07-13' => 'Nutrition Day',
+                    '10-03' => 'Teacher\'s Day',
+                    '08-31' => 'Araw ng Wika'
                 ];
 
                 // Get current month and year

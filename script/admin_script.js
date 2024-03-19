@@ -1,16 +1,11 @@
-// JavaScript to handle sidebar item clicks and apply active state
 const sidebarLinks = document.querySelectorAll('.sidebar a');
 
 sidebarLinks.forEach(link => {
     link.addEventListener('click', function () {
-        // Remove 'active' class from all links
         sidebarLinks.forEach(link => link.classList.remove('active'));
-        // Add 'active' class to the clicked link
         this.classList.add('active');
 
-        // Check if the clicked link is the Dashboard link
         if (this.id === 'dashboardLink') {
-            // If it is, navigate to the main page
             window.location.href = 'admin.php';
         }
     });
@@ -79,7 +74,6 @@ function loadAttendanceTables() {
 }
 
 function loadEmployees() {
-    // Set the title explicitly
     changeTitle('Employees');
 
     // Fetch and display employee data using AJAX
@@ -90,7 +84,7 @@ function loadEmployees() {
             // Display employee data
             document.getElementById('contentContainer').innerHTML = this.responseText;
 
-            // Add click event listener for each employee name
+            // click event listener
             var employeeNames = document.getElementsByClassName('employee-name');
             Array.from(employeeNames).forEach(function (element) {
                 element.addEventListener('click', function () {
@@ -154,7 +148,7 @@ function loadSchedule() {
             // Display schedule data
             document.getElementById('contentContainer').innerHTML = this.responseText;
 
-            // Add click event listener for each employee name to view their schedule
+            // click event listener
             var employeeNames = document.getElementsByClassName('employee-name');
             Array.from(employeeNames).forEach(function (element) {
                 element.addEventListener('click', function () {
@@ -225,13 +219,8 @@ function changeTitleAndLoadGraph() {
 }
 
 function displayGraphData(data) {
-    // Display graph data as a line chart and individual cards
     var contentContainer = document.getElementById('contentContainer');
-
-    // Clear the content container
     contentContainer.innerHTML = '';
-
-    // Create a container for the cards
     var cardsContainer = document.createElement('div');
     cardsContainer.classList.add('cards-container', 'clearfix'); // Add clearfix for proper styling
 
@@ -241,47 +230,40 @@ function displayGraphData(data) {
         var card = document.createElement('div');
         card.classList.add('card');
 
-        // Create a card body
+        // card body
         var cardBody = document.createElement('div');
         cardBody.classList.add('card-body');
 
-        // Create a heading for the card
+        // card heading
         var heading = document.createElement('h2');
         heading.textContent = item.status;
 
-        // Create a paragraph for the total count
+        // total count
         var totalParagraph = document.createElement('p');
         totalParagraph.textContent = 'Total: ' + item.total;
 
-        // Append elements to the card body
         cardBody.appendChild(heading);
         cardBody.appendChild(totalParagraph);
 
-        // Append the card body to the card
         card.appendChild(cardBody);
 
-        // Append the card to the cards container
         cardsContainer.appendChild(card);
     });
 
-    // Append the cards container to the content container
     contentContainer.appendChild(cardsContainer);
 
-    // Create a container for the line chart
+    // container for line chart
     var chartContainer = document.createElement('div');
     chartContainer.classList.add('chart-container');
 
-    // Create a canvas element for the chart
+    // canvas element
     var canvas = document.createElement('canvas');
     chartContainer.appendChild(canvas);
 
-    // Append the chart container to the content container
     contentContainer.appendChild(chartContainer);
 
-    // Get the 2D context of the canvas
     var ctx = canvas.getContext('2d');
 
-    // Extract labels and data from the provided data
     var labels = data.map(function (item) {
         return item.status;
     });

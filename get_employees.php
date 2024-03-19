@@ -113,11 +113,9 @@
                     // Set default color
                     $statusColor = '';
 
-                    // Check if the attendance status is a custom status
                     if (isset($customStatusColors[$attendanceStatus])) {
                         $statusColor = $customStatusColors[$attendanceStatus];
                     } else {
-                        // Use default logic for 'Late' and 'Early'
                         $statusColor = ($attendanceStatus === 'Late') ? '#d9a71e' : (($attendanceStatus === 'Early') ? '#1fab36' : '');
                     }
                 } else {
