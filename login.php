@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login Page</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -62,7 +62,7 @@
 </head>
 <body>
     <form action="login.php" method="post">
-        <h2>Admin Login</h2>
+        <h2>User Login</h2>
 
         <?php 
         include_once('conns/errors.php'); 
