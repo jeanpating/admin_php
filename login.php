@@ -80,9 +80,9 @@
         <label for="in" class="userlabel">User:
             <input id="in" type="text" name="uname" 
                 <?php   include_once('conns/server.php'); 
-                        session_start();
-                        if(isset($_GET['user'])){  echo 'value="'. $_GET['user'].'"';}
-            ?>>
+                    session_start();
+                    if(isset($_GET['user'])){  echo 'value="'. $_GET['user'].'"';}
+                ?>>
         </label>
 
         <label for="pass" class="passlabel">Password:
