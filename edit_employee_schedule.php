@@ -1,4 +1,5 @@
     <?php
+    ob_start();
     // edit_employee_schedule.php
 
     $servername = "localhost";
@@ -110,9 +111,13 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Edit Employee Schedule</title>
         <link rel="stylesheet" type="text/css" href="styles/edit_employee_schedule.css">
+        <style>
+
+    </style>
     </head>
 
     <body>
+
     <div class="container">
     <?php
     
@@ -149,7 +154,7 @@
         
         echo "<label for='pm_time_out'>PM Time Out:</label>";
         echo "<input type='text' name='pm_time_out' id='pm_time_out' value='" . (isset($_POST['pm_time_out']) ? $_POST['pm_time_out'] : '') . "' style='border-radius: 10px;' required><br>";
-
+        echo"<br>";
         // Add submit buttons for update, insert, and delete
         echo "<input type='submit' name='update' value='Update' style='background-color: #65B741; color: white; border-radius: 10px;'>";
         echo "<input type='submit' name='insert' value='Insert' style='background-color: #ECB159; color: white; border-radius: 10px;'>";
@@ -181,15 +186,17 @@
             }
         
             echo "</table>";
+            echo"<br>";
+            echo"<a href='admin.php' class='back-button'>Back</a>";
         } else {
-            echo "No entries found in the employee_schedule table for the selected employee.";
+            echo "No existing schedule found.";
         }
         ?>
 
         <?php
         echo "</div>";
     } else {
-        echo "No schedule information found for the selected employee.";
+        echo "No schedule information found.";
     }
     echo"</div>";
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -233,8 +240,43 @@
             });
         });
     </script>
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['delete_schedule_entry'])) {
+        // Handling deletion logic
+        $entryId = isset($_POST['entry_id1']) ? $_POST['entry_id1'] : null;
+        if ($entryId !== null) {
+            $deleteSql = "DELETE FROM scheduledb.schedule WHERE id = ?";
+            $stmtDelete = $conn->prepare($deleteSql);
+            
+            // Corrected parameter binding for deletion
+            $stmtDelete->bind_param("i", $entryId);
+            
+            if ($stmtDelete->execute()) {
+                echo "<script>alert('Entry Deleted successfully');</script>";
+            } else {
+                echo "<script>alert('Error deleting entry: " . $stmtDelete->error . "');</script>";
+            }
+    
+            // Close the prepared statement
+            $stmtDelete->close();
+        } else {
+            echo "<script>alert('Entry ID not set or invalid.');</script>";
+        }
+    } elseif (isset($_POST['update_schedule_entry'])) {
+        // Handling update logic
+        $entryId = isset($_POST['entry_id1']) ? $_POST['entry_id1'] : null;
+        if ($entryId !== null) {
+            // header("Location: update_entry.php?id=$entryId");
+            // exit;
+        } else {
+            echo "<script>alert('Entry ID not set or invalid.');</script>";
+        }
+    }
+}
+?>
 <!-- Add this form after the existing form for 'employee_schedule' table -->
-<div class="form-container">
+<div class="subject-form-container">
     <form action='' method='post' class="add-schedule-form">
         <h2>Add Schedule Entry</h2>
 
@@ -260,10 +302,10 @@
         <!-- Add submit button for inserting into 'schedule' table -->
         <input type='submit' name='insert_schedule' value='Add Schedule Entry' class="submit-button" style='border-radius: 10px;'>
     </form>
-
     <!-- Display existing entries for the specific emp_id -->
     <h2>Existing Entries</h2>
     <?php
+    ob_end_flush();
     $sqlExistingEntries = "SELECT id, time, subject, classroom FROM scheduledb.schedule WHERE emp_id = $employeeId";
     $resultExistingEntries = $conn->query($sqlExistingEntries);
 
@@ -288,48 +330,51 @@
         
             echo "<input type='hidden' name='entry_id1' value='" . $entryId . "'>";
             echo "<input type='submit' name='delete_schedule_entry' value='Delete' style='background-color: red; color: white; border-radius: 10px;' onclick='return confirm(\"Are you sure you want to delete this entry?\");'>";
+            
+            // Add an update button
+            echo "<input type='submit' name='update_schedule_entry' value='Update' style='background-color: green; color: white; border-radius: 10px;' onclick='return updateEntry($entryId);'>";
+        
             echo "</form>";
             echo "</td>";
             echo "</tr>";
-        }
+        }        
 
         echo "</table>";
         echo "</form>";
+         echo "</div>"; // Add this line to close the form-container div
     } else {
-        echo "No existing entries found for the selected employee.";
+        echo "No existing entries found.";
     }
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_schedule_entry'])) {
-        // Check if "delete_schedule_entry" key is set
-        $entryId = isset($_POST['entry_id1']) ? $_POST['entry_id1'] : null;
-        if ($entryId !== null) {
-            $deleteSql = "DELETE FROM scheduledb.schedule WHERE id = ?";
-            $stmtDelete = $conn->prepare($deleteSql);
-            
-            // Corrected parameter binding for deletion
-            $stmtDelete->bind_param("i", $entryId);
-            
-            if ($stmtDelete->execute()) {
-                echo "<script>alert('Entry Deleted successfully');</script>";
-            } else {
-                echo "<script>alert('Error deleting entry: " . $stmtDelete->error . "');</script>";
-            }
-    
-            // Close the prepared statement
-            $stmtDelete->close();
-        } else {
-            echo "<script>alert('Entry ID not set or invalid.');</script>";
-        }
-    }    
-
-    $conn->close();
-    $connEmployee->close();
     ?>
-    <br>
-    <br>
-    <a href='admin.php' class='back-button'>
-        Back
-    </a>
-    </body>
 
-    </html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    function updateEntry(entryId) {
+        var newTime = prompt("Enter new time:");
+        var newSubject = prompt("Enter new subject:");
+        var newClassroom = prompt("Enter new classroom:");
+
+        // Send AJAX request to update entry in the database
+        $.ajax({
+            type: "POST",
+            url: "update_entry.php",
+            data: {id: entryId, time: newTime, subject: newSubject, classroom: newClassroom},
+            success: function(data) {
+                alert(data); // Display response from server
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>
+
+<?php
+$conn->close();
+$connEmployee->close();
+?>
+
+</body>
+
+</html>
