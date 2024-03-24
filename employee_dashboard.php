@@ -57,6 +57,24 @@ function handlePictureChange($conn) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="styles/get_employee_details.css">
     <title>Employee Dashboard</title>
+    <style>
+        .schedule-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .schedule-table th {
+            text-align: center;
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        .schedule-table td {
+            text-align: center;
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 
 <body>
@@ -161,108 +179,49 @@ $conn->close();
 ?>
 
 <hr>
+<h2>Schedule</h2>
 
+<table class="schedule-table">
+    <thead>
+        <tr>
+            <th>Time</th>
+            <th>Subject</th>
+            <th>Classroom</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Connect to the database
+        $servername = "localhost";
+        $username = "root";
+        $password = ""; 
+        $database = "scheduledb"; 
 
+        $conn = new mysqli($servername, $username, $password, $database);
 
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Select data from table
+        $sql = "SELECT time, subject, classroom FROM schedule";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            // Output data of each row
+            while($row = $result->fetch_assoc()) {
+                echo "<tr><td>".$row["time"]."</td><td>".$row["subject"]."</td><td>".$row["classroom"]."</td></tr>";
+            }
+        } else {
+            echo "0 results";
+        }
+        $conn->close();
+        ?>
+    </tbody>
+</table>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script>
-    function showDateFields(containerId) {
-        $('#' + containerId).show();
-    }
-    $(document).ready(function () {
-        $('.markOnOfficialBusiness, .markOnLeave, .markAbsent').on('click', function () {
-            var status = $(this).text();
-            var startDate, endDate;
-
-            showCustomConfirm('Are you sure you want to mark attendance as ' + status + '?', function () {
-                markAttendance(status);
-            });
-
-            if (status === 'On-Official Business') {
-                OBStartDate = $('#onOfficialBusinessStartDate').val();
-                OBEndDate = $('#onOfficialBusinessEndDate').val();
-            } 
-
-            if (status === 'On-Leave') {
-                LStartDate = $('#onLeaveStartDate').val();
-                LEndDate = $('#onLeaveEndDate').val();
-            }
-            
-            OBStartDate = $('#onOfficialBusinessStartDate').val();
-            OBEndDate = $('#onOfficialBusinessEndDate').val();
-
-            LStartDate = $('#onLeaveStartDate').val();
-            LEndDate = $('#onLeaveEndDate').val();
-
-            console.log('Status:', status);
-            console.log('Start Date:', OBStartDate);
-            console.log('End Date:', OBEndDate);
-
-            console.log('Start Date:', LStartDate);
-            console.log('End Date:', LEndDate);
-
-            if (status === 'Absent') {
-                showCustomConfirm('Are you sure you want to mark attendance as ' + status + '?', function () {
-                    markAttendance(status);
-               });
-            } else if (OBStartDate && OBEndDate) {
-                showCustomConfirm('Are you sure you want to mark attendance as ' + status + ' from ' + OBStartDate + ' to ' + OBEndDate + '?', function () {
-                    markAttendance(status, OBStartDate, OBEndDate);
-                });
-            } else {
-                console.error('Invalid date values');
-            }
-            if (LStartDate && LEndDate) {
-                showCustomConfirm('Are you sure you want to mark attendance as ' + status + ' from ' + LStartDate + ' to ' + LEndDate + '?', function () {
-                    markAttendance(status, LStartDate, LEndDate);
-                });
-            } else {
-                console.error('Invalid date values');
-            }
-        });
-
-        function showCustomConfirm(message, callback) {
-            $('#confirm-message').text(message);
-            $('#custom-confirm-modal').show();
-
-            $('#confirm-yes').on('click', function () {
-                callback();
-                $('#custom-confirm-modal').hide();
-            });
-
-            $('#confirm-no').on('click', function () {
-                console.log('Attendance marking canceled.');
-                $('#custom-confirm-modal').hide();
-            });
-        }
-
-        function markAttendance(status, startDate, endDate) {
-            var empId = <?php echo $employeeId; ?>;
-            var employeeName = <?php echo json_encode($employeeName); ?>;
-            var url = 'mark_attendance.php';
-
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: {
-                    emp_id: empId,
-                    status: status,
-                    employee_name: employeeName,
-                    start_date: startDate,
-                    end_date: endDate
-                },
-                success: function (response) {
-                    console.log(response);
-                    // Handle success response if needed
-                },
-                error: function (error) {
-                    console.error('Error marking attendance: ' + error);
-                }
-            });
-        }
-    });
 </script>
 <div class="card employee-dtr">
 <form method="post" action="employee_selected_dtr.php">
