@@ -74,6 +74,44 @@ function handlePictureChange($conn) {
             padding: 8px;
             text-align: left;
         }
+        .logout {
+            text-decoration: none;
+        }
+        .confirmation-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .confirmation-box h2 {
+            margin-top: 0;
+        }
+
+        .confirmation-box button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .confirmation-box button#confirmButton {
+            background-color: #4CAF50;
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        .confirmation-box button#cancelButton {
+            border-radius: 8px;
+            background-color: #ff4444;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -81,7 +119,35 @@ function handlePictureChange($conn) {
 
 <div class="container">
 <div class="card employee-info">
-    
+
+
+<a href="#" onclick="confirmLogout()" class="logout">Logout</a>
+<div id="confirmationBox" class="confirmation-box">
+    <h2>Confirm Logout</h2>
+    <p>Are you sure you want to logout?</p>
+    <button id="confirmButton">Logout</button>
+    <button class="cancel" id="cancelButton">Cancel</button>
+</div>
+
+<script>
+function confirmLogout() {
+    var confirmationBox = document.getElementById("confirmationBox");
+    confirmationBox.style.display = "block";
+
+    var confirmButton = document.getElementById("confirmButton");
+    var cancelButton = document.getElementById("cancelButton");
+
+    confirmButton.onclick = function () {
+        window.location.href = "admin.php?logout=1";
+    };
+
+    cancelButton.onclick = function () {
+        confirmationBox.style.display = "none";
+    };
+}
+</script>
+
+<hr>
 <?php
 if ($employeeId === false) {
     die("Invalid employee ID");

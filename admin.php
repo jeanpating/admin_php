@@ -56,11 +56,13 @@
 
         .confirmation-box button#confirmButton {
             background-color: #4CAF50;
+            border-radius: 8px;
             color: #fff;
         }
 
         .confirmation-box button#cancelButton {
-            background-color: #ff4444; /* Red color */
+            background-color: #ff4444;
+            border-radius: 8px;
             color: #fff;
         }
     </style>
