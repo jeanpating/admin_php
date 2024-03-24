@@ -75,24 +75,17 @@ $conn->close();
 <?php
 function handleEditForm($conn) {
     $employeeId = $_GET['emp_id'];
-    
-    // Define an array to store the columns that can be updated
     $updateableColumns = ['name', 'department', 'position', 'address', 'contact_number', 'email_address'];
-
     $sqlUpdates = [];
 
-    // Loop through each potential updateable column
     foreach ($updateableColumns as $columnName) {
-        // Skip columns that are not in the POST data
         if (isset($_POST[$columnName])) {
             $columnValue = $conn->real_escape_string($_POST[$columnName]);
             $sqlUpdates[] = "$columnName = '$columnValue'";
         }
     }
-
     // Construct the SQL query for updating
     $sql = "UPDATE employees SET " . implode(', ', $sqlUpdates) . " WHERE emp_id = $employeeId";
-
     if ($conn->query($sql) === TRUE) {
         // Redirect to the employee details page after the update
         header("Location: get_employee_details.php?emp_id=$employeeId");

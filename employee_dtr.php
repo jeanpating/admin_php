@@ -246,9 +246,7 @@
 
                 // Add a page
                 $pdf->AddPage();
-
-                // Output HTML content to PDF
-                $html = ob_get_clean(); // Get the HTML content from the output buffer
+                $html = ob_get_clean(); 
 
                 // Write HTML content to PDF
                 $pdf->writeHTML($html, true, false, true, false, '');
@@ -260,7 +258,6 @@
                 $connAttendance->close();
 
             ?>
-
         </div>
     </body>
 </html>

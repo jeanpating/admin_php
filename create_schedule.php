@@ -1,7 +1,4 @@
 <?php
-// create_schedule.php
-
-// Your database connection code
 $servername = "localhost";
 $username = "root";
 $password = "";

@@ -85,7 +85,7 @@
                 if ($scheduleResult && $scheduleResult->num_rows > 0) {
                     // Display the schedule in a table
                     echo "<h3>Employee's Schedule</h3>";
-                    echo "<table border='1'>"; // Added the missing '>' here
+                    echo "<table border='1'>";
                     echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
                 
                     while ($scheduleRow = $scheduleResult->fetch_assoc()) {
@@ -250,9 +250,7 @@
 
             // Add a page
             $pdf->AddPage();
-
-            // Output HTML content to PDF
-            $html = ob_get_clean(); // Get the HTML content from the output buffer
+            $html = ob_get_clean(); 
 
             // Write HTML content to PDF
             $pdf->writeHTML($html, true, false, true, false, '');
@@ -265,5 +263,4 @@
         ?>
     </div>
 </body>
-
 </html>

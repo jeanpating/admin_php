@@ -11,7 +11,6 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 // Variables to store HTML content
 $tableHTML = '';
 
-// Handle form submission for View Attendance
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
     // Get the selected date from the form
     $selectedDate = $_POST["selected_date"];
@@ -25,7 +24,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
         echo 'Error executing the query: ' . $conn->error;
     } else {
         if ($result->num_rows > 0) {
-            // Display the data from the 'attendance' table with dynamic background colors and text color
             $tableHTML .= '<div style="overflow-x:auto;">';
             $tableHTML .= '<table class="modern-table">';
             $tableHTML .= '<thead>';
@@ -126,7 +124,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"])) {
         }
 
         <?php
-        // This part should now be at the end of the body, ensuring it runs after the functions are defined
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitAttendance"]) && $result->num_rows === 0) {
             echo 'showModal();';
         }

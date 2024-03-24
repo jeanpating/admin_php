@@ -19,32 +19,61 @@ if (isset($_POST['oksbut'])) {
     }
 
     if (count($errors) == 0) {
-       	// Check admin table
-		$query1 = "SELECT * FROM users WHERE user_email='$username' AND user_pwd='$password'";
-		$results1 = mysqli_query($db, $query1);
+       	// Check admin table for hashed password
+		$query_admin_hashed = "SELECT * FROM users WHERE user_email='$username'";
+		$results_admin_hashed = mysqli_query($db, $query_admin_hashed);
+		if (mysqli_num_rows($results_admin_hashed) == 1) {
+			$row = mysqli_fetch_assoc($results_admin_hashed);
+			if (password_verify($password, $row['user_pwd'])) {
+				// Admin login with hashed password
+				session_start();
+				$_SESSION['username1'] = $username;
+				header('location: admin.php');
+				exit(); 
+			}
+		}
 
-        // Check employee table
-        $query_employee = "SELECT * FROM emp_acc WHERE emp_email='$username' AND emp_pwd='$password'";
-        $results_employee = mysqli_query($db, $query_employee);
-
-		if (mysqli_num_rows($results1) == 1) {
-		// Admin login
-		session_start();
-		$_SESSION['username1'] = $username;
-		header('location: admin.php');
-  
-        } elseif (mysqli_num_rows($results_employee) == 1) {
-            // Employee login
-			$row = mysqli_fetch_assoc($results_employee); 
-			$employeeId = $row['emp_id']; // Get employee ID
+		// Check admin table for plain text password
+		$query_admin_plain = "SELECT * FROM users WHERE user_email='$username' AND user_pwd='$password'";
+		$results_admin_plain = mysqli_query($db, $query_admin_plain);
+		if (mysqli_num_rows($results_admin_plain) == 1) {
+			// Admin login with plain text password
 			session_start();
-			$_SESSION['username'] = $username;
-			header("location: employee_dashboard.php?emp_id=$employeeId");
+			$_SESSION['username1'] = $username;
+			header('location: admin.php');
 			exit(); 
-        } else {
-            // Invalid username/password
-            header("location: login.php?wup=Wrong Username / Password&user=".$username."");
+		}
+
+        // Check employee table for hashed password
+        $query_employee_hashed = "SELECT * FROM emp_acc WHERE emp_email='$username'";
+        $results_employee_hashed = mysqli_query($db, $query_employee_hashed);
+        if (mysqli_num_rows($results_employee_hashed) == 1) {
+            $row = mysqli_fetch_assoc($results_employee_hashed);
+            if (password_verify($password, $row['emp_pwd'])) {
+                // Employee login with hashed password
+                $employeeId = $row['emp_id']; // Get employee ID
+                session_start();
+                $_SESSION['username'] = $username;
+                header("location: employee_dashboard.php?emp_id=$employeeId");
+                exit(); 
+            }
         }
+
+        // Check employee table for plain text password
+        $query_employee_plain = "SELECT * FROM emp_acc WHERE emp_email='$username' AND emp_pwd='$password'";
+        $results_employee_plain = mysqli_query($db, $query_employee_plain);
+        if (mysqli_num_rows($results_employee_plain) == 1) {
+            // Employee login with plain text password
+            $row = mysqli_fetch_assoc($results_employee_plain);
+            $employeeId = $row['emp_id']; // Get employee ID
+            session_start();
+            $_SESSION['username'] = $username;
+            header("location: employee_dashboard.php?emp_id=$employeeId");
+            exit(); 
+        }
+
+        // Invalid username/password
+        header("location: login.php?wup=Wrong Username / Password&user=".$username."");
     }
 }
 ?>

@@ -25,13 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 function handlePictureChange($conn) {
     $newPicture = $_FILES['new_picture'];
-
-    // Check if a new picture was uploaded
     if ($newPicture['error'] === UPLOAD_ERR_OK) {
         $tempFilePath = $newPicture['tmp_name'];
-        $newPicturePath = "profilepics/" . $newPicture['name']; // Modify the path as needed
+        $newPicturePath = "profilepics/" . $newPicture['name'];
 
-        // Move the uploaded file to the desired location
         move_uploaded_file($tempFilePath, $newPicturePath);
 
         // Update the picture path in the database
@@ -98,12 +95,8 @@ if ($result && $result->num_rows > 0) {
     <?php    
     if ($picturePath) {
         echo "<div class='employee-details-header'>";
-        
-    
-        // Create a container for both picture and form
         echo "<div class='employee-content-container'>";
         
-        //Add a form for changing the picture
         echo "<form action='' method='post' enctype='multipart/form-data' class='change-picture-form'>";
         echo "<label class='file-label'>";
         echo "<input type='file' name='new_picture' accept='image/*' class='file-input'>";
@@ -308,7 +301,6 @@ $conn->close();
                 },
                 success: function (response) {
                     console.log(response);
-                    // Handle success response if needed
                 },
                 error: function (error) {
                     console.error('Error marking attendance: ' + error);
@@ -569,7 +561,6 @@ $connAttendance->close();
         // Show the custom modal
         customConfirm.style.display = 'block';
 
-        // You can customize the message here
         document.getElementById('confirmMessage').innerHTML = "Are you sure you want to remove this employee?";
 
         // Set up event listeners for buttons

@@ -1,5 +1,4 @@
 <?php
-// Include database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -39,11 +38,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Close the prepared statement
         $stmtUpdate->close();
     } else {
-        // Required parameters are missing
         echo "Error: Required parameters are missing";
     }
 } else {
-    // Not a POST request
     echo "Error: Only POST requests are allowed";
 }
 

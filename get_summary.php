@@ -6,7 +6,6 @@
         <link rel="stylesheet" type="text/css" href="styles/get_summary.css">
     </head>
     <body>
-        <!-- Form for selecting a date / Download Monthly Summary -->
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             Select Month and Year:
             <select name="selected_month">
@@ -34,7 +33,6 @@
         </form>
 
         <?php
-        // Handle form submission for View Monthly Summary
         if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submitMonthlySummary"])) {
             // Get the selected month and year from the form
             $selectedMonth = $_POST["selected_month"];

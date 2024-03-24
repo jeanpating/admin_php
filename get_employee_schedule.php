@@ -31,7 +31,7 @@ if (!$result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Schedule</title>
-    <link rel="stylesheet" href="styles/get_employee_schedule.css"> <!-- Include your common styles -->
+    <link rel="stylesheet" href="styles/get_employee_schedule.css">
 </head>
 
 <body>

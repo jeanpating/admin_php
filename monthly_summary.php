@@ -58,9 +58,9 @@ if ($result === false) {
     $pdf->AddPage();
 
     // Add content to the PDF
-    $pdf->SetFont('helvetica', 'B', 16); // Set font to bold and increase font size
+    $pdf->SetFont('helvetica', 'B', 16); 
     $pdf->Cell(0, 10, 'BAWA ELEMENTARY SCHOOL', 0, 1, 'C');
-    $pdf->SetFont('helvetica', '', 8); // Reset font to regular
+    $pdf->SetFont('helvetica', '', 8);
 
     // Check if there are no attendance records
     if (empty($summary)) {
@@ -95,7 +95,6 @@ if ($result === false) {
 
             $pdf->Cell($w[7], 6, $perfectAttendance, 'LR', 1, 'R');
         }
-
         // Add a border below the table
         $pdf->Cell(array_sum($w), 0, '', 'T');
     }

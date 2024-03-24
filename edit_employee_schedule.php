@@ -1,6 +1,5 @@
     <?php
     ob_start();
-    // edit_employee_schedule.php
 
     $servername = "localhost";
     $username = "root";

@@ -12,9 +12,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $employeeId = $_POST['employee_id']; // Make sure to include employee_id in your form
+    $employeeId = $_POST['employee_id']; 
 
     // Check if file was uploaded without errors
     if (isset($_FILES["profile_picture"]) && $_FILES["profile_picture"]["error"] == 0) {
@@ -24,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $timestamp = time();
         $targetFile = $targetDir . $timestamp . '_' . basename($_FILES["profile_picture"]["name"]);
 
-        // Move the uploaded file to the destination
         if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
             // Update the database with the file path
             $sql = "UPDATE employees SET profile_picture_path = '$targetFile' WHERE emp_id = $employeeId";

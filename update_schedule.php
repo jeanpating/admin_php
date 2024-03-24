@@ -17,9 +17,7 @@ $subject = $_POST['subject'];
 $time = $_POST['time'];
 $classroom = $_POST['classroom'];
 
-// Validate form data (add your validation logic here)
-
-// Check if emp_id exists in the employee_schedule table
+//check for emp_id
 $checkEmpIdSql = "SELECT emp_id FROM employee_schedule WHERE emp_id = ?";
 $stmtCheck = $conn->prepare($checkEmpIdSql);
 $stmtCheck->bind_param("i", $employeeId);

@@ -13,12 +13,10 @@ if ($conn->connect_error) {
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Check if form is submitted
     if (isset($_POST['submit'])) {
-        // Get the column name to delete
+    
         $columnToDelete = $_POST['column_to_delete'];
 
-        // SQL to delete the column
         $deleteColumnSql = "ALTER TABLE attendance DROP COLUMN $columnToDelete";
 
         // Execute the query

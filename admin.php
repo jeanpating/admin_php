@@ -1,21 +1,21 @@
 <?php
-  session_start(); 
+    session_start(); 
 
-  if (!isset($_SESSION['username1'])) {
-  	$_SESSION['msg'] = "You must log in first";
-  	header('location: login.php');
-  }
-  if (isset($_GET['logout'])) {
-    if(isset($_SESSION['username1'])){
-      unset($_SESSION['username1']);
-      session_destroy();
-      header("location: login.php?out='1'");
-    }/*elseif(isset($_SESSION['username2'])){
-      unset($_SESSION['username2']);
-      session_destroy();
-      header("location: ../../login.php?out='1'");
-    }*/
-  }
+    if (!isset($_SESSION['username1'])) {
+        $_SESSION['msg'] = "You must log in first";
+        header('location: login.php');
+    }
+    if (isset($_GET['logout'])) {
+        if(isset($_SESSION['username1'])){
+        unset($_SESSION['username1']);
+        session_destroy();
+        header("location: login.php?out='1'");
+        }/*elseif(isset($_SESSION['username2'])){
+        unset($_SESSION['username2']);
+        session_destroy();
+        header("location: ../../login.php?out='1'");
+        }*/
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,11 +88,13 @@
         <a href="#" id="scheduleLink" class="fa-solid fa-calendar-days"> Schedule</a>
         <a href="#" id="summaryLink" class="fa-solid fa-check-to-slot"> Summary</a>
         <a href="#" id="graphLink" class="fa-solid fa-chart-simple"> Graph</a>
-
-        <br><br><br><br>
-        
         <a href="notification.php"  class="fa-solid fa-bell"> Notification</a>
+
+        <br><br><br>
+        
+        <a href="#" onclick="changePassword()" class="fa-solid fa-key"> Change Pass</a>
         <a href="#" onclick="confirmLogout()" class="fa-solid fa-right-from-bracket"> LOGOUT</a>
+
     </div>
 
     <!-- Content area -->
@@ -456,7 +458,8 @@
 
     </div>
     <script src="script/admin_script.js"></script>
-
+    
+    <!--Log out-->
     <script>
         function confirmLogout() {
             var confirmationBox = document.getElementById("confirmationBox");
@@ -482,6 +485,58 @@
         <button class="cancel" id="cancelButton">Cancel</button>
     </div>
    
-    
+    <!--Change pass-->
+    <div class="confirmation-box" id="passwordChangeBox">
+            <h2>Change Password</h2>
+            <form id="passwordChangeForm">
+                <label for="newPassword">New Password:</label><br>
+                <input type="password" id="newPassword" name="newPassword"><br><br>
+                <label for="confirmPassword">Confirm Password:</label><br>
+                <input type="password" id="confirmPassword" name="confirmPassword"><br><br>
+                <button type="button" id="confirmButton" onclick="submitPasswordChange()">Change</button>
+                <button type="button" id="cancelButton" onclick="hidePasswordChangeBox()">Cancel</button>
+            </form>
+        </div>
+        <script>
+        function changePassword() {
+            document.getElementById("passwordChangeBox").style.display = "block";
+        }
+
+        function hidePasswordChangeBox() {
+            document.getElementById("passwordChangeBox").style.display = "none";
+        }
+
+        function submitPasswordChange() {
+            var newPassword = document.getElementById("newPassword").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+
+            // Check if the passwords match
+            if (newPassword !== confirmPassword) {
+                alert("Passwords do not match. Please try again.");
+                return;
+            }
+
+            // Perform AJAX request to update password
+            $.ajax({
+                type: "POST",
+                url: "change_password.php",
+                data: { newPassword: newPassword },
+                success: function(response) {
+                    // Handle success response
+                    var data = JSON.parse(response);
+                    if (data.status === "success") {
+                        alert("Password changed successfully!");
+                        hidePasswordChangeBox();
+                    } else {
+                        alert("Failed to change password: " + data.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    alert("Error occurred while changing password: " + error);
+                }
+            });
+        }
+    </script>
 </body>
 </html>

@@ -50,7 +50,6 @@ if ($result && $result->num_rows > 0) {
         $scheduleResult = $conn->query($scheduleSql);
 
         echo "<div class='employee-list-item-container'>";
-        // echo "<img src='$picturePath' alt='$employeeName' class='employee-picture'>";
         echo "<div class='employee-details'>";
         echo "<p class='employee-name' data-employee-id='$employeeId'>$employeeName</p>";
         echo "<p>Schedule</p>"
