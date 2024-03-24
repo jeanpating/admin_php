@@ -186,10 +186,10 @@
         
             echo "</table>";
             echo"<br>";
-            echo"<a href='admin.php' class='back-button'>Back</a>";
         } else {
             echo "No existing schedule found.";
         }
+        echo"<a href='admin.php' class='back-button'>Back</a>";
         ?>
 
         <?php

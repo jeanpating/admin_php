@@ -306,18 +306,18 @@
     <hr>
     <h2>Schedule</h2>
 
-    <table class="schedule-table">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Subject</th>
-                <th>Classroom</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
+
+        <?php
+            // Retrieve emp_id from URL parameter
+            if(isset($_GET['emp_id'])) {
+                $emp_id = $_GET['emp_id'];
+            } else {
+                echo "Employee ID not provided.";
+                exit;
+            }
+
             // Connect to the database
-            $servername = "localhost";
+            $servername = "localhost"; 
             $username = "root";
             $password = ""; 
             $database = "scheduledb"; 
@@ -329,23 +329,33 @@
                 die("Connection failed: " . $conn->connect_error);
             }
 
-            // Select data from table
-            $sql = "SELECT time, subject, classroom FROM schedule";
+            // Query to retrieve employee's schedule based on emp_id
+            $sql = "SELECT time, subject, classroom FROM schedule WHERE emp_id = $emp_id";
             $result = $conn->query($sql);
 
             if ($result->num_rows > 0) {
+                // Display the schedule in a table
+                echo "<table class='schedule-table'>
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Subject</th>
+                                <th>Classroom</th>
+                            </tr>
+                        </thead>
+                        <tbody>";
                 // Output data of each row
                 while($row = $result->fetch_assoc()) {
                     echo "<tr><td>".$row["time"]."</td><td>".$row["subject"]."</td><td>".$row["classroom"]."</td></tr>";
                 }
+                echo "</tbody></table>";
             } else {
-                echo "0 results";
+                echo "No schedule found for the provided employee ID.";
             }
-            $conn->close();
-            ?>
-        </tbody>
-    </table>
 
+            $conn->close();
+        ?>
+       
     <hr>
     <!--Logout-->
     <a href="#" onclick="confirmLogout()" class="logout">Logout</a>
