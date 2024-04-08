@@ -1,6 +1,25 @@
     <?php
     // Start session to access employee ID
-    session_start();
+    
+    session_start(); 
+
+
+    if (!isset($_SESSION['username'])) {
+        $_SESSION['msg'] = "You must log in first";
+        header('location: login.php');
+    }
+    if (isset($_GET['logout'])) {
+        if(isset($_SESSION['username'])){
+        unset($_SESSION['username']);
+        session_destroy();
+        header("location: login.php?out='1'");
+        }/*elseif(isset($_SESSION['username2'])){
+        unset($_SESSION['username2']);
+        session_destroy();
+        header("location: ../../login.php?out='1'");
+        }*/
+    }
+
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
 
@@ -350,7 +369,7 @@
                 }
                 echo "</tbody></table>";
             } else {
-                echo "No schedule found for the provided employee ID.";
+                echo "No schedule found for the employee.";
             }
 
             $conn->close();
