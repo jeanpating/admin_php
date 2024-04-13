@@ -493,7 +493,7 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         
             echo "<tr>";
             echo "<td>$day</td>";
-            echo "<td>" . (isset($amTimeIn[$day]) ? $amTimeIn[$day] : '') . "</td>";
+            echo "<td>" . (($amTimeIn[$day] != '00:00:00') ? $amTimeIn[$day] : '') . "</td>";
             echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
             echo "<td>";
         
@@ -504,7 +504,12 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
                 echo '<b>'."Saturday".'</b>';
             } else {
                 // Show the regular status
-                echo (isset($amStatus[$day]) ? $amStatus[$day] : '');
+                // Changed On-Official Business into OOB because its too long
+                if (isset($amStatus[$day]) && $amStatus[$day] === 'On-Official Business') {
+                    echo 'OOB';
+                } else {
+                    echo (isset($amStatus[$day]) ? $amStatus[$day] : '');
+                }
             }
         
             echo "</td>";
