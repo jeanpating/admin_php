@@ -261,7 +261,7 @@
             $pdf->writeHTML($html, true, false, true, false, '');
 
             // Close and output PDF
-            $pdf->Output($employeeName. '_DTR_'.$currentMonth.'.pdf', 'D'); // D for download
+            $pdf->Output($employeeName. '_DTR_'.$selectedMonth.'.pdf', 'D'); // D for download
 
             $connEmployees->close();
             $connAttendance->close();
