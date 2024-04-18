@@ -192,7 +192,61 @@
         box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
         "></div>
 
+        <!-- Eto yung naka fix sa Asia/Manila, kahit palitan yung timezone ng computer na gamit hindi magbabago yung time -->
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script>
+            // Function to refresh the page
+            function refreshPage() {
+                // Set the current date
+                var currentDate = new Date();
+                var options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+                var formattedDate = currentDate.toLocaleString('en-US', { ...options, timeZone: 'Asia/Manila' });
+                document.getElementById("current_date").innerHTML = formattedDate;
+                
+                // Use jQuery AJAX to load only the necessary part of the page
+                $.ajax({
+                    url: 'partial-content.html',
+                    success: function(data) {
+                        $('#content-container').html($(data).find('#content-container').html());
+                    }
+                });
+            }
+
+            // Refresh the page every second
+            setInterval(refreshPage, 1000);
+        </script>
+
+
+
+        <!-- This code bellow is working but still changeable -->
+
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            // Function to refresh the page
+            function refreshPage() {
+                // Set the current date
+                var currentDate = new Date();
+                var options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+                var formattedDate = currentDate.toLocaleDateString('en-US', options);
+                document.getElementById("current_date").innerHTML = formattedDate;
+                
+                // Use jQuery AJAX to load only the necessary part of the page
+                $.ajax({
+                    url: 'partial-content.html',
+                    success: function(data) {
+                        $('#content-container').html($(data).find('#content-container').html());
+                    }
+                });
+            }
+
+            // Refresh the page every second
+            setInterval(refreshPage, 1000);
+        </script> -->
+
+
+        <!-- The old code -->
+        <!-- <script>
             // Function to refresh the page
             function refreshPage() {
                 // Set the current date
@@ -210,7 +264,7 @@
 
             // Refresh the page every second
             setInterval(refreshPage, 1000);
-        </script>
+        </script> -->
 
         
         <div class="attendance-table-card" style="float: left; width: 58%;">
