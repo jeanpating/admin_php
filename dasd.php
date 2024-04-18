@@ -218,6 +218,54 @@
         </script>
 
 
+
+        <!-- This code bellow is working but still changeable -->
+
+        <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+            // Function to refresh the page
+            function refreshPage() {
+                // Set the current date
+                var currentDate = new Date();
+                var options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+                var formattedDate = currentDate.toLocaleDateString('en-US', options);
+                document.getElementById("current_date").innerHTML = formattedDate;
+                
+                // Use jQuery AJAX to load only the necessary part of the page
+                $.ajax({
+                    url: 'partial-content.html',
+                    success: function(data) {
+                        $('#content-container').html($(data).find('#content-container').html());
+                    }
+                });
+            }
+
+            // Refresh the page every second
+            setInterval(refreshPage, 1000);
+        </script> -->
+
+
+        <!-- The old code -->
+        <!-- <script>
+            // Function to refresh the page
+            function refreshPage() {
+                // Set the current date
+                var currentDate = new Date();
+                document.getElementById("current_date").innerHTML = currentDate;
+                
+                // Use jQuery AJAX to load only the necessary part of the page
+                $.ajax({
+                    url: 'partial-content.html',
+                    success: function(data) {
+                        $('#content-container').html($(data).find('#content-container').html());
+                    }
+                });
+            }
+
+            // Refresh the page every second
+            setInterval(refreshPage, 1000);
+        </script> -->
+
         
         <div class="attendance-table-card" style="float: left; width: 58%;">
         <h3 style="text-align: center; font-size: 25px; font-family: roboto;">Calendar</h3>
