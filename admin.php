@@ -65,6 +65,35 @@
             border-radius: 8px;
             color: #fff;
         }
+        .confirmation-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Default hidden */
+        }
+
+        .confirmation-box button {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #confirmResetButton {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+
+        #cancelResetButton {
+            background-color: #f44336; /* Red */
+            color: white;
+        }
+
     </style>
 
 </head>
@@ -90,9 +119,10 @@
         <a href="#" id="graphLink" class="fa-solid fa-chart-simple"> Graph</a>
         <a href="notification.php"  class="fa-solid fa-bell"> Notification</a>
 
-        <br><br><br>
+        <br><br>
         
         <a href="#" onclick="changePassword()" class="fa-solid fa-key"> Change Pass</a>
+        <a href="#" onclick="resetPassword()" class="fa-solid fa-key"> Reset Pass</a>
         <a href="#" onclick="confirmLogout()" class="fa-solid fa-right-from-bracket"> LOGOUT</a>
 
     </div>
@@ -543,6 +573,44 @@
                 }
             });
         }
+        function resetPassword() {
+            var confirmationBox = document.getElementById("resetConfirmationBox");
+            confirmationBox.style.display = "block"; // Show the confirmation box
+            
+            var confirmResetButton = document.getElementById("confirmResetButton");
+            var cancelResetButton = document.getElementById("cancelResetButton");
+            
+            confirmResetButton.onclick = function () {
+                $.ajax({
+                    type: "POST",
+                    url: "reset_password.php",
+                    success: function (response) {
+                        var result = JSON.parse(response);
+                        if (result.status === "success") {
+                            alert("Password has been reset.");
+                        } else {
+                            alert("Failed to reset password: " + result.message);
+                        }
+                        confirmationBox.style.display = "none"; // Hide the confirmation box
+                    },
+                    error: function () {
+                        alert("An error occurred while resetting the password.");
+                        confirmationBox.style.display = "none"; // Hide the confirmation box
+                    }
+                });
+            };
+            
+            cancelResetButton.onclick = function () {
+                confirmationBox.style.display = "none"; // Hide the confirmation box
+            };
+        }
     </script>
+    <div id="resetConfirmationBox" class="confirmation-box" style="display: none;">
+        <h2>Reset Password</h2>
+        <p>Are you sure you want to reset the password?</p>
+        <button id="confirmResetButton">Reset</button>
+        <button id="cancelResetButton">Cancel</button>
+    </div>
+
 </body>
 </html>

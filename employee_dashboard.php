@@ -218,6 +218,61 @@
         .logout:hover {
             background-color: #45a049;
         }
+
+        /* Unique class for the confirmation box used in reset password */
+        .reset-confirmation-box {
+            display: none; /* Initially hidden */
+            position: fixed; /* Position relative to the viewport */
+            top: 50%; /* Centered vertically */
+            left: 50%; /* Centered horizontally */
+            transform: translate(-50%, -50%); /* Center precisely */
+            padding: 20px; /* Padding for spacing */
+            background-color: #fff; /* White background for visibility */
+            border: 1px solid #ccc; /* Light border */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Drop shadow for depth */
+            z-index: 1000; /* High z-index to appear above other elements */
+            border-radius: 10px; /* Rounded corners */
+            text-align: center; /* Center-align text */
+            max-width: 300px; /* Maximum width */
+            font-family: Arial, sans-serif; /* Consistent font style */
+        }
+
+        /* Header styling within the confirmation box */
+        .reset-confirmation-box h2 {
+            margin: 0 0 10px; /* Remove default margins and add spacing */
+            font-size: 1.2em; /* Larger font for emphasis */
+        }
+
+        /* Button styling within the reset confirmation box */
+        .reset-confirmation-box button {
+            padding: 10px 15px; /* Padding for comfort */
+            border: none; /* No border on buttons */
+            cursor: pointer; /* Pointer cursor on hover */
+            margin-right: 10px; /* Spacing between buttons */
+            border-radius: 5px; /* Rounded corners */
+            transition: background-color 0.3s; /* Smooth transition on hover */
+        }
+
+        /* Specific styles for 'confirm' and 'cancel' buttons */
+        .reset-confirmation-box button#resetConfirmButton {
+            background-color: #4CAF50; /* Green for confirmation */
+            color: #fff; /* White text for visibility */
+        }
+
+        .reset-confirmation-box button#resetConfirmButton:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        .reset-confirmation-box button#resetCancelButton {
+            background-color: #ff4444; /* Red for cancellation */
+            color: #fff; /* White text for visibility */
+        }
+
+        .reset-confirmation-box button#resetCancelButton:hover {
+            background-color: #e53935; /* Darker red on hover */
+        }
+
+
         </style>
     </head>
 
@@ -431,6 +486,55 @@
             };
         }
     </script>
+    
+    <!-- HTML structure with unique ID and class -->
+    <div id="resetConfirmationBox" class="reset-confirmation-box">
+        <h2>Reset Password Confirmation</h2>
+        <p>Are you sure you want to reset the password to default?</p>
+        <button id="resetConfirmButton">Confirm</button>
+        <button id="resetCancelButton">Cancel</button>
+    </div>
+
+    <!-- JavaScript to manage visibility of the reset confirmation box -->
+    <script>
+    function showResetConfirmationBox() {
+        var box = document.getElementById("resetConfirmationBox");
+        box.style.display = "block"; // Show the box when triggered
+    }
+
+    function hideResetConfirmationBox() {
+        var box = document.getElementById("resetConfirmationBox");
+        box.style.display = "none"; // Hide the box when not needed
+    }
+
+    document.getElementById("resetConfirmButton").onclick = function () {
+        // Perform AJAX request to reset the password to default
+        var xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
+        xhr.open("POST", "reset_password_emp.php", true); // Set the request method and endpoint
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the appropriate content type
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) { // Check if the request is complete
+                if (xhr.status === 200) { // Check if the request was successful
+                    alert("Password reset to default."); // Notify the user
+                    hideResetConfirmationBox(); // Hide the confirmation box
+                } else {
+                    alert("Error resetting password."); // Notify the user of an error
+                }
+            }
+        };
+
+        // Send the POST request to reset the password to default
+        xhr.send("action=reset_password&new_password=Employee123"); // Data to send with the POST request
+    };
+
+    document.getElementById("resetCancelButton").onclick = function () {
+        hideResetConfirmationBox(); // Hide the box if canceled
+    };
+    </script>
+
+    <!-- Trigger to show the reset confirmation box -->
+    <a href="#" onclick="showResetConfirmationBox()" class="changepass">Reset Password</a>
 
     </div>
 
