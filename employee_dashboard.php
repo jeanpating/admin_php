@@ -495,46 +495,60 @@
         <button id="resetCancelButton">Cancel</button>
     </div>
 
-    <!-- JavaScript to manage visibility of the reset confirmation box -->
+    <!--Reset Password-->
+    <?php
+    
+    $emp_id = isset($_GET['emp_id']) ? intval($_GET['emp_id']) : null;
+
+    echo "<script>var employeeId = " . json_encode($emp_id) . ";</script>";
+    ?>
+
+    <!-- Trigger to show the reset confirmation box -->
+    <a href="#" onclick="showResetConfirmationBox()" class="changepass">Reset Password</a>
+
     <script>
     function showResetConfirmationBox() {
         var box = document.getElementById("resetConfirmationBox");
-        box.style.display = "block"; // Show the box when triggered
+        box.style.display = "block"; 
     }
 
     function hideResetConfirmationBox() {
         var box = document.getElementById("resetConfirmationBox");
-        box.style.display = "none"; // Hide the box when not needed
+        box.style.display = "none"; 
     }
 
     document.getElementById("resetConfirmButton").onclick = function () {
-        // Perform AJAX request to reset the password to default
-        var xhr = new XMLHttpRequest(); // Create a new XMLHttpRequest object
-        xhr.open("POST", "reset_password_emp.php", true); // Set the request method and endpoint
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the appropriate content type
+        if (!employeeId) {
+            console.error("Employee ID is undefined."); 
+            alert("Employee ID not available.");
+            return; 
+        }
+
+        console.log("Resetting password for Employee ID:", employeeId); // Debugging
+        var xhr = new XMLHttpRequest(); 
+        xhr.open("POST", "reset_password_emp.php", true); 
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
 
         xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) { // Check if the request is complete
-                if (xhr.status === 200) { // Check if the request was successful
+            if (xhr.readyState === 4) { 
+                if (xhr.status === 200) {
+                    console.log("Password reset response:", xhr.responseText); // Debugging
                     alert("Password reset to default."); // Notify the user
-                    hideResetConfirmationBox(); // Hide the confirmation box
                 } else {
-                    alert("Error resetting password."); // Notify the user of an error
+                    console.error("Error resetting password:", xhr.responseText); // Log error details
+                    alert("Error resetting password.");
                 }
             }
         };
 
-        // Send the POST request to reset the password to default
-        xhr.send("action=reset_password&new_password=Employee123"); // Data to send with the POST request
+        // send post request
+        xhr.send("emp_id=" + employeeId + "&action=reset_password&new_password=Employee123"); 
     };
 
     document.getElementById("resetCancelButton").onclick = function () {
-        hideResetConfirmationBox(); // Hide the box if canceled
+        hideResetConfirmationBox();
     };
     </script>
-
-    <!-- Trigger to show the reset confirmation box -->
-    <a href="#" onclick="showResetConfirmationBox()" class="changepass">Reset Password</a>
 
     </div>
 
