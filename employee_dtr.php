@@ -17,7 +17,7 @@
         th, td {
             border: 1px solid #ddd;
             padding: 8px;
-            text-align: center;
+            text-align: left;
         }
 
         th {
@@ -206,8 +206,6 @@
                     echo "<table border='1'>";
                     echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>AM-STATUS</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>PM-STATUS</th></tr>";
             
-                    $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
-
                     $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
                     // Loop through each day of the month
