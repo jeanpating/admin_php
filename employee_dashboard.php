@@ -721,58 +721,114 @@
             }
 
             // Display attendance records in a table format
-            $currentMonth = date("F");
-            $currentYear = date("Y");
+            $currentMonth = date('m');  // Current month as a number
+            $currentYear = date('Y');  // Current year
             
+            $holidays = [
+                '01-01' => 'New Year\'s Day',
+                '02-09' => 'Lunar New Year Holiday',
+                '02-10' => 'Lunar New Year\'s Day',
+                '02-25' => 'People Power Anniversary',
+                '03-11' => 'Ramadans Start',
+                '03-28' => 'Maundy Thursday',
+                '03-29' => 'Good Friday',
+                '03-30' => 'Black Saturday',
+                '03-31' => 'Easter Sunday',
+                '04-09' => 'The Day of Valor',
+                '05-01' => 'Labour Day',
+                '06-12' => 'Independence Day',
+                '08-21' => 'Ninoy Aquino Day',
+                '08-26' => 'National Heroes Day',
+                '11-01' => 'All Saint\'s Day',
+                '11-02' => 'All Souls Day',
+                '11-30' => 'Bonifacio Day',
+                '12-08' => 'Feast of the Immaculate Conception',
+                '12-24' => 'Christmas Eve',
+                '12-25' => 'Christmas Day',
+                '12-30' => 'Rizal Day',
+                '12-31' => 'New Year\'s Eve'
+            ];
+
             echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
-            echo "<table border='1'>";
-            echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>AM-STATUS</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>PM-STATUS</th></tr>";
+            echo "<table border='1' style='border-collapse: collapse; text-align: left;'>";
+
+            // Main header 
+            echo "<tr>";
+            echo "<th rowspan='2'>Day</th>";  
+            echo "<th colspan='2'>AM</th>";   
+            echo "<th rowspan='2'>AM-STATUS</th>";  
+            echo "<th colspan='2'>PM</th>";   
+            echo "<th rowspan='2'>PM-STATUS</th>";  
+
+            echo "</tr>";
+
+            // Sub-header row for Time-in and Time-out under "AM" and "PM"
+            echo "<tr>";
+            echo "<th>Time-in</th>";  // AM Time-in
+            echo "<th>Time-out</th>";  // AM Time-out
+            echo "<th>Time-in</th>";  // PM Time-in
+            echo "<th>Time-out</th>";  // PM Time-out
+            echo "</tr>";
             
             $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
+            // Loop through each day of the month
             foreach (range(1, date('t', strtotime("$currentYear-$currentMonth-01"))) as $day) {
-                $currentDayOfWeek = ($firstDayOfMonth + $day - 1) % 7; // Calculate the day of the week
-            
+                $formattedDate = sprintf("%02d-%02d", $currentMonth, $day); // 'MM-DD'
+                $weekdayName = date('D', strtotime("$currentYear-$currentMonth-$day")); // "Mon", "Tue", etc.
+                $displayDay = "$day $weekdayName"; 
+                
+                // Check if it's a holiday
+                $isHoliday = isset($holidays[$formattedDate]);
+                $holidayName = $isHoliday ? $holidays[$formattedDate] : ''; // Get the holiday name
+
+                // Output the table row
                 echo "<tr>";
-                echo "<td>$day</td>";
-                echo "<td>" . (($amTimeIn[$day] != '00:00:00') ? $amTimeIn[$day] : '') . "</td>";
-                echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
-                echo "<td>";
-            
-                // Check if it's Saturday (0) or Sunday (6)
-                if ($currentDayOfWeek == 0) {
-                    echo '<b>'."Sunday".'</b>';
-                } elseif ($currentDayOfWeek == 6) {
-                    echo '<b>'."Saturday".'</b>';
-                } else {
-                    // Show the regular status
-                    // Changed On-Official Business into OOB because its too long
-                    if (isset($amStatus[$day]) && $amStatus[$day] === 'On-Official Business') {
-                        echo 'OOB';
-                    } else {
-                        echo (isset($amStatus[$day]) ? $amStatus[$day] : '');
-                    }
+                echo "<td>$displayDay"; 
+
+                // Display holiday name if it's a holiday
+                if ($isHoliday) {
+                    echo " - <b>$holidayName</b>";
                 }
-            
+
                 echo "</td>";
-                echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
-                echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
+
+                // AM Time-in
+                echo "<td>" . (($amTimeIn[$day] != '00:00:00') ? $amTimeIn[$day] : '') . "</td>";
+                // AM Time-out
+                echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
+
+                // AM-STATUS
                 echo "<td>";
-            
-                // Check if it's Saturday (0) or Sunday (6)
-                if ($currentDayOfWeek == 0) {
-                    echo '<b>'."Sunday".'</b>';
-                } elseif ($currentDayOfWeek == 6) {
-                    echo '<b>'."Saturday".'</b>';
+                if ($isHoliday) {
+                    echo isset($amStatus[$day]) ? $amStatus[$day] : '';
+                } 
+                // Changed On-Official Business into OOB because its too long
+                if (isset($amStatus[$day]) && $amStatus[$day] === 'On-Official Business') {
+                    echo 'OOB';
+                } else {
+                    echo (isset($amStatus[$day]) ? $amStatus[$day] : '');
+                }
+                echo "</td>";
+
+                // PM Time-in
+                echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
+                // PM Time-out
+                echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
+
+                // PM-STATUS
+                echo "<td>";
+                if ($isHoliday) {
+                    echo isset($pmStatus[$day]) ? $pmStatus[$day] : '';
+                
                 } else {
                     // Show the regular status
                     echo (isset($pmStatus[$day]) ? $pmStatus[$day] : '');
                 }
-            
                 echo "</td>";
+
                 echo "</tr>";
             }
-            
             echo "</table>";
             
         } else {
