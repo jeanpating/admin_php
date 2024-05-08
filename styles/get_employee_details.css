@@ -222,7 +222,10 @@ button {
 .markOnLeave {
     background-color: #EEC759;
 }
-.markOnOfficialBusiness, .markOnLeave {
+.markAsync {
+    background-color: #3da939;
+}
+.markOnOfficialBusiness, .markOnLeave, .markAsync {
     margin-right: 10px;
     padding: 10px;
     color: white;
@@ -241,6 +244,6 @@ button {
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 }
-.markAbsent:hover, .markOnOfficialBusiness:hover, .markOnLeave:hover {
+.markAbsent:hover, .markOnOfficialBusiness:hover, .markOnLeave:hover, .markAsync:hover {
     transform: scale(1.05);
 }

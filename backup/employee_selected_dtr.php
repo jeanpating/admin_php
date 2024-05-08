@@ -67,15 +67,6 @@
                 die("Invalid employee ID");
             }
 
-            // Process the selected month and year
-            $selectedMonth = isset($_POST['month']) ? $_POST['month'] : date('m');
-            $selectedYear = isset($_POST['year']) ? $_POST['year'] : date('Y');
-
-            $firstDayOfMonth = date("Y-m-d", strtotime("$selectedYear-$selectedMonth-01"));
-            $lastDayOfMonth = date("Y-m-t", strtotime("$selectedYear-$selectedMonth-01"));
-
-            $monthRange = $firstDayOfMonth . ' ~ ' . $lastDayOfMonth;
-
             // Fetch employee details
             $sqlEmployee = "SELECT * FROM employees WHERE emp_id = $employeeId";
             $resultEmployee = $connEmployees->query($sqlEmployee);
@@ -84,48 +75,32 @@
                 $rowEmployee = $resultEmployee->fetch_assoc();
 
                 echo "<h1>Daily Time Record</h1>";
-                // Data
-                $department = "BAWA Elementary School";
-               
-                // Output as a table
-                echo "<table border='0' cellspacing='0' cellpadding='5'>";
+                echo "<p>Name: <b>" . $rowEmployee['name'] . "</b></p>";
+                echo "<p>Employee ID: <b>" . $rowEmployee['emp_id'] ."</b></p>";
+                echo "<p>Department: <b>" . $rowEmployee['department'] . "</b></p>";
 
-                // First row with two columns
-                echo "<tr>";
-                echo "<td><b>Department: </b> $department</td>";
-                echo "<td><b>Name: </b>" . $rowEmployee['name'] . "</td>";           
-                echo "</tr>";
+                $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
+                $scheduleResult = $connEmployees->query($scheduleSql);
 
-                // Second row with two columns
-                echo "<tr>";
-                echo "<td><b>Date: </b> $monthRange</td>";      
-                echo "<td><b>Employee ID: </b>" . $rowEmployee['emp_id'] . "</td>";
-                echo "</tr>";
-
-                echo "</table>";
-
-                // $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
-                // $scheduleResult = $connEmployees->query($scheduleSql);
-
-                // if ($scheduleResult && $scheduleResult->num_rows > 0) {
-                //     // Display the schedule in a table
-                //     echo "<h3>Employee's Schedule</h3>";
-                //     echo "<table border='1'>";
-                //     echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
+                if ($scheduleResult && $scheduleResult->num_rows > 0) {
+                    // Display the schedule in a table
+                    echo "<h3>Employee's Schedule</h3>";
+                    echo "<table border='1'>";
+                    echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
                 
-                //     while ($scheduleRow = $scheduleResult->fetch_assoc()) {
-                //         echo "<tr>";
-                //         echo "<td>{$scheduleRow['am_time_in']}</td>";
-                //         echo "<td>{$scheduleRow['am_time_out']}</td>";
-                //         echo "<td>{$scheduleRow['pm_time_in']}</td>";
-                //         echo "<td>{$scheduleRow['pm_time_out']}</td>";
-                //         echo "</tr>";
-                //     }
+                    while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+                        echo "<tr>";
+                        echo "<td>{$scheduleRow['am_time_in']}</td>";
+                        echo "<td>{$scheduleRow['am_time_out']}</td>";
+                        echo "<td>{$scheduleRow['pm_time_in']}</td>";
+                        echo "<td>{$scheduleRow['pm_time_out']}</td>";
+                        echo "</tr>";
+                    }
                 
-                //     echo "</table>";
-                // } else {
-                //     echo "<p>No schedule found for the employee.</p>";
-                // }
+                    echo "</table>";
+                } else {
+                    echo "<p>No schedule found for the employee.</p>";
+                }
                 
 
                 // Fetch attendance records using the name column from attendancedb
@@ -231,80 +206,70 @@
                         '12-31' => 'New Year\'s Eve'
                     ];
             
-                    // echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
-                    echo "<h2 style='text-align: center;'>Time Card</h2>";
+                    echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
                     echo "<table border='1'>";
-                    echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>PM TIME-IN</th><th>PM TIME-OUT</th></tr>";
+                    echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>AM-STATUS</th><th>PM TIME-IN</th><th>PM TIME-OUT</th><th>PM-STATUS</th></tr>";
             
-                // Define the first day of the current month
-                $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
+                    $firstDayOfMonth = date('N', strtotime("$selectedYear-$selectedMonth-01"));
 
-                // Loop through each day of the current month
-                foreach (range(1, date('t', strtotime("$currentYear-$currentMonth-01"))) as $day) {
-                    $formattedDate = sprintf("%02d-%02d", $currentMonth, $day); // 'MM-DD'
-                    $weekdayName = date('D', strtotime("$currentYear-$currentMonth-$day")); // "Mon", "Tue", etc.
-                    $displayDay = "$day $weekdayName"; 
-
-                    // Check if it's a holiday
-                    $isHoliday = isset($holidays[$formattedDate]);
-                    $holidayName = $isHoliday ? $holidays[$formattedDate] : ''; // Get the holiday name
-
-                    // Check for specific statuses
-                    $specialStatus = ''; // Default empty status
-
-                    if (isset($amStatus[$day])) {
-                        $status = $amStatus[$day];
-                    } elseif (isset($pmStatus[$day])) {
-                        $status = $pmStatus[$day];
-                    }
-
-                    if (isset($status)) {
-                        switch ($status) {
-                            case 'On-Leave':
-                            case 'Absent':
-                            case 'On-Official Business':
-                            case 'Asynchronous':
-                                if ($status === 'On-Official Business') {
-                                    $specialStatus = 'OOB'; // Abbreviation
-                                } elseif ($status === 'Asynchronous') {
-                                    $specialStatus = 'Async'; // Abbreviation
-                                } else {
-                                    $specialStatus = $status;
-                                }
-                                break;
-                            default:
-                                // Ignore other statuses
-                                break;
+                    foreach (range(1, date('t', strtotime("$selectedYear-$selectedMonth-01"))) as $day) {
+                        $currentDayOfWeek = ($firstDayOfMonth + $day - 1) % 7; // Calculate the day of the week
+                        $formattedDate = sprintf("%02d-%02d", $currentMonth, $day); // 'MM-DD'
+                        $weekdayName = date('D', strtotime("$selectedYear-$currentMonth-$day")); // "Mon", "Tue", etc.
+                        $displayDay = "$day $weekdayName"; 
+                        
+                        // Check if it's a holiday
+                        $isHoliday = isset($holidays[$formattedDate]);
+                        $holidayName = $isHoliday ? $holidays[$formattedDate] : ''; // Get the holiday name
+        
+                        // Output the table row
+                        echo "<tr>";
+                        echo "<td>$displayDay"; 
+        
+                        // Display holiday name if it's a holiday
+                        if ($isHoliday) {
+                            echo " - <b>$holidayName</b>";
                         }
+        
+                        echo "</td>";
+        
+                        // AM Time-in
+                        echo "<td>" . (($amTimeIn[$day] != '00:00:00') ? $amTimeIn[$day] : '') . "</td>";
+                        // AM Time-out
+                        echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
+        
+                        // AM-STATUS
+                        echo "<td>";
+                        if ($isHoliday) {
+                            echo isset($amStatus[$day]) ? $amStatus[$day] : '';
+                        } 
+                        // Changed On-Official Business into OOB because its too long
+                        if (isset($amStatus[$day]) && $amStatus[$day] === 'On-Official Business') {
+                            echo 'OOB';
+                        } else {
+                            echo (isset($amStatus[$day]) ? $amStatus[$day] : '');
+                        }
+                        echo "</td>";
+        
+                        // PM Time-in
+                        echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
+                        // PM Time-out
+                        echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
+        
+                        // PM-STATUS
+                        echo "<td>";
+                        if ($isHoliday) {
+                            echo isset($pmStatus[$day]) ? $pmStatus[$day] : '';
+                        
+                        } else {
+                            // Show the regular status
+                            echo (isset($pmStatus[$day]) ? $pmStatus[$day] : '');
+                        }
+                        echo "</td>";
+        
+                        echo "</tr>";
                     }
-
-                    // Output the table row
-                    echo "<tr>";
-                    echo "<td>$displayDay"; 
-
-                    // Display holiday or special status
-                    if ($isHoliday) {
-                        echo " - <b>$holidayName</b>";
-                    }
-                    if ($specialStatus !== '') {
-                        echo " - <b>$specialStatus</b>"; // Display special status
-                    }
-
-                    echo "</td>";
-
-                    // Display AM Time-in and AM Time-out
-                    echo "<td>" . (($amTimeIn[$day] != '00:00:00') ? $amTimeIn[$day] : '') . "</td>";
-                    echo "<td>" . (isset($amTimeOut[$day]) ? $amTimeOut[$day] : '') . "</td>";
-
-                    // Display PM Time-in and PM Time-out
-                    echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
-                    echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
-
-                    echo "</tr>";
-                }
-
-                // End the table
-                echo "</table>";
+                    echo "</table>";
 
                 } else {
                     echo "<p>No attendance records found for the employee in the specified date range.</p>";
