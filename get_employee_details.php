@@ -405,6 +405,11 @@ if ($employeeId === false) {
     die("Invalid employee ID");
 }
 
+$currentDate1 = date('Y-m-d');
+$firstDay = date('Y-m-01', strtotime($currentDate1));
+$lastDay = date('Y-m-t', strtotime($currentDate1));
+$monthRange = $firstDay . ' ~ ' . $lastDay;
+
 // Fetch employee details
 $sqlEmployee = "SELECT * FROM employees WHERE emp_id = $employeeId";
 $resultEmployee = $connEmployees->query($sqlEmployee);
@@ -413,6 +418,26 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
     $rowEmployee = $resultEmployee->fetch_assoc();
 
     echo "<h1 style='text-align: center;'>Daily Time Record</h1>";
+    // Data
+    $department = "BAWA Elementary School";
+    
+    // Output as a table
+    echo "<table border='1' cellspacing='0' cellpadding='5' style='width: 100%;'>";
+
+    // First row with two columns
+    echo "<tr>";
+    echo "<td><b>Department: </b> $department</td>";
+    echo "<td><b>Name: </b>" . $rowEmployee['name'] . "</td>";           
+    echo "</tr>";
+
+    // Second row with two columns
+    echo "<tr>";
+    echo "<td><b>Date: </b> $monthRange</td>";      
+    echo "<td><b>Employee ID: </b>" . $rowEmployee['emp_id'] . "</td>";
+    echo "</tr>";
+
+    echo "</table>";
+
     // echo "<hr>";
     // echo "<p>Name: <b>" . $rowEmployee['name'] . "</b></p>";
     // echo "<p>Employee ID: <b>" . $rowEmployee['emp_id'] ."</b></p>";
@@ -512,7 +537,67 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
         // Display attendance records in a table format
         $currentMonth = date('m');  // Current month as a number
         $currentYear = date('Y');  // Current year
+
+        $sqlAttendance = "SELECT * FROM attendance 
+        WHERE name = '$employeeName' 
+        AND MONTH(date) = $currentMonth 
+        AND YEAR(date) = $currentYear";
+
+        $resultAttendance = $connAttendance->query($sqlAttendance);
+
+        if ($resultAttendance === false) {
+            die("Error in SQL query: " . $connAttendance->error);
+        }
+
+        $totalAbsence = 0;
+        $totalLeave = 0;
+        $totalTrip = 0;
+        $totalWork = 0;
+
+        // Array to store dates already counted for work
+        $workDates = [];
+
+        if ($resultAttendance->num_rows > 0) {
+            while ($rowAttendance = $resultAttendance->fetch_assoc()) {
+                $status = $rowAttendance['status'];
+                $date = $rowAttendance['date'];
+
+        // Increment totals based on the status
+        switch ($status) {
+            case 'Absent':
+                $totalAbsence++;
+            break;
+            case 'On-Leave':
+                $totalLeave++;
+            break;
+            case 'On-Official Business':
+                $totalTrip++;
+            break;
+            case 'On-Time':
+            case 'Late':
+            case 'Early':
+            case 'Asynchronous':
         
+        if (!in_array($date, $workDates)) {
+            $totalWork++;
+            $workDates[] = $date;
+        }
+            break;
+            default:
+            // Ignore other statuses
+                break;
+                }
+            }
+        }
+
+        echo "<table border='1'>";
+        echo "<tr><th>Absence (Day)</th><th>Leave (Day)</th><th>Trip (Day)</th><th>Work (Day)</th>
+        <th>Overtime Normal</th><th>Overtime Special</th><th>Late (Time)</th><th>Late (Minute)</th>
+        <th>Early (Time)</th><th>Early (Minute)</th></tr>";
+        echo "<tr><td>$totalAbsence</td><td>$totalLeave</td><td>$totalTrip</td><td>$totalWork</td>
+        <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>";
+        echo "</table>";
+
         $holidays = [
             '01-01' => 'New Year\'s Day',
             '02-09' => 'Lunar New Year Holiday',
@@ -538,6 +623,8 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
             '12-31' => 'New Year\'s Eve'
         ];
 
+
+        
         // echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
         echo "<h2 style='text-align: center;'>Time Card</h2>";
         echo "<table border='1' style='border-collapse: collapse; text-align: left; width: 100%;'>";

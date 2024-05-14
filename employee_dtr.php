@@ -199,6 +199,67 @@
                     $currentMonth = date('m');  // Current month as a number
                     $currentYear = date('Y');  // Current year
 
+                    $sqlAttendance = "SELECT * FROM attendance 
+                    WHERE name = '$employeeName' 
+                    AND MONTH(date) = $currentMonth 
+                    AND YEAR(date) = $currentYear";
+            
+                    $resultAttendance = $connAttendance->query($sqlAttendance);
+            
+                    if ($resultAttendance === false) {
+                        die("Error in SQL query: " . $connAttendance->error);
+                    }
+            
+                    $totalAbsence = 0;
+                    $totalLeave = 0;
+                    $totalTrip = 0;
+                    $totalWork = 0;
+            
+                    // Array to store dates already counted for work
+                    $workDates = [];
+            
+                    if ($resultAttendance->num_rows > 0) {
+                        while ($rowAttendance = $resultAttendance->fetch_assoc()) {
+                            $status = $rowAttendance['status'];
+                            $date = $rowAttendance['date'];
+            
+                    // Increment totals based on the status
+                    switch ($status) {
+                        case 'Absent':
+                            $totalAbsence++;
+                        break;
+                        case 'On-Leave':
+                            $totalLeave++;
+                        break;
+                        case 'On-Official Business':
+                            $totalTrip++;
+                        break;
+                        case 'On-Time':
+                        case 'Late':
+                        case 'Early':
+                        case 'Asynchronous':
+                    
+                    if (!in_array($date, $workDates)) {
+                        $totalWork++;
+                        $workDates[] = $date;
+                    }
+                        break;
+                        default:
+                        // Ignore other statuses
+                            break;
+                            }
+                        }
+                    }
+
+                // Output the totals
+                echo "<table border='1'>";
+                echo "<tr><th>Absence (Day)</th><th>Leave (Day)</th><th>Trip (Day)</th><th>Work (Day)</th>
+                <th>Overtime Normal</th><th>Overtime Special</th><th>Late (Time)</th><th>Late (Minute)</th>
+                <th>Early (Time)</th><th>Early (Minute)</th></tr>";
+                echo "<tr><td>$totalAbsence</td><td>$totalLeave</td><td>$totalTrip</td><td>$totalWork</td>
+                <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>";
+                echo "</table>";
+
                     $holidays = [
                         '01-01' => 'New Year\'s Day',
                         '02-09' => 'Lunar New Year Holiday',
@@ -253,7 +314,7 @@
 
                     if (isset($status)) {
                         switch ($status) {
-                            case 'On-leave':
+                            case 'On-Leave':
                             case 'Absent':
                             case 'On-Official Business':
                             case 'Asynchronous':
