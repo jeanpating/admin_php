@@ -628,46 +628,28 @@
         $department = "BAWA Elementary School";
         
         // Output as a table
-        echo "<table border='1' cellspacing='0' cellpadding='5' style='width: 100%;'>";
-    
+        echo "<table style='border-collapse: collapse; width: 100%;'>";
+
         // First row with two columns
         echo "<tr>";
-        echo "<td><b>Department: </b> $department</td>";
-        echo "<td><b>Name: </b>" . $rowEmployee['name'] . "</td>";           
+        echo "<td style='border: 1px solid black;'>Dept.</td>";
+        echo "<td style='border: 1px solid black;'>$department</td>";
+        echo "<td style='border: 1px solid black;'>Name</td>"; 
+        echo "<td style='border: 1px solid black;'>" . $rowEmployee['name'] . "</td>";              
         echo "</tr>";
-    
+
         // Second row with two columns
         echo "<tr>";
-        echo "<td><b>Date: </b> $monthRange</td>";      
-        echo "<td><b>Employee ID: </b>" . $rowEmployee['emp_id'] . "</td>";
+        echo "<td style='border: 1px solid black;'>Date</td>"; 
+        echo "<td style='border: 1px solid black;'>$monthRange</td>";         
+        echo "<td style='border: 1px solid black;'>User ID</td>";
+        echo "<td style='border: 1px solid black;'>" . $rowEmployee['emp_id'] . "</td>";
         echo "</tr>";
-    
+
         echo "</table>";
-        // echo "<hr>";
-        // echo "<p>Name: <b>" . $rowEmployee['name'] . "</b></p>";
-        // echo "<p>Employee ID: <b>" . $rowEmployee['emp_id'] ."</b></p>";
-        // echo "<p>Department: <b>" . $rowEmployee['department'] . "</b></p>";
 
         $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
         $scheduleResult = $connEmployees->query($scheduleSql);
-
-        // if ($scheduleResult && $scheduleResult->num_rows > 0) {
-        //     // Display the schedule in a table
-        //     echo "<h3 style='text-align: center;'>Employee's Schedule</h3>";
-        //     echo "<table border='1' style='text-align: center; margin-left: auto; margin-right: auto;'>";
-        //     echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
-
-        //     while ($scheduleRow = $scheduleResult->fetch_assoc()) {
-        //         echo "<td>{$scheduleRow['am_time_in']}</td>";
-        //         echo "<td>{$scheduleRow['am_time_out']}</td>";
-        //         echo "<td>{$scheduleRow['pm_time_in']}</td>";
-        //         echo "<td>{$scheduleRow['pm_time_out']}</td>";
-        //     }
-
-        //     echo "</table>";
-        // } else {
-        //     echo "<p>No schedule found for the employee.</p>";
-        // }
 
         // Fetch attendance records using the name column from attendancedb
         $employeeName = $rowEmployee['name'];

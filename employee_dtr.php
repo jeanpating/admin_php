@@ -1,14 +1,17 @@
+<?php
+ob_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <style>
         body {
-            font-size: 10.5px;
+            font-size: 5px;
         }
         table {
             border-collapse: collapse;
-            width: 100%;
+            width: 48%;
             text-align: left;
             margin-left: auto;
             margin-right: auto;
@@ -18,6 +21,7 @@
             border: 1px solid #ddd;
             padding: 8px;
             text-align: left;
+            height: 10px;
         }
 
         th {
@@ -26,8 +30,15 @@
         h1, h2, h3 {
             text-align: center;
         }
-        h4 {
-            text-align: right;
+        h6 {
+            text-indent: 110px;
+        }
+        h5 {
+            text-indent: 40px;
+            font-size: 8px;
+        }
+        p {
+            text-indent: 105px;
         }
     </style>
 </head>
@@ -37,8 +48,9 @@
     <div class="container">
 
         <?php   
+        
             require_once('tcpdf/tcpdf.php');
-
+            
             error_reporting(E_ALL);
             ini_set('display_errors', 1);
 
@@ -79,52 +91,30 @@
             if ($resultEmployee && $resultEmployee->num_rows > 0) {
                 $rowEmployee = $resultEmployee->fetch_assoc();
 
-                echo "<h1>Daily Time Record</h1>";
                 // Data
                 $department = "BAWA Elementary School";
                
                 // Output as a table
-                echo "<table border='0' cellspacing='0' cellpadding='5'>";
+                echo "<table>";
 
                 // First row with two columns
                 echo "<tr>";
-                echo "<td><b>Department: </b> $department</td>";
-                echo "<td><b>Name: </b>" . $rowEmployee['name'] . "</td>";           
+                echo "<td>Dept.</td>";
+                echo "<td>$department</td>";
+                echo "<td>Name</td>"; 
+                echo "<td>" . $rowEmployee['name'] . "</td>";              
                 echo "</tr>";
 
                 // Second row with two columns
                 echo "<tr>";
-                echo "<td><b>Date: </b> $monthRange</td>";      
-                echo "<td><b>Employee ID: </b>" . $rowEmployee['emp_id'] . "</td>";
+                echo "<td>Date</td>"; 
+                echo "<td>$monthRange</td>";         
+                echo "<td>User ID</td>";
+                echo "<td>" . $rowEmployee['emp_id'] . "</td>";
                 echo "</tr>";
 
                 echo "</table>";
                 
-
-                // $scheduleSql = "SELECT am_time_in, am_time_out, pm_time_in, pm_time_out FROM scheduledb.employee_schedule WHERE emp_id = $employeeId";
-                // $scheduleResult = $connEmployees->query($scheduleSql);
-
-                // if ($scheduleResult && $scheduleResult->num_rows > 0) {
-                //     // Display the schedule in a table
-                //     echo "<h3>Employee's Schedule</h3>";
-                //     echo "<table border='1'>"; // Added the missing '>' here
-                //     echo "<tr><th>AM Time In</th><th>AM Time Out</th><th>PM Time In</th><th>PM Time Out</th></tr>";
-                
-                //     while ($scheduleRow = $scheduleResult->fetch_assoc()) {
-                //         echo "<tr>";
-                //         echo "<td>{$scheduleRow['am_time_in']}</td>";
-                //         echo "<td>{$scheduleRow['am_time_out']}</td>";
-                //         echo "<td>{$scheduleRow['pm_time_in']}</td>";
-                //         echo "<td>{$scheduleRow['pm_time_out']}</td>";
-                //         echo "</tr>";
-                //     }
-                
-                //     echo "</table>";
-                // } else {
-                //     echo "<p>No schedule found for the employee.</p>";
-                // }
-                
-
                 // Fetch attendance records using the name column from attendancedb
                 $employeeName = $rowEmployee['name'];
                 $currentDate = date('Y-m-d');
@@ -254,8 +244,8 @@
                 // Output the totals
                 echo "<table border='1'>";
                 echo "<tr><th>Absence (Day)</th><th>Leave (Day)</th><th>Trip (Day)</th><th>Work (Day)</th>
-                <th>Overtime Normal</th><th>Overtime Special</th><th>Late (Time)</th><th>Late (Minute)</th>
-                <th>Early (Time)</th><th>Early (Minute)</th></tr>";
+                <th>Overtime Normal</th><th>Overtime Special</th><th>Late (Times)</th><th>Late (Minute)</th>
+                <th>Early (Times)</th><th>Early (Minute)</th></tr>";
                 echo "<tr><td>$totalAbsence</td><td>$totalLeave</td><td>$totalTrip</td><td>$totalWork</td>
                 <td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>";
                 echo "</table>";
@@ -285,19 +275,39 @@
                         '12-31' => 'New Year\'s Eve'
                     ];
             
-                    // echo "<h2 style='text-align: center;'>Attendance Records ($currentMonth, $currentYear)</h2>";
-                    echo "<h2 style='text-align: center;'>Time Card</h2>";
+                    echo "<h6>Time Card</h6>";
                     echo "<table border='1'>";
-                    echo "<tr><th>DAY</th><th>AM TIME-IN</th><th>AM TIME-OUT</th><th>PM TIME-IN</th><th>PM TIME-OUT</th></tr>";
+                    echo "<tr>
+                    <th></th>
+                    <th>Before Noon</th>
+                    <th></th>
+                    <th>After Noon</th>
+                    <th></th>
+                    <th>Overtime</th>
+                    <th></th>
+                    </tr>";
+                    echo "<tr><th>Date / Weekday</th><th>In</th><th>Out</th><th>In</th><th>Out</th><th>In</th><th>Out</th></tr>";
             
                 // Define the first day of the current month
                 $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
+
+                // Mapping of three-letter day names to two-letter versions
+                $twoLetterDays = [
+                    'Mon' => 'Mo',
+                    'Tue' => 'Tu',
+                    'Wed' => 'We',
+                    'Thu' => 'Th',
+                    'Fri' => 'Fr',
+                    'Sat' => 'Sa',
+                    'Sun' => 'Su'
+                ];
 
                 // Loop through each day of the current month
                 foreach (range(1, date('t', strtotime("$currentYear-$currentMonth-01"))) as $day) {
                     $formattedDate = sprintf("%02d-%02d", $currentMonth, $day); // 'MM-DD'
                     $weekdayName = date('D', strtotime("$currentYear-$currentMonth-$day")); // "Mon", "Tue", etc.
-                    $displayDay = "$day $weekdayName"; 
+                    $twoLetterDay = $twoLetterDays[$weekdayName]; // Get the two-letter abbreviation
+                    $displayDay = "$day $twoLetterDay";
 
                     // Check if it's a holiday
                     $isHoliday = isset($holidays[$formattedDate]);
@@ -353,6 +363,10 @@
                     // Display PM Time-in and PM Time-out
                     echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
                     echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
+                    
+                    // Display Overtime TDs
+                    echo "<td></td>";
+                    echo "<td></td>";
 
                     echo "</tr>";
                 }
@@ -365,8 +379,11 @@
                 }?>
                 <br><br>
                 <?php
-                echo"<h4>__________________</h4>";
-                echo"<h4>Employee Signature</h4>"; 
+                echo"<h5>" . "__________" . "<u><b>" . $employeeName . "</u></b>" . "__________" ."</h5>";
+                echo"<p>Employee Name</p>";
+                
+                echo"<h5>" . "__________" . "<u><b>" . "Janeia Fran G. Fider" . "</b></u>" . "__________" ."</h5>";
+                echo"<p>In Charge</p>"; 
                 } else {
                     echo "<p>No employee details found.</p>";
                 }

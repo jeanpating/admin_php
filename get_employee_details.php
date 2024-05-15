@@ -422,18 +422,22 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
     $department = "BAWA Elementary School";
     
     // Output as a table
-    echo "<table border='1' cellspacing='0' cellpadding='5' style='width: 100%;'>";
+    echo "<table style='border-collapse: collapse; width: 100%;'>";
 
     // First row with two columns
     echo "<tr>";
-    echo "<td><b>Department: </b> $department</td>";
-    echo "<td><b>Name: </b>" . $rowEmployee['name'] . "</td>";           
+    echo "<td style='border: 1px solid black;'>Dept.</td>";
+    echo "<td style='border: 1px solid black;'>$department</td>";
+    echo "<td style='border: 1px solid black;'>Name</td>"; 
+    echo "<td style='border: 1px solid black;'>" . $rowEmployee['name'] . "</td>";              
     echo "</tr>";
 
     // Second row with two columns
     echo "<tr>";
-    echo "<td><b>Date: </b> $monthRange</td>";      
-    echo "<td><b>Employee ID: </b>" . $rowEmployee['emp_id'] . "</td>";
+    echo "<td style='border: 1px solid black;'>Date</td>"; 
+    echo "<td style='border: 1px solid black;'>$monthRange</td>";         
+    echo "<td style='border: 1px solid black;'>User ID</td>";
+    echo "<td style='border: 1px solid black;'>" . $rowEmployee['emp_id'] . "</td>";
     echo "</tr>";
 
     echo "</table>";
@@ -631,28 +635,43 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
 
         // Main header 
         echo "<tr>";
-        echo "<th rowspan='2'>Day</th>";  
-        echo "<th colspan='2'>AM</th>";     
-        echo "<th colspan='2'>PM</th>";   
+        echo "<th rowspan='2'>Date/Weekday</th>";  
+        echo "<th colspan='2' style='width: 30%; text-align: center;'>Before Noon</th>";     
+        echo "<th colspan='2' style='width: 30%; text-align: center;'>After Noon</th>";   
+        echo "<th colspan='2' style='width: 30%; text-align: center;'>Overtime</th>";   
 
         echo "</tr>";
 
         // Sub-header row for Time-in and Time-out under "AM" and "PM"
         echo "<tr>";
-        echo "<th>Time-in</th>";  // AM Time-in
-        echo "<th>Time-out</th>";  // AM Time-out
-        echo "<th>Time-in</th>";  // PM Time-in
-        echo "<th>Time-out</th>";  // PM Time-out
+        echo "<th>In</th>";  // AM Time-in
+        echo "<th>Out</th>";  // AM Time-out
+        echo "<th>In</th>";  // PM Time-in
+        echo "<th>Out</th>";  // PM Time-out
+        echo "<th>In</th>";  // PM Time-in
+        echo "<th>Out</th>";  // PM Time-out
         echo "</tr>";
         
         // Define the first day of the current month
         $firstDayOfMonth = date('N', strtotime("$currentYear-$currentMonth-01"));
 
+        // Mapping of three-letter day names to two-letter versions
+        $twoLetterDays = [
+            'Mon' => 'Mo',
+            'Tue' => 'Tu',
+            'Wed' => 'We',
+            'Thu' => 'Th',
+            'Fri' => 'Fr',
+            'Sat' => 'Sa',
+            'Sun' => 'Su'
+        ];
+
         // Loop through each day of the current month
         foreach (range(1, date('t', strtotime("$currentYear-$currentMonth-01"))) as $day) {
             $formattedDate = sprintf("%02d-%02d", $currentMonth, $day); // 'MM-DD'
             $weekdayName = date('D', strtotime("$currentYear-$currentMonth-$day")); // "Mon", "Tue", etc.
-            $displayDay = "$day $weekdayName"; 
+            $twoLetterDay = $twoLetterDays[$weekdayName]; // Get the two-letter abbreviation
+            $displayDay = "$day $twoLetterDay";
 
             // Check if it's a holiday
             $isHoliday = isset($holidays[$formattedDate]);
@@ -708,20 +727,21 @@ if ($resultEmployee && $resultEmployee->num_rows > 0) {
             // Display PM Time-in and PM Time-out
             echo "<td>" . (isset($pmTimeIn[$day]) ? $pmTimeIn[$day] : '') . "</td>";
             echo "<td>" . (isset($pmTimeOut[$day]) ? $pmTimeOut[$day] : '') . "</td>";
-
+            echo "<td></td>";
+            echo "<td></td>";
             echo "</tr>";
         }
 
         // End the table
         echo "</table>";
 
-                
-    } else {
-        echo "<p>No attendance records found for the employee in the specified date range.</p>";
-    }
-} else {
-    echo "<p>No employee details found.</p>";
-}
+        } else {
+            echo "<p>No attendance records found for the employee in the specified date range.</p>";
+        }
+        } else {
+            echo "<p>No employee details found.</p>";
+        }
+
 
 $connEmployees->close();
 $connAttendance->close();
